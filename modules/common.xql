@@ -147,9 +147,9 @@ declare function common:limit-str($str as xs:string*, $limit as xs:integer) as x
         $str
 };
 
-declare function common:binary-resource($file as xs:string) as xs:base64Binary
+declare function common:epub-resource($file as xs:string) as xs:base64Binary
 {
-    util:binary-doc(xs:anyURI(concat(common:app-path(), '/epub/resources/', $file)))
+    util:binary-doc(xs:anyURI(concat(common:app-path(), '/views/epub/resources/', $file)))
 };
 
 declare function common:environment(){

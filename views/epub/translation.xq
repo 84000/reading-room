@@ -2,8 +2,8 @@ xquery version "3.0";
 
 declare namespace m = "http://read.84000.co/ns/1.0";
 
-import module namespace common = "http://read.84000.co/common" at "../modules/common.xql";
-import module namespace translation = "http://read.84000.co/translation" at "../modules/translation.xql";
+import module namespace common = "http://read.84000.co/common" at "../../modules/common.xql";
+import module namespace translation = "http://read.84000.co/translation" at "../../modules/translation.xql";
 
 (:
 
@@ -81,11 +81,11 @@ let $entries := (
             </spine>
         </package>
     </entry>,
-    <entry name="OEBPS/css/manualStyles.css" type="binary">{ common:binary-resource('css/manualStyles.css') }</entry>,
-    <entry name="OEBPS/css/fontStyles.css" type="binary">{ common:binary-resource('css/fontStyles.css') }</entry>,
-    <entry name="OEBPS/image/logo-stacked.png" type="binary">{ common:binary-resource('image/logo-stacked.png') }</entry>,
-    <entry name="OEBPS/image/CC_logo.png" type="binary">{ common:binary-resource('image/CC_logo.png') }</entry>,
-    <entry name="OEBPS/fonts/DDC_Uchen.ttf" type="binary">{ common:binary-resource('fonts/DDC_Uchen.ttf') }</entry>,
+    <entry name="OEBPS/css/manualStyles.css" type="binary">{ common:epub-resource('css/manualStyles.css') }</entry>,
+    <entry name="OEBPS/css/fontStyles.css" type="binary">{ common:epub-resource('css/fontStyles.css') }</entry>,
+    <entry name="OEBPS/image/logo-stacked.png" type="binary">{ common:epub-resource('image/logo-stacked.png') }</entry>,
+    <entry name="OEBPS/image/CC_logo.png" type="binary">{ common:epub-resource('image/CC_logo.png') }</entry>,
+    <entry name="OEBPS/fonts/DDC_Uchen.ttf" type="binary">{ common:epub-resource('fonts/DDC_Uchen.ttf') }</entry>,
     <entry name="OEBPS/half-title.xhtml" type="xml">{transform:transform($data, doc("xslt/half-title.xsl"), ())}</entry>,
     <entry name="OEBPS/full-title.xhtml" type="xml">{transform:transform($data, doc("xslt/full-title.xsl"), ())}</entry>,
     <entry name="OEBPS/imprint.xhtml" type="xml">{transform:transform($data, doc("xslt/imprint.xsl"), ())}</entry>,
