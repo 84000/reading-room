@@ -76,7 +76,6 @@ declare function deployment:push-app() {
     let $sync-path := $deployment-conf/m:sync-path/text()
     
     (: Sync app :)
-    (: TO DO: also get index config and re-index on pull :)
     let $sync :=
         if($action eq 'sync' and $sync-path) then
             (
