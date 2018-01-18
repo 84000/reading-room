@@ -1,0 +1,279 @@
+/* base styles */
+body, div, dl, dt, dd, h1, h2, h3, h4, h5, h6, p, pre, code, blockquote {
+	margin: 0;
+	padding: 0;
+	border-width: 0;
+}
+body {
+	color:#000000;
+	font-family: Georgia,"Times New Roman",Times,serif;
+	margin: 5px;
+}
+h1, h2, h3, h4, h5, h6 {
+  display: block;
+  width: 100%;
+  text-align: inherit;
+}
+section, aside {
+  display: block;
+	page-break-before:always;
+	max-width: 100%;
+}
+p {
+	line-height:1.6;
+	page-break-after:auto;
+	page-break-before:auto;
+	text-align: left;
+}
+a {
+	color: #003f5f;
+}
+
+/* headings */
+h1 {
+	font-size: 1.7em;
+	font-weight: 500;
+	line-height: 1.3em;
+}
+h2 {
+	font-size: 1.5em;
+	font-weight: 500;
+	line-height: 1.4em;
+}
+h3 {
+	font-size: 1.3em;
+	font-weight: 500;
+}	
+h4 {
+	font-size: 1.15em;
+	font-weight: 600;
+	margin-top: 20px;
+}
+h5 {
+	font-size: 1em;
+	font-weight: normal;
+	line-height: 1.4em;
+}
+h5.space-before {
+	margin-top: 40px;
+}
+
+/* helpers */
+.bold {
+  font-weight: bold;
+}
+.center {
+	text-align: center;
+}
+.center p {
+	text-align: center;
+}
+.italic {
+	font-style: italic;
+}
+.title {
+	font-style: italic;
+}
+.foreign {
+	font-style: italic;
+}
+.name {
+  font-weight: bold;
+  font-style: italic;
+}
+.uppercase {
+	text-transform: uppercase;
+}
+.small {
+	font-size: .85em;
+}
+.speaker {
+	font-style: italic;
+}
+.trailer {
+  font-style: italic;
+}
+.section-label {
+  font-weight: bold;
+}
+
+/* other scripts */
+.text-bo {
+    font-family:"Tibetan" !important;
+}
+.text-zh {
+    font-style: normal !important;
+}
+
+/* section header */
+.header {
+	padding-top: 25%;
+}
+.header-lg {
+	padding-top: 20%;
+	padding-bottom: 20px;
+}
+.header h1, .header h2, .header-lg h1, .header-lg h2, .header-lg h3, .header-lg h4 {
+  margin-top:0px;
+	margin-bottom: 20px;
+}
+
+/* milestone indents */
+.milestones .milestone, .footnote a:first-child {
+  position:absolute;
+  left:-60px;
+  width: 40px;
+  text-indent: 0;
+}
+.milestones p, .milestones .line-group, p.footnote {
+	position:relative;
+	margin-left: 60px;
+}
+.milestones p {
+  text-align: justify;
+	text-indent: 2em;
+}
+.milestones .line-group p {
+	margin-left: 0px;
+	text-indent: 0;
+}
+
+/* footnote links */
+.footnote-link {
+	font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+  top: -0.5em;
+}
+
+/* paragraph spacers */
+.space {
+  margin-top: 20px;
+}
+p.space-before {
+	margin-top: 20px;
+}
+p.space-after {
+	margin-bottom: 20px;
+}
+/* div spacers */
+div.space-before {
+	margin-top: 50px;
+}
+div.space-after {
+	margin-bottom: 50px;
+}
+.spaced p {
+  margin-top: 20px;
+}
+
+/* Images */
+img.illustration {
+	display: block;
+	page-break-before: always;
+	max-width: 100%;
+	max-height: 100%;
+	margin: 0px auto;
+}
+img.divider {
+	display: block;
+	margin: 30px auto 30px auto;
+	page-break-after: always;
+}
+img.logo-84000 {
+    width: 170px;
+}
+
+/* line-groups */
+.line-group {
+  position: relative;
+}
+.line-group .line-group {
+  margin-top: 12px;
+}
+
+/* title pages */
+.half-title, .colophon {
+	padding-top: 20%;
+	padding-bottom: 20%;
+}
+.half-title h1, .half-title h2 {
+	margin-bottom: 45px;
+}
+.half-title .logo {
+	display: inline-block;
+	margin: 0px auto;
+	margin-top: 50px;
+}
+.full-title {
+	padding-top: 10%;
+}
+.full-title h1, .full-title h2, .full-title p {
+	margin-bottom: 35px;
+}
+.full-title .translator {
+    padding: 15px;
+    background-color: #f9eadb;
+}
+
+/* imprint */
+.imprint {
+	padding-top: 25%;
+	font-size: .9em;
+	margin-left: 15%;
+	margin-right: 15%;
+}
+.imprint .logo {
+	display: inline-block;
+	margin: 10px auto;
+}
+p.space-before {
+	margin-top: 40px;
+}
+
+/* contents */
+.contents a {
+	text-decoration: none;
+}
+.contents > ol {
+  list-style-type: disc;
+}
+.contents > ol ol {
+  list-style-type: circle;
+}
+.contents li {
+  margin-top: 10px;
+}
+
+dl.inline:after {
+  content: "";
+  display: block;
+  width: 100%;
+  clear: both;
+}
+dl.inline dt, dl.inline dd {
+  float: left;
+}
+dl.inline dt {
+  clear: both;
+  font-weight: normal;
+}
+dl.inline dd {
+  clear: none;
+}
+dl.inline dd:before {
+  content: '-';
+  padding: 0px 8px;
+}
+
+.glossary-item {
+  margin-bottom: 20px; 
+}
+.glossary-item .term {
+  margin-top: 0px;
+}
+.glossary-item .alternative {
+  display: none;
+}
+

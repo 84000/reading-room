@@ -1,0 +1,5 @@
+/* Import fonts */
+@font-face {
+  font-family: "Tibetan";
+  src: url(../fonts/DDC_Uchen.ttf);
+}
