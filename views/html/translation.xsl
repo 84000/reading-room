@@ -66,7 +66,7 @@
                                         </div>
                                         
                                         <xsl:if test="count(m:translation/m:long-titles/m:title/text()) eq 1 and m:translation/m:long-titles/m:title[@xml:lang eq 'bo-ltn']/text()">
-                                            <h4 class="text-bo">
+                                            <h4 class="text-wy italic">
                                                 <xsl:value-of select="m:translation/m:long-titles/m:title[@xml:lang eq 'bo-ltn']/text()"/>
                                             </h4>
                                         </xsl:if>

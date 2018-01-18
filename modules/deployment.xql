@@ -64,8 +64,6 @@ declare function deployment:snapshot() {
         }
         </result>
     
-     
-    
 };
 
 declare function deployment:push-app() {
