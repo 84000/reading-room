@@ -98,11 +98,7 @@ declare function deployment:push-app() {
             {
                 $sync
             }
-            </sync>,
-            if($sync) then
-                deployment:git-push($sync-path, $deployment-conf/m:path/text(), $deployment-conf/m:home/text(), '.', $commit-msg)
-            else
-                ()
+            </sync>
         }
         </result>
     

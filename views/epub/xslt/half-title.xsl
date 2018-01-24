@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" exclude-result-prefixes="#all" version="2.0">
     
+    <xsl:import href="../../../xslt/tei-to-xhtml.xsl"/>
     <xsl:include href="epub-page.xsl"/>
     <xsl:variable name="page-title" select="'Half Title'"/>
     
@@ -9,13 +10,13 @@
         <xsl:variable name="content">
             <section class="center half-title" epub:type="halftitlepage">
                 <h2 class="text-bo">
-                    <xsl:value-of select="m:translation/m:titles/m:title[@xml:lang eq 'bo']"/>
+                    <xsl:apply-templates select="m:translation/m:titles/m:title[@xml:lang eq 'bo']"/>
                 </h2>
                 <h1>
-                    <xsl:value-of select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
+                    <xsl:apply-templates select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
                 </h1>
                 <h2 class="text-sa">
-                    <xsl:value-of select="m:translation/m:titles/m:title[@xml:lang eq 'sa-ltn']"/>
+                    <xsl:apply-templates select="m:translation/m:titles/m:title[@xml:lang eq 'sa-ltn']"/>
                 </h2>
                 <img src="image/logo-stacked.png" alt="84000 Translating the Words of the Buddha Logo" class="logo logo-84000"/>
             </section>

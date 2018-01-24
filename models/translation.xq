@@ -12,6 +12,7 @@ import module namespace common="http://read.84000.co/common" at "../modules/comm
 import module namespace translation="http://read.84000.co/translation" at "../modules/translation.xql";
 import module namespace text="http://read.84000.co/outline-text" at "../modules/outline-text.xql";
 import module namespace section="http://read.84000.co/outline-section" at "../modules/outline-section.xql";
+import module namespace glossary="http://read.84000.co/glossary" at "../modules/glossary.xql";
 
 declare option exist:serialize "method=xml indent=no";
 
@@ -21,6 +22,7 @@ let $doc-type :=
         'epub'
     else
         'www'
+
 let $translation := translation:tei($resource-id)
 let $translation-id := translation:id($translation)
 let $outlines := collection(common:outlines-path())
@@ -44,19 +46,20 @@ return
                 { translation:titles($translation) }
                 { translation:long-titles($translation) }
                 { translation:source($translation) }
-                { translation:translation($translation, $doc-type) }
-                { translation:summary($translation, $doc-type) }
-                { translation:acknowledgment($translation, $doc-type) }
-                { translation:introduction($translation, $doc-type) }
-                { translation:prologue($translation, $doc-type) }
-                { translation:body($translation, $doc-type) }
-                { translation:colophon($translation, $doc-type) }
-                { translation:notes($translation, $doc-type) }
-                { translation:abbreviations($translation, $doc-type) }
-                { translation:bibliography($translation, $doc-type) }
-                { translation:glossary($translation, $doc-type) }
-                { translation:appendix($translation, $doc-type) }
+                { translation:translation($translation) }
                 { translation:downloads($translation-id) }
+                { translation:summary($translation) } 
+                { translation:acknowledgment($translation) }
+                { translation:introduction($translation) }
+                { translation:prologue($translation) }
+                { translation:body($translation) }
+                { translation:colophon($translation) }
+                { translation:appendix($translation) }
+                { translation:abbreviations($translation) }
+                { translation:notes($translation) }
+                { translation:bibliography($translation) }
+                { translation:glossary($translation) }
+                {(::)()}
             </translation>
     </response>
     

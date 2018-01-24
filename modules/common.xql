@@ -124,6 +124,19 @@ declare function common:html-paragraphs($node as node()*, $prefix as xs:string, 
      )
 };
 
+declare function common:xhtml($node as node()*, $doc-type as xs:string, $glossarize as xs:boolean, $prefix as xs:string) as node()*
+{
+    transform:transform(
+        $node, 
+        doc(concat(common:app-path(), "/xslt/xhtml.xsl")), 
+        <parameters>
+            <param name="doc-type" value="{ $doc-type }"/>
+            <param name="glossarize" value="{ $glossarize }"/>
+            <param name="prefix" value="{ $prefix }"/>
+        </parameters>
+    )
+};
+
 declare function common:search-result($nodes as node()*) as node()*
 {
     for $node in $nodes

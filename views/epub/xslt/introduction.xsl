@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="#all" version="2.0">
     
+    <xsl:import href="../../../xslt/tei-to-xhtml.xsl"/>
     <xsl:include href="epub-page.xsl"/>
     <xsl:variable name="page-title" select="'Introduction'"/>
     
@@ -9,9 +10,11 @@
         <xsl:variable name="content">
             <section class="milestones">
                 <div class="center header-lg">
-                    <h2>Introduction</h2>
+                    <h2>
+                        <xsl:value-of select="$page-title"/>
+                    </h2>
                 </div>
-                <xsl:copy-of select="m:translation/m:introduction/xhtml:*"/>
+                <xsl:apply-templates select="m:translation/m:introduction"/>
             </section>
         </xsl:variable>
         

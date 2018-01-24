@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns="http://www.daisy.org/z3986/2005/ncx/" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" xmlns:xhtml="http://www.w3.org/1999/xhtml" exclude-result-prefixes="#all" version="2.0">
     
+    <xsl:import href="../../../xslt/tei-to-xhtml.xsl"/>
     <xsl:param name="epub-id"/>
     
     <xsl:template match="/m:response">
@@ -14,7 +15,7 @@
             </head>
             <docTitle>
                 <text>
-                    <xsl:value-of select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
+                    <xsl:apply-templates select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
                 </text>
             </docTitle>
             <navMap>
@@ -54,7 +55,7 @@
                     </navLabel>
                     <content src="introduction.xhtml"/>
                 </navPoint>
-                <xsl:if test="m:translation/m:prologue/xhtml:p">
+                <xsl:if test="m:translation/m:prologue/tei:p">
                     <navPoint id="prologue">
                         <navLabel>
                             <text>Prologue</text>
@@ -68,41 +69,40 @@
                     </navLabel>
                     <content src="body.xhtml#body-title"/>
                 </navPoint>
-                <xsl:if test="m:translation/m:body/m:chapter[xhtml:h2 | xhtml:h4]">
-                    <xsl:for-each select="m:translation/m:body/m:chapter">
-                        <navPoint>
-                            <xsl:attribute name="id" select="concat('chapter-', @chapter-index/string())"/>
-                            <navLabel>
-                                <text>
-                                    <xsl:choose>
-                                        <xsl:when test="xhtml:h2">
-                                            <xsl:value-of select="@chapter-index"/>. <xsl:value-of select="xhtml:h2"/>
-                                        </xsl:when>
-                                        <xsl:otherwise>
-                                            <xsl:choose>
-                                                <xsl:when test="xhtml:h4[@class = 'chapter-number']">
-                                                    <xsl:value-of select="xhtml:h4[@class = 'chapter-number']"/>
-                                                </xsl:when>
-                                                <xsl:otherwise>
-                                                    Chapter <xsl:value-of select="@chapter-index"/>
-                                                </xsl:otherwise>
-                                            </xsl:choose>
-                                        </xsl:otherwise>
-                                    </xsl:choose>
-                                </text>
-                            </navLabel>
-                            <content>
-                                <xsl:attribute name="src" select="concat('body.xhtml#chapter-', @chapter-index/string())"/>
-                            </content>
-                        </navPoint>
-                    </xsl:for-each>
-                </xsl:if>
-                <xsl:if test="m:translation/m:colophon/xhtml:p">
+                <xsl:for-each select="m:translation/m:body/m:chapter[m:title/text() | m:title-number/text()]">
+                    <navPoint>
+                        <xsl:attribute name="id" select="concat('chapter-', @chapter-index/string())"/>
+                        <navLabel>
+                            <text>
+                                <xsl:choose>
+                                    <xsl:when test="m:title/text()">
+                                        <xsl:apply-templates select="@chapter-index"/>. <xsl:apply-templates select="m:title/text()"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:apply-templates select="m:title-number/text()"/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </text>
+                        </navLabel>
+                        <content>
+                            <xsl:attribute name="src" select="concat('body.xhtml#chapter-', @chapter-index/string())"/>
+                        </content>
+                    </navPoint>
+                </xsl:for-each>
+                <xsl:if test="m:translation/m:colophon/tei:p">
                     <navPoint id="colophon">
                         <navLabel>
                             <text>Colophon</text>
                         </navLabel>
                         <content src="body.xhtml#colophon"/>
+                    </navPoint>
+                </xsl:if>
+                <xsl:if test="m:translation/m:appendix//tei:p">
+                    <navPoint id="appendix">
+                        <navLabel>
+                            <text>Appendix</text>
+                        </navLabel>
+                        <content src="body.xhtml#appendix"/>
                     </navPoint>
                 </xsl:if>
                 <xsl:if test="m:translation/m:abbreviations/m:item">
@@ -119,14 +119,6 @@
                     </navLabel>
                     <content src="body.xhtml#notes"/>
                 </navPoint>
-                <xsl:if test="m:translation/m:appendix//xhtml:p">
-                    <navPoint id="appendix">
-                        <navLabel>
-                            <text>Appendix</text>
-                        </navLabel>
-                        <content src="body.xhtml#appendix"/>
-                    </navPoint>
-                </xsl:if>
                 <navPoint id="bibliography">
                     <navLabel>
                         <text>Bibliography</text>

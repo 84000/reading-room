@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:exist="http://exist.sourceforge.net/NS/exist" xmlns:common="http://read.84000.co/common" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0" exclude-result-prefixes="#all">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:common="http://read.84000.co/common" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" version="2.0" exclude-result-prefixes="#all">
     <!-- 
         Converts other xml to valid xhtml
     -->
@@ -43,7 +43,7 @@
     <xsl:function name="common:index-of-node" as="xs:integer*">
         <xsl:param name="nodes" as="node()*"/>
         <xsl:param name="nodeToFind" as="node()"/>
-        <xsl:sequence select="             for $seq in (1 to count($nodes))             return                 $seq[$nodes[$seq] is $nodeToFind]"/>
+        <xsl:sequence select="                          for $seq in (1 to count($nodes))             return                 $seq[$nodes[$seq] is $nodeToFind]"/>
     </xsl:function>
     
     <xsl:function name="common:standardized-sa" as="xs:string*">
@@ -56,7 +56,7 @@
     <xsl:function name="common:space-before" as="xs:boolean">
         <xsl:param name="node" as="node()*"/>
         <xsl:choose>
-            <xsl:when test="                 (: space before these - except if first to avoid double space :)                 $node[preceding-sibling::*][self::tei:lg | self::tei:trailer | self::tei:ab | self::tei:label]                 (: space before if they follow these :)                 or $node[preceding-sibling::*[1][self::tei:ab | self::tei:lg]                 or (preceding-sibling::*[1][self::tei:milestone] and preceding-sibling::*[2][self::tei:ab | self::tei:lg])]">
+            <xsl:when test="                 (: space before these - except if first to avoid double space :)                 $node[preceding-sibling::*][self::tei:lg | self::tei:trailer | self::tei:ab | self::tei:label]                 (: space before if they follow these :)                 or $node[                     preceding-sibling::*[1][self::tei:ab | self::tei:lg | self::tei:lb]                     or (preceding-sibling::*[1][self::tei:milestone] and preceding-sibling::*[2][self::tei:ab | self::tei:lg | self::tei:lb])                  ]">
                 <xsl:value-of select="true()"/>
             </xsl:when>
             <xsl:otherwise>

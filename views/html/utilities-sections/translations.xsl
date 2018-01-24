@@ -27,7 +27,7 @@
                     <xsl:sort select="@id"/>
                     <tr class="header">
                         <td colspan="10">
-                            <xsl:value-of select="m:title/text()"/>  
+                            <xsl:value-of select="concat(m:toh/text(), ' / ', m:title/text())"/>  
                             <xsl:choose>
                                 <xsl:when test="@status = 'not-started'">
                                     <div class="label label-default">Not Started</div>

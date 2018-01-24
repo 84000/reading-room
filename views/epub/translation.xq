@@ -5,18 +5,6 @@ declare namespace m = "http://read.84000.co/ns/1.0";
 import module namespace common = "http://read.84000.co/common" at "../../modules/common.xql";
 import module namespace translation = "http://read.84000.co/translation" at "../../modules/translation.xql";
 
-(:
-
-import module namespace xmldb = "http://exist-db.org/xquery/xmldb";
-let $epub-path := concat(common:data-path(), '/epub')
-let $create-collection := xmldb:create-collection($epub-path, $translation-id)
-let $output := transform:transform(
-        $data, 
-        doc("summary.xsl"), 
-        ()
-     )
-:)
-
 let $data := request:get-data()
 let $translation-id := $data//m:translation/@id
 let $translation-title := $data//m:translation/m:titles/m:title[@xml:lang eq 'en']

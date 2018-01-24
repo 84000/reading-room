@@ -74,7 +74,7 @@ declare function translation:source($translation as node()) as node()* {
     </source>
 };
 
-declare function translation:translation($translation as node(), $doc-type as xs:string) as node()* {
+declare function translation:translation($translation as node()) as node()* {
     <translation xmlns="http://read.84000.co/ns/1.0">
         <authors>
             {
@@ -82,7 +82,7 @@ declare function translation:translation($translation as node(), $doc-type as xs
                 return 
                     <author>{ normalize-space($author/text()) }</author>
             }
-            <summary>{ common:html($translation//tei:titleStmt/tei:author[@role = 'translatorMain'][1]/node(), $doc-type, false()) }</summary>
+            <summary>{ $translation//tei:titleStmt/tei:author[@role = 'translatorMain'][1]/node() }</summary>
         </authors>
         <editors>
         {
@@ -91,105 +91,149 @@ declare function translation:translation($translation as node(), $doc-type as xs
                 <editor>{ normalize-space($editor/text()) }</editor>
         }
         </editors>
-        <edition>{ common:html($translation//tei:editionStmt/tei:edition[1]/node(), $doc-type, false()) }</edition>
+        <edition>{ $translation//tei:editionStmt/tei:edition[1]/node() }</edition>
         <license img-url="{ $translation//tei:publicationStmt/tei:availability/tei:licence/tei:graphic/@url }">
         {
-            common:html-paragraphs($translation//tei:publicationStmt/tei:availability/tei:licence , 'l', $doc-type, false()) 
+            $translation//tei:publicationStmt/tei:availability/tei:licence/tei:p
         }
         </license>
         <publication-statement>
         {
-            common:html($translation//tei:publicationStmt/tei:publisher, $doc-type, false()) 
+            $translation//tei:publicationStmt/tei:publisher/node()
         }
         </publication-statement>
     </translation>
 };
 
-declare function translation:summary($translation as node(), $doc-type as xs:string) as node()* {
-    <summary xmlns="http://read.84000.co/ns/1.0">
+declare function translation:summary($translation as node()) as node()* {
+    <summary xmlns="http://read.84000.co/ns/1.0" prefix="s">
     { 
-        common:html-paragraphs($translation//tei:front//*[@type='summary'], 's', $doc-type, true()) 
+        $translation//tei:front//*[@type='summary']/*[self::tei:p | self::tei:milestone | self::tei:lg ]/.
     }
     </summary>
 };
 
-declare function translation:acknowledgment($translation as node(), $doc-type as xs:string) as node()* {
-    <acknowledgment xmlns="http://read.84000.co/ns/1.0">
+declare function translation:acknowledgment($translation as node()) as node()* {
+    <acknowledgment xmlns="http://read.84000.co/ns/1.0" prefix="ac">
     { 
-        common:html-paragraphs($translation//tei:front//*[@type='acknowledgment'], 'ac', $doc-type, false()) 
+        $translation//tei:front//*[@type='acknowledgment']/*[self::tei:p | self::tei:milestone | self::tei:lg ]/.
     }
     </acknowledgment>
 };
 
-declare function translation:introduction($translation as node(), $doc-type as xs:string) as node()* {
-    <introduction xmlns="http://read.84000.co/ns/1.0">
+declare function translation:introduction($translation as node()) as node()* {
+    (: In the intro we flatten out the sections and only space by the heads :)
+    <introduction xmlns="http://read.84000.co/ns/1.0" prefix="i">
     { 
-        common:html-paragraphs($translation//tei:front//*[@type='introduction'], 'i', $doc-type, true())
+        $translation//tei:front//*[@type='introduction']/*[@type='section']/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list ]/.
     }
     </introduction>
 };
 
-declare function translation:prologue($translation as node(), $doc-type as xs:string) as node()* {
-    <prologue xmlns="http://read.84000.co/ns/1.0">
+declare function translation:prologue($translation as node()) as node()* {
+    <prologue xmlns="http://read.84000.co/ns/1.0" prefix="p">
     { 
-        common:html-paragraphs($translation//tei:body//*[@type='prologue' or tei:head/text()[lower-case(.) = "prologue"]], 'p', $doc-type, true())
+        $translation//tei:body//*[@type='prologue' or tei:head/text()[lower-case(.) = "prologue"]]//*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]/.
     }
     </prologue>
 };
 
-declare function translation:body($translation as node(), $doc-type as xs:string) as node()* {
-    <body xmlns="http://read.84000.co/ns/1.0">
+declare function translation:body($translation as node()) as node()* {
+    <body xmlns="http://read.84000.co/ns/1.0" prefix="tr">
         <honoration>{ data($translation//tei:body/*[@type='translation']/tei:head[@type='titleHon']) }</honoration>
         <main-title>{ data($translation//tei:body/*[@type='translation']/tei:head[@type='titleMain']) }</main-title>
         { 
             for $chapter at $chapter-index in $translation//tei:body//*[@type='translation']/*[@type=('section', 'chapter')][not(tei:head/text()[lower-case(.) = "prologue"])]
             return
-                <chapter chapter-index="{ $chapter-index }">
-                   {
-                       common:html-paragraphs($chapter, xs:string($chapter-index), $doc-type, true())
-                   }
+                <chapter chapter-index="{ $chapter-index }" prefix="{ $chapter-index }">
+                    <title>
+                    {
+                        $chapter/tei:head[@type eq 'chapterTitle']/text()
+                    }
+                    </title>
+                    <title-number>
+                    {
+                        if($chapter/tei:head[@type eq 'chapterTitle']/text() and $chapter/tei:head[@type eq 'chapter']/text())then
+                            $chapter/tei:head[@type eq 'chapter']/text()
+                        else if($chapter/tei:head[@type eq 'chapterTitle']/text())then
+                            concat('Chapter ', $chapter-index)
+                        else
+                            ()
+                    }
+                    </title-number>
+                    {
+                       $chapter/*[self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]/.
+                    }
                 </chapter>
         }
     </body>
 };
 
-declare function translation:colophon($translation as node(), $doc-type as xs:string) as node()* {
-    <colophon xmlns="http://read.84000.co/ns/1.0">
+declare function translation:colophon($translation as node()) as node()* {
+    <colophon xmlns="http://read.84000.co/ns/1.0" prefix="c">
     { 
-        common:html-paragraphs($translation//tei:body//*[@type='colophon'], 'c', $doc-type, true())
+        $translation//tei:body//*[@type='colophon']//*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]/.
     }
     </colophon>
 };
 
-declare function translation:notes($translation as node(), $doc-type as xs:string) as node()* {
-    <notes xmlns="http://read.84000.co/ns/1.0">
+declare function translation:appendix($translation as node()) as node()* {
+    <appendix xmlns="http://read.84000.co/ns/1.0" prefix="ap">
+    { 
+        let $count-appendix := 
+            count($translation//tei:back//*[@type='appendix']/*[@type = 'prologue' or tei:head[lower-case(text()) eq "appendix prologue"]])
+            
+        for $chapter at $chapter-index in $translation//tei:back//*[@type='appendix']/*[@type=('section', 'chapter', 'prologue')]
+            let $chapter-number := xs:string($chapter-index - $count-appendix)
+            let $chapter-class := 
+                if($chapter/tei:head[lower-case(text()) eq "appendix prologue"])then
+                    'p'
+                else
+                    $chapter-number
+        return
+            <chapter chapter-index="{ $chapter-class }" prefix="{ concat('ap', $chapter-class) }">
+                <title>
+                {
+                    $chapter/tei:head[@type = ('section', 'chapter', 'prologue')]/text()
+                }
+                </title>
+                {
+                   $chapter/*[self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]/.
+                }
+            </chapter>
+    }
+    </appendix>
+};
+
+declare function translation:abbreviations($translation as node()) as node()* {
+    <abbreviations xmlns="http://read.84000.co/ns/1.0" prefix="ab">
+    {
+        for $item in $translation//tei:list[@type='abbreviations']/tei:item
+        return
+            <item>
+                <abbreviation>{ normalize-space($item/tei:abbr/text()) }</abbreviation>
+                <explanation>{ $item/tei:expan/node() }</explanation>
+            </item>
+    }
+    </abbreviations>
+};
+
+declare function translation:notes($translation as node()) as node()* {
+    <notes xmlns="http://read.84000.co/ns/1.0" prefix="n">
     {
         for $note in $translation//tei:text//tei:note
         return
             <note index="{ $note/@index/string() }" uid="{ $note/@xml:id/string() }">
             {  
-                common:html($note/node(), $doc-type, true())
+                $note/node()
             }
             </note>
     }
     </notes>
 };
 
-declare function translation:abbreviations($translation as node(), $doc-type as xs:string) as node()* {
-    <abbreviations xmlns="http://read.84000.co/ns/1.0">
-    {
-        for $item in $translation//tei:list[@type='abbreviations']/tei:item
-        return
-            <item>
-                <abbreviation>{ normalize-space($item/tei:abbr/text()) }</abbreviation>
-                <explanation>{ common:html($item/tei:expan/node(), $doc-type, false()) }</explanation>
-            </item>
-    }
-    </abbreviations>
-};
-
-declare function translation:bibliography($translation as node(), $doc-type as xs:string) as node()* {
-    <bibliography xmlns="http://read.84000.co/ns/1.0">
+declare function translation:bibliography($translation as node()) as node()* {
+    <bibliography xmlns="http://read.84000.co/ns/1.0" prefix="b">
     {
         for $section in $translation//tei:back/*[@type='listBibl']//*[@type='section']
         return
@@ -198,15 +242,15 @@ declare function translation:bibliography($translation as node(), $doc-type as x
                 {
                     for $item in $section/tei:bibl
                     return
-                        <item>{ common:html($item/node(), $doc-type, false()) }</item>
+                        <item>{ $item/node() }</item>
                 }
             </section>
     }
     </bibliography>
 };
 
-declare function translation:glossary($translation as node(), $doc-type as xs:string) as node()* {
-    <glossary xmlns="http://read.84000.co/ns/1.0">
+declare function translation:glossary($translation as node()) as node()* {
+    <glossary xmlns="http://read.84000.co/ns/1.0" prefix="g">
     {
         for $item in $translation//tei:back//*[@type='glossary']//tei:gloss
         return
@@ -222,7 +266,7 @@ declare function translation:glossary($translation as node(), $doc-type as xs:st
                 {
                     for $definition in $item/tei:term[@type = 'definition']
                     return
-                        <definition>{ common:html($definition/node(), $doc-type, false()) }</definition>
+                        <definition>{ $definition/node() }</definition>
                 }
                 </definitions>
                 <alternatives>
@@ -239,31 +283,6 @@ declare function translation:glossary($translation as node(), $doc-type as xs:st
             </item>
     }
     </glossary>
-};
-
-declare function translation:appendix($translation as node(), $doc-type as xs:string) as node()* {
-    <appendix xmlns="http://read.84000.co/ns/1.0">
-    { 
-        let $count-appendix := 
-            count($translation//tei:back//*[@type='appendix']/*[@type = 'prologue' or tei:head[lower-case(text()) eq "appendix prologue"]])
-            
-        for $chapter at $chapter-index in $translation//tei:back//*[@type='appendix']/*[@type=('section', 'chapter', 'prologue')]
-            let $chapter-number := xs:string($chapter-index - $count-appendix)
-        return
-            if($chapter/tei:head[lower-case(text()) eq "appendix prologue"])then
-                <prologue chapter-index="p">
-                   {
-                       common:html-paragraphs($chapter, 'app', $doc-type, true())
-                   }
-                </prologue>
-            else
-                <chapter chapter-index="{ $chapter-number }">
-                   {
-                       common:html-paragraphs($chapter, concat('ap', $chapter-number), $doc-type, true())
-                   }
-                </chapter>
-    }
-    </appendix>
 };
 
 declare function translation:downloads($translation-id as xs:string) as node()* {

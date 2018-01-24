@@ -36,10 +36,10 @@ declare function translations:translations()
                {
                    translation:title($translation)
                }
-               </title>,
+               </title>
                <toh>
                {
-                    data($translation//tei:sourceDesc/tei:bibl/tei:ref)
+                    $translation//tei:sourceDesc/tei:bibl/tei:ref/text()
                }
                </toh>
             </translation>

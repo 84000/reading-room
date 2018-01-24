@@ -86,7 +86,7 @@ declare function glossary:glossary-items($term as xs:string) as node() {
                         {
                             for $definition in $item/tei:term[@type = 'definition']
                             return
-                                <definition>{ common:html($definition/node(), 'www', false()) }</definition>
+                                <definition>{ $definition/node() }</definition>
                         }
                         </definitions>
                         <alternatives>
@@ -133,7 +133,6 @@ declare function glossary:item-query($item as node()) as node(){
 declare function glossary:translation-glossary($translation as node(), $doc-type as xs:string) as node()* {
     <glossary xmlns="http://read.84000.co/ns/1.0">
     {
-    
         let $options := 
             <options>
                 <default-operator>and</default-operator>
@@ -149,7 +148,6 @@ declare function glossary:translation-glossary($translation as node(), $doc-type
                 uid="{ $item/@xml:id/string() }" 
                 type="{ $item/@type/string() }" 
                 mode="{ $item/@mode/string() }">
-                { $query }
                 <term xml:lang="en">{ normalize-space(functx:capitalize-first(data($item/tei:term[@xml:lang eq 'en'][not(@type)] | $item/tei:term[not(@xml:lang)][not(@type)]))) }</term>
                 <term xml:lang="bo">{ data($item/tei:term[@xml:lang = 'bo'][not(@type)]) }</term>
                 <term xml:lang="bo-ltn">{ common:bo-ltn(data($item/tei:term[@xml:lang = 'Bo-Ltn'][not(@type)])) }</term>
@@ -173,7 +171,7 @@ declare function glossary:translation-glossary($translation as node(), $doc-type
                 }
                 </alternatives>
                 <passages>
-                {
+                {(:
                     for $paragraph in 
                         $translation//tei:text//tei:p[ft:query(., $query, $options)]
                         | $translation//tei:text//tei:lg[ft:query(., $query, $options)]
@@ -181,7 +179,7 @@ declare function glossary:translation-glossary($translation as node(), $doc-type
                         | $translation//tei:text//tei:trailer[ft:query(., $query, $options)]
                     return
                         <passage tid="{ $paragraph/@tid }"/>
-                }
+                :)()}
                 </passages>
             </item>
     }
