@@ -51,7 +51,7 @@ return
             if($tab eq 'sections') then 
                 outline:outline()
             else if($tab eq 'translations') then 
-                translations:translations()
+                translations:translations(true())
             else if($tab eq 'progress') then 
                 outline:progress($status, $sort)
             else if($tab eq 'requests') then 

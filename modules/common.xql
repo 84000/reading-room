@@ -99,44 +99,6 @@ declare function common:unescape($text as xs:string*) as node()*
             $html/HTML/BODY/node()
 };
 
-declare function common:html($node as node()*, $doc-type as xs:string, $glossarize as xs:boolean) as node()*
-{
-    transform:transform(
-        $node, 
-        doc(concat(common:app-path(), "/xslt/html.xsl")), 
-        <parameters>
-            <param name="doc-type" value="{ $doc-type }"/>
-            <param name="glossarize" value="{ $glossarize }"/>
-        </parameters>
-    )
-};
-
-declare function common:html-paragraphs($node as node()*, $prefix as xs:string, $doc-type as xs:string, $glossarize as xs:boolean) as node()*
-{
-    transform:transform(
-        $node, 
-        doc(concat(common:app-path(), "/xslt/html-paragraphs.xsl")), 
-        <parameters>
-            <param name="prefix" value="{ $prefix }"/>
-            <param name="doc-type" value="{ $doc-type }"/>
-            <param name="glossarize" value="{ $glossarize }"/>
-        </parameters>
-     )
-};
-
-declare function common:xhtml($node as node()*, $doc-type as xs:string, $glossarize as xs:boolean, $prefix as xs:string) as node()*
-{
-    transform:transform(
-        $node, 
-        doc(concat(common:app-path(), "/xslt/xhtml.xsl")), 
-        <parameters>
-            <param name="doc-type" value="{ $doc-type }"/>
-            <param name="glossarize" value="{ $glossarize }"/>
-            <param name="prefix" value="{ $prefix }"/>
-        </parameters>
-    )
-};
-
 declare function common:search-result($nodes as node()*) as node()*
 {
     for $node in $nodes
@@ -165,25 +127,33 @@ declare function common:epub-resource($file as xs:string) as xs:base64Binary
     util:binary-doc(xs:anyURI(concat(common:app-path(), '/views/epub/resources/', $file)))
 };
 
-declare function common:environment(){
+declare function common:environment() as node()* 
+{
     doc('/db/env/environment.xml')/m:environments/m:environment[@id eq common:app-id()]
 };
 
-declare function common:snapshot-conf(){
+declare function common:test-path() as xs:string* 
+{
+    common:environment()//m:test-path/text()
+};
+
+declare function common:snapshot-conf() as node()* 
+{
     common:environment()//m:snapshot-conf
 };
 
-declare function common:deployment-conf(){
+declare function common:deployment-conf() as node()* 
+{
     common:environment()//m:deployment-conf
 };
 
-declare function common:user-name(){
+declare function common:user-name() as xs:string* {
     let $user := sm:id()
     return
         $user//sm:real/sm:username
 };
 
-declare function common:auth-environment(){
+declare function common:auth-environment() as xs:boolean {
     (: Check the environment to see if we need to login :)
     if(common:environment()/@auth eq '1')then
         true()

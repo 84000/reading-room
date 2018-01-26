@@ -271,7 +271,7 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
             </dispatch>
             
 else
-    (: Auth required and not give. Show login. :)
+    (: Auth required and not given. Show login. :)
     local:auth(concat('/', $controller-root,  $exist:path))
 
     

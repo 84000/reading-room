@@ -21,7 +21,7 @@
                         <xsl:choose>
                             <xsl:when test="m:translation/@status = 'available'">
                                 <xsl:attribute name="class" select="'panel-heading panel-heading-bold hidden-print'"/>
-                                <ul class="breadcrumb">
+                                <ul id="outline" class="breadcrumb">
                                     <li>
                                         <a href="/section/lobby.html">The Lobby</a>
                                     </li>
@@ -66,9 +66,11 @@
                                         </div>
                                         
                                         <xsl:if test="count(m:translation/m:long-titles/m:title/text()) eq 1 and m:translation/m:long-titles/m:title[@xml:lang eq 'bo-ltn']/text()">
-                                            <h4 class="text-wy italic">
-                                                <xsl:apply-templates select="m:translation/m:long-titles/m:title[@xml:lang eq 'bo-ltn']/text()"/>
-                                            </h4>
+                                            <div id="long-titles">
+                                                <h4 class="text-wy italic">
+                                                    <xsl:apply-templates select="m:translation/m:long-titles/m:title[@xml:lang eq 'bo-ltn']/text()"/>
+                                                </h4>
+                                            </div>
                                         </xsl:if>
                                         
                                         <div class="hidden-print">
@@ -118,33 +120,33 @@
                                         
                                         <div>
                                             <h4>
-                                                <strong>
+                                                <strong id="toh">
                                                     <xsl:apply-templates select="m:translation/m:source/m:toh"/>
                                                 </strong>
                                             </h4>
-                                            <p>
+                                            <p id="location">
                                                 <xsl:value-of select="string-join(m:translation/m:source/m:series/text() | m:translation/m:source/m:scope/text() | m:translation/m:source/m:range/text(), ', ')"/>.
                                             </p>
                                         </div>
     
                                         <div class="well">
                                             <xsl:for-each select="m:translation/m:translation/m:authors/m:summary">
-                                                <p>
+                                                <p id="authours-summary">
                                                     <xsl:apply-templates select="node()"/>
                                                 </p>
                                             </xsl:for-each>
                                         </div>
     
                                         <div>
-                                            <p>
+                                            <p id="edition">
                                                 <xsl:apply-templates select="m:translation/m:translation/m:edition"/>
                                             </p>
-                                            <p>
+                                            <p id="publication-statement">
                                                 <xsl:apply-templates select="m:translation/m:translation/m:publication-statement"/>
                                             </p>
                                         </div>
     
-                                        <div class="license">
+                                        <div id="license">
                                             <img>
                                                 <xsl:attribute name="src" select="m:translation/m:translation/m:license/@img-url"/>
                                             </img>
@@ -401,49 +403,52 @@
                                     </section>
                                 </xsl:if>
                                 
-                                <xsl:for-each select="m:translation/m:body/m:chapter">
+                                <div id="translation">
                                     
-                                    <xsl:if test="m:title/text()">
-                                        <hr class="hidden-print"/>
-                                    </xsl:if>
-                                    
-                                    <section>
-                                        <xsl:attribute name="id" select="concat('chapter-', @chapter-index/string())"/>
-                                        <xsl:choose>
-                                            <xsl:when test="m:title/text() or m:title-number/text() or m:translation/m:prologue/tei:p">
-                                                <xsl:attribute name="class" select="'chapter page indent text glossarize-section'"/>
-                                            </xsl:when>
-                                            <xsl:otherwise>
-                                                <xsl:attribute name="class" select="'chapter indent text glossarize-section'"/>
-                                            </xsl:otherwise>
-                                        </xsl:choose>
+                                    <xsl:for-each select="m:translation/m:body/m:chapter">
                                         
-                                        <xsl:if test="m:title/text() or m:title-number/text()">
-                                            
-                                            <a class="milestone" title="Bookmark this section">
-                                                <xsl:attribute name="href" select="concat('#chapter-', @chapter-index/string())"/>
-                                                <xsl:value-of select="concat(@prefix, '.')"/>
-                                            </a>
-                                            
-                                            <xsl:if test="m:title-number/text()">
-                                                <h4 class="chapter-number">
-                                                    <xsl:apply-templates select="m:title-number/text()"/>
-                                                </h4>
-                                            </xsl:if>
-                                            
-                                            <xsl:if test="m:title/text()">
-                                                <h2>
-                                                    <xsl:apply-templates select="m:title/text()"/>
-                                                </h2>
-                                            </xsl:if>
-                                            
+                                        <xsl:if test="m:title/text()">
+                                            <hr class="hidden-print"/>
                                         </xsl:if>
                                         
-                                        <xsl:apply-templates select="tei:*"/>
+                                        <section>
+                                            <xsl:attribute name="id" select="concat('chapter-', @chapter-index/string())"/>
+                                            <xsl:choose>
+                                                <xsl:when test="m:title/text() or m:title-number/text() or m:translation/m:prologue/tei:p">
+                                                    <xsl:attribute name="class" select="'chapter indent text glossarize-section page'"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:attribute name="class" select="'chapter indent text glossarize-section'"/>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                            
+                                            <xsl:if test="m:title/text() or m:title-number/text()">
+                                                
+                                                <a class="milestone" title="Bookmark this section">
+                                                    <xsl:attribute name="href" select="concat('#chapter-', @chapter-index/string())"/>
+                                                    <xsl:value-of select="concat(@prefix, '.')"/>
+                                                </a>
+                                                
+                                                <xsl:if test="m:title-number/text()">
+                                                    <h4 class="chapter-number">
+                                                        <xsl:apply-templates select="m:title-number/text()"/>
+                                                    </h4>
+                                                </xsl:if>
+                                                
+                                                <xsl:if test="m:title/text()">
+                                                    <h2>
+                                                        <xsl:apply-templates select="m:title/text()"/>
+                                                    </h2>
+                                                </xsl:if>
+                                                
+                                            </xsl:if>
+                                            
+                                            <xsl:apply-templates select="tei:*"/>
+                                            
+                                        </section>
                                         
-                                    </section>
-                                    
-                                </xsl:for-each>
+                                    </xsl:for-each>
+                                </div>
                                 
                                 <xsl:if test="m:translation/m:colophon/tei:p">
                                     
@@ -453,7 +458,7 @@
                                         <a href="#colophon" class="milestone" title="Bookmark this section">
                                             <xsl:value-of select="concat(m:translation/m:colophon/@prefix, '.')"/>
                                         </a>
-                                        <h4>Colophon</h4>
+                                        <h2>Colophon</h2>
                                         <xsl:apply-templates select="m:translation/m:colophon"/>
                                     </section>
                                 </xsl:if>
@@ -498,6 +503,11 @@
                                             <xsl:value-of select="concat(m:translation/m:abbreviations/@prefix, '.')"/>
                                         </a>
                                         <h3>Abbreviations</h3>
+                                        <xsl:if test="m:translation/m:abbreviations/m:head">
+                                            <h5>
+                                                <xsl:apply-templates select="m:translation/m:abbreviations/m:head/text()"/>
+                                            </h5>
+                                        </xsl:if>
                                         <dl>
                                             <xsl:for-each select="m:translation/m:abbreviations/m:item">
                                                 <xsl:sort select="m:abbreviation/text()"/>
@@ -509,6 +519,11 @@
                                                 </dd>
                                             </xsl:for-each>
                                         </dl>
+                                        <xsl:if test="m:translation/m:abbreviations/m:foot">
+                                            <p>
+                                                <xsl:apply-templates select="m:translation/m:abbreviations/m:foot/text()"/>
+                                            </p>
+                                        </xsl:if>
                                     </section>
                                     
                                 </xsl:if>
@@ -566,54 +581,67 @@
                                         <xsl:value-of select="concat(m:translation/m:glossary/@prefix, '.')"/>
                                     </a>
                                     <h3>Glossary</h3>
-                                    <xsl:for-each select="m:translation/m:glossary/m:item">
-                                        <xsl:sort select="common:standardized-sa(m:term[lower-case(@xml:lang) = 'en'][1])"/>
-                                        <div class="glossary-item">
-                                            <xsl:attribute name="id" select="@uid/string()"/>
-                                            <xsl:attribute name="data-match" select="if(@mode/string() eq 'marked') then 'marked' else 'match'"/>
-                                            <a class="milestone" title="Bookmark this section">
-                                                <xsl:attribute name="href" select="concat('#', @uid/string())"/>
-                                                <xsl:value-of select="concat('g.', position())"/>
-                                            </a>
-                                            <div class="row">
-                                                
-                                                <div class="col-sm-6 col-md-8 match-this-height print-width-override print-height-override">
+                                    <div class="">
+                                        <xsl:for-each select="m:translation/m:glossary/m:item">
+                                            <xsl:sort select="common:standardized-sa(m:term[lower-case(@xml:lang) = 'en'][1])"/>
+                                            <div class="glossary-item">
+                                                <xsl:attribute name="id" select="@uid/string()"/>
+                                                <xsl:attribute name="data-match" select="if(@mode/string() eq 'marked') then 'marked' else 'match'"/>
+                                                <a class="milestone" title="Bookmark this section">
+                                                    <xsl:attribute name="href" select="concat('#', @uid/string())"/>
+                                                    <xsl:value-of select="concat('g.', position())"/>
+                                                </a>
+                                                <div class="row">
                                                     
-                                                    <xsl:attribute name="data-match-height" select="concat('g-', position())"/>
+                                                    <div class="col-sm-6 col-md-8 match-this-height print-width-override print-height-override">
+                                                        
+                                                        <xsl:attribute name="data-match-height" select="concat('g-', position())"/>
+                                                        
+                                                        <h4 class="term">
+                                                            <xsl:apply-templates select="m:term[lower-case(@xml:lang) = 'en']"/>
+                                                        </h4>
+                                                        
+                                                        <xsl:if test="m:term[lower-case(@xml:lang) eq 'bo-ltn']">
+                                                            <p class="text-wylie">
+                                                                <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'bo-ltn'], ' · ')"/>
+                                                            </p>
+                                                        </xsl:if>
+                                                        
+                                                        <xsl:if test="m:term[lower-case(@xml:lang) eq 'bo']">
+                                                            <p class="text-bo">
+                                                                <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'bo'], ' ')"/>
+                                                            </p>
+                                                        </xsl:if>
+                                                        
+                                                        <xsl:if test="m:term[lower-case(@xml:lang) eq 'sa-ltn']">
+                                                            <p class="text-sa">
+                                                                <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'sa-ltn'], ' · ')"/>
+                                                            </p>
+                                                        </xsl:if>
+                                                        
+                                                        <xsl:for-each select="m:alternatives/m:alternative">
+                                                            <p class="term alternative">
+                                                                <xsl:apply-templates select="text()"/>
+                                                            </p>
+                                                        </xsl:for-each>
+                                                        
+                                                        <xsl:for-each select="m:definitions/m:definition">
+                                                            <p class="glossarize">
+                                                                <xsl:apply-templates select="node()"/>
+                                                            </p>
+                                                        </xsl:for-each>
+                                                        
+                                                    </div>
                                                     
-                                                    <h4 class="term">
-                                                        <xsl:apply-templates select="m:term[lower-case(@xml:lang) = 'en']"/>
-                                                    </h4>
-                                                    
-                                                    <xsl:for-each select="m:term[lower-case(@xml:lang) != 'en']">
-                                                        <p>
-                                                            <xsl:attribute name="class" select="common:lang-class(@xml:lang)"/>
-                                                            <xsl:apply-templates select="text()"/>
-                                                        </p>
-                                                    </xsl:for-each>
-                                                    
-                                                    <xsl:for-each select="m:alternatives/m:alternative">
-                                                        <p class="term alternative">
-                                                            <xsl:apply-templates select="text()"/>
-                                                        </p>
-                                                    </xsl:for-each>
-                                                    
-                                                    <xsl:for-each select="m:definitions/m:definition">
-                                                        <p class="glossarize">
-                                                            <xsl:apply-templates select="node()"/>
-                                                        </p>
-                                                    </xsl:for-each>
+                                                    <div class="col-sm-6 col-md-4 occurences hidden-print match-height-overflow print-height-override">
+                                                        <xsl:attribute name="data-match-height" select="concat('g-', position())"/>
+                                                        <h6>Passages containing this term</h6>
+                                                    </div>
                                                     
                                                 </div>
-                                                
-                                                <div class="col-sm-6 col-md-4 occurences hidden-print match-height-overflow print-height-override">
-                                                    <xsl:attribute name="data-match-height" select="concat('g-', position())"/>
-                                                    <h6>Passages containing this term</h6>
-                                                </div>
-                                                
                                             </div>
-                                        </div>
-                                    </xsl:for-each>
+                                        </xsl:for-each>
+                                    </div>
                                 </section>
     
                             </div>

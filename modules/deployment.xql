@@ -46,7 +46,7 @@ declare function deployment:snapshot() {
     return 
         <result xmlns="http://read.84000.co/ns/1.0">
         {
-            translations:translations(),
+            translations:translations(false()),
             <view-repo-url>
             { 
                 $snapshot-conf/m:view-repo-url/text() 
@@ -98,7 +98,11 @@ declare function deployment:push-app() {
             {
                 $sync
             }
-            </sync>
+            </sync>,
+            if($sync) then
+                deployment:git-push($sync-path, $deployment-conf/m:path/text(), $deployment-conf/m:home/text(), '.', $commit-msg)
+            else
+                ()
         }
         </result>
     

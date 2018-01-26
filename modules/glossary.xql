@@ -79,9 +79,18 @@ declare function glossary:glossary-items($term as xs:string) as node() {
                         type="{ $item/@type/string() }">
                         <title>{ $translation//tei:teiHeader/tei:fileDesc/tei:titleStmt/tei:title[@type='mainTitle'][lower-case(@xml:lang) = ('eng', 'en')][1]/text()[1] }</title>
                         <term xml:lang="en">{ normalize-space(functx:capitalize-first(data($item/tei:term[@xml:lang eq 'en'][not(@type)] | $item/tei:term[not(@xml:lang)][not(@type)]))) }</term>
-                        <term xml:lang="bo">{ data($item/tei:term[@xml:lang = 'bo'][not(@type)]) }</term>
-                        <term xml:lang="bo-ltn">{ common:bo-ltn(data($item/tei:term[@xml:lang = 'Bo-Ltn'][not(@type)])) }</term>
-                        <term xml:lang="sa-ltn">{ data($item/tei:term[@xml:lang = 'Sa-Ltn'][not(@type)]) }</term>
+                        {
+                            for $item in $item/tei:term[@xml:lang = ('bo', 'Bo-Ltn', 'Sa-Ltn')][not(@type)]
+                            return 
+                                <term xml:lang="{ lower-case($item/@xml:lang) }">
+                                { 
+                                    if ($item/@xml:lang eq 'Bo-Ltn') then
+                                        common:bo-ltn($item/text())
+                                    else
+                                        $item/text() 
+                                }
+                                </term>
+                        }
                         <definitions>
                         {
                             for $definition in $item/tei:term[@type = 'definition']
@@ -130,7 +139,7 @@ declare function glossary:item-query($item as node()) as node(){
     </query>
 };
 
-declare function glossary:translation-glossary($translation as node(), $doc-type as xs:string) as node()* {
+declare function glossary:translation-glossary($translation as node()) as node()* {
     <glossary xmlns="http://read.84000.co/ns/1.0">
     {
         let $options := 
@@ -149,9 +158,18 @@ declare function glossary:translation-glossary($translation as node(), $doc-type
                 type="{ $item/@type/string() }" 
                 mode="{ $item/@mode/string() }">
                 <term xml:lang="en">{ normalize-space(functx:capitalize-first(data($item/tei:term[@xml:lang eq 'en'][not(@type)] | $item/tei:term[not(@xml:lang)][not(@type)]))) }</term>
-                <term xml:lang="bo">{ data($item/tei:term[@xml:lang = 'bo'][not(@type)]) }</term>
-                <term xml:lang="bo-ltn">{ common:bo-ltn(data($item/tei:term[@xml:lang = 'Bo-Ltn'][not(@type)])) }</term>
-                <term xml:lang="sa-ltn">{ data($item/tei:term[@xml:lang = 'Sa-Ltn'][not(@type)]) }</term>
+                {
+                    for $item in $item/tei:term[@xml:lang = ('bo', 'Bo-Ltn', 'Sa-Ltn')][not(@type)]
+                    return 
+                        <term xml:lang="{ lower-case($item/@xml:lang) }">
+                        { 
+                            if ($item/@xml:lang eq 'Bo-Ltn') then
+                                common:bo-ltn($item/text())
+                            else
+                                $item/text() 
+                        }
+                        </term>
+                }
                 <definitions>
                 {
                     for $definition in $item/tei:term[@type = 'definition']

@@ -14,22 +14,28 @@ declare function translations:word-count($element as element()*) as xs:integer
   count(tokenize($element, '\W+')[. != ''])
 };
 
-declare function translations:translations()
+declare function translations:translations($count-words as xs:boolean)
 {
     let $outlines-path := common:outlines-path()
     let $outlines := collection($outlines-path)
+    
     return
         <translations xmlns="http://read.84000.co/ns/1.0">
         {
          for $translation in collection(common:translations-path())
             let $text-id := $translation/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno/@xml:id
             let $outline-text := text:translation($text-id, $outlines)
+            let $word-count := 
+                if ($count-words eq true()) then
+                    translations:word-count($translation/tei:TEI/tei:text)
+                else
+                    0
          return
              <translation 
                   uri="{ base-uri($translation) }"
                   fileName="{ util:unescape-uri(replace(base-uri($translation), ".+/(.+)$", "$1"), 'UTF-8') }"
                   id="{ $text-id }" 
-                  wordCount="{ translations:word-count($translation/tei:TEI/tei:text) }"
+                  wordCount="{ $word-count }"
                   glossaryCount="{ glossary:item-count($translation) }"
                   status="{ text:status-str($outline-text) }">
                <title>

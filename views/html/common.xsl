@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" exclude-result-prefixes="#all" version="2.0">
     
     <!-- Set cache-clearing version number -->
-    <xsl:variable name="version" select="'1.3'"/>
+    <xsl:variable name="version" select="'1.4'"/>
     
     <xsl:output method="html" indent="no" doctype-system="about:legacy-compat"/>
     

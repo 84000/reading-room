@@ -42,12 +42,11 @@
                     </xsl:choose>
                 </h3>
                 <p>
-                    Test <xsl:value-of select="$test-title"/>
+                    <xsl:value-of select="$test-title"/>
                 </p>
                 <p>
                     <xsl:value-of select="$text-title"/>
                     <br/>
-                    
                     <ul class="list-inline">
                         <li>
                             <xsl:value-of select="$text-id"/>
@@ -78,7 +77,7 @@
                 <ul>
                     <xsl:for-each select="$test-detail/m:detail">
                         <li>
-                            <xsl:value-of select="text()"/>
+                            <xsl:copy-of select="node()"/>
                         </li>
                     </xsl:for-each>
                 </ul>
@@ -92,8 +91,8 @@
             
             <div class="container">
                 <div class="panel panel-default">
+                    
                     <div class="panel-heading panel-heading-bold hidden-print center-vertical">
-                        
                         <ul class="breadcrumb">
                             <li>
                                 <a href="/utilities.html?tab=tests">
@@ -104,10 +103,32 @@
                                 Automated tests
                             </li>
                         </ul>
-                        
                     </div>
                     
-                    <div class="panel-body">
+                    <div class="panel-body min-height-md">
+                        
+                        <form action="/tests.html" method="post" class="form-inline filter-form">
+                            <div class="input-group">
+                                <select name="translation-id" id="translation-id" class="form-control">
+                                    <option value="all">All translations</option>
+                                    <xsl:for-each select="//m:translations/m:translation">
+                                        <xsl:sort select="@id"/>
+                                        <option>
+                                            <xsl:attribute name="value" select="@id"/>
+                                            <xsl:if test="@id eq /m:response/@translation-id">
+                                                <xsl:attribute name="selected" select="'selected'"/>
+                                            </xsl:if>
+                                            <xsl:value-of select="concat(m:toh, ' / ', m:title)"/>
+                                        </option>
+                                    </xsl:for-each>
+                                </select>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="submit">Go!</button>
+                                </span>
+                            </div>
+                        </form>
+                        
+                        <hr/>
                         
                         <table class="table table-responsive">
                             <thead>
@@ -209,7 +230,5 @@
         </xsl:call-template>
         
     </xsl:template>
-    
-    
     
 </xsl:stylesheet>

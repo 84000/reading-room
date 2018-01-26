@@ -260,7 +260,7 @@
     <xsl:template name="milestone">
         <xsl:if test="preceding-sibling::*[1][self::tei:milestone] or (preceding-sibling::*[1][self::tei:lb] and preceding-sibling::*[2][self::tei:milestone])">
             <xsl:variable name="id" select="preceding-sibling::*[1]/@xml:id"/>
-            <a class="milestone" title="Bookmark this section">
+            <a class="milestone from-tei" title="Bookmark this section">
                 <xsl:attribute name="href" select="concat('#', $id)"/>
                 <xsl:attribute name="id" select="$id"/>
                 <xsl:variable name="group" select="ancestor::*[exists(@prefix)][1]"/>

@@ -125,7 +125,8 @@ declare function translation:introduction($translation as node()) as node()* {
     (: In the intro we flatten out the sections and only space by the heads :)
     <introduction xmlns="http://read.84000.co/ns/1.0" prefix="i">
     { 
-        $translation//tei:front//*[@type='introduction']/*[@type='section']/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list ]/.
+        $translation//tei:front//*[@type='introduction']/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list ]/.
+        | $translation//tei:front//*[@type='introduction']/*[@type='section']/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list ]/.
     }
     </introduction>
 };
@@ -208,12 +209,32 @@ declare function translation:appendix($translation as node()) as node()* {
 declare function translation:abbreviations($translation as node()) as node()* {
     <abbreviations xmlns="http://read.84000.co/ns/1.0" prefix="ab">
     {
-        for $item in $translation//tei:list[@type='abbreviations']/tei:item
+        if($translation//tei:list[@type='abbreviations']/tei:head[text() and not(lower-case(text()) = ('abbreviations', 'abbreviations:'))])then
+            <head>
+            {
+                $translation//tei:list[@type='abbreviations']/tei:head/text()
+            }
+            </head>
+        else
+            ()
+    }
+    {
+        for $item in $translation//tei:list[@type='abbreviations']/tei:item[tei:abbr]
         return
             <item>
                 <abbreviation>{ normalize-space($item/tei:abbr/text()) }</abbreviation>
                 <explanation>{ $item/tei:expan/node() }</explanation>
             </item>
+    }
+    {
+        if($translation//tei:list[@type='abbreviations']/tei:item[not(tei:abbr)]/text())then
+            <foot>
+            {
+                $translation//tei:list[@type='abbreviations']/tei:item[not(tei:abbr)]/text()
+            }
+            </foot>
+        else
+            ()
     }
     </abbreviations>
 };
@@ -259,9 +280,18 @@ declare function translation:glossary($translation as node()) as node()* {
                 type="{ $item/@type/string() }" 
                 mode="{ $item/@mode/string() }">
                 <term xml:lang="en">{ normalize-space(functx:capitalize-first(data($item/tei:term[@xml:lang eq 'en'][not(@type)] | $item/tei:term[not(@xml:lang)][not(@type)]))) }</term>
-                <term xml:lang="bo">{ data($item/tei:term[@xml:lang = 'bo'][not(@type)]) }</term>
-                <term xml:lang="bo-ltn">{ common:bo-ltn(data($item/tei:term[@xml:lang = 'Bo-Ltn'][not(@type)])) }</term>
-                <term xml:lang="sa-ltn">{ data($item/tei:term[@xml:lang = 'Sa-Ltn'][not(@type)]) }</term>
+                {
+                    for $item in $item/tei:term[@xml:lang = ('bo', 'Bo-Ltn', 'Sa-Ltn')][not(@type)]
+                    return 
+                        <term xml:lang="{ lower-case($item/@xml:lang) }">
+                        { 
+                            if ($item/@xml:lang eq 'Bo-Ltn') then
+                                common:bo-ltn($item/text())
+                            else
+                                $item/text() 
+                        }
+                        </term>
+                }
                 <definitions>
                 {
                     for $definition in $item/tei:term[@type = 'definition']

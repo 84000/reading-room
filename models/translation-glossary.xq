@@ -37,7 +37,7 @@ return
                     translation:title($translation)
                 }
                 </title>
-                { glossary:translation-glossary($translation, 'www') }
+                { glossary:translation-glossary($translation) }
             </translation-glossary>
     </response>
     
