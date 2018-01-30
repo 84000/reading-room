@@ -87,10 +87,11 @@
         </span>
     </xsl:template>
     
+    <!-- 
     <xsl:template match="tei:item">
         <xsl:apply-templates select="node()"/>
         <br/>
-    </xsl:template>
+    </xsl:template> -->
     
     <xsl:template match="tei:gloss">
         <a class="glossary">
@@ -102,7 +103,9 @@
     <xsl:template match="tei:ref">
         <xsl:choose>
             <xsl:when test="@cRef">
-                <span class="ref">[<xsl:apply-templates select="@cRef"/>]</span>
+                <xsl:if test="not(@rend) or @rend != 'hidden'">
+                    <span class="ref">[<xsl:apply-templates select="@cRef"/>]</span>
+                </xsl:if>
             </xsl:when>
             <xsl:when test="@target">
                 <a target="_blank">
@@ -122,10 +125,7 @@
     </xsl:template>
     
     <xsl:template match="tei:lb">
-        <!-- Only if there's not already a space before -->
-        <xsl:if test="not(common:space-before(following-sibling::*[1]))">
-            <br/>
-        </xsl:if>
+        <br/>
     </xsl:template>
     
     <xsl:template match="tei:ptr">
@@ -152,49 +152,15 @@
         </xsl:choose>
     </xsl:template>
     
-    <xsl:template match="tei:list[tei:item]">
-        <div class="relative">
-            <xsl:call-template name="milestone"/>
-            <xsl:if test="tei:head">
-                <h5 class="relative">
-                    <!-- temporary id -->
-                    <xsl:if test="tei:head/@tid">
-                        <xsl:attribute name="id" select="concat('node', '-', tei:head/@tid)"/>
-                    </xsl:if>
-                    <xsl:value-of select="tei:head"/>
-                </h5>
-            </xsl:if>
-            <ul class="line-group">
-                <xsl:apply-templates select="node()"/>
-            </ul>
-        </div>
-    </xsl:template>
-    
-    <xsl:template match="tei:item[parent::tei:list]">
-        <li>
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </li>
-    </xsl:template>
-    
-    <xsl:template match="tei:p | tei:ab | tei:trailer | tei:label | tei:bibl">
+    <xsl:template match="tei:p | tei:ab | tei:trailer | tei:bibl">
         <p>
-            <!-- temporary id -->
-            <xsl:if test="@tid">
-                <xsl:attribute name="id" select="concat('node', '-', @tid)"/>
-            </xsl:if>
+            <!-- id -->
+            <xsl:call-template name="tid"/>
             <!-- class -->
             <xsl:variable name="cssClass">
-                <!-- Space the paragraphs -->
                 glossarize 
-                <xsl:if test="common:space-before(.)">
-                    space 
-                </xsl:if>
                 <xsl:if test="self::tei:ab[@type = 'mantra']">
                     mantra
-                </xsl:if>
-                <xsl:if test="self::tei:label">
-                    section-label 
                 </xsl:if>
                 <xsl:if test="self::tei:trailer">
                     trailer 
@@ -206,31 +172,47 @@
         </p>
     </xsl:template>
     
+    <xsl:template match="tei:label">
+        <h5 class="relative section-label">
+            <xsl:call-template name="tid"/>
+            <xsl:call-template name="milestone"/>
+            <xsl:apply-templates select="node()"/>
+        </h5>
+    </xsl:template>
+    
+    <xsl:template match="tei:list[tei:item]">
+        <div class="relative list">
+            <xsl:call-template name="milestone"/>
+            <xsl:apply-templates select="node()"/>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="tei:item[parent::tei:list]">
+        <div class="relative list-item">
+            <xsl:call-template name="milestone"/>
+            <xsl:apply-templates select="node()"/>
+        </div>
+    </xsl:template>
+    
+    <xsl:template match="tei:head[parent::tei:list]">
+        <h5 class="relative section-label">
+            <xsl:call-template name="tid"/>
+            <xsl:call-template name="milestone"/>
+            <xsl:apply-templates select="node()"/>
+        </h5>
+    </xsl:template>
+    
     <xsl:template match="tei:lg">
-        <div>
-            <!-- temporary id -->
-            <xsl:if test="@tid">
-                <xsl:attribute name="id" select="concat('node', '-', @tid)"/>
-            </xsl:if>
-            <!-- class -->
-            <xsl:variable name="cssClass">
-                line-group 
-                <!-- Space the paragraphs -->
-                <xsl:if test="common:space-before(.)">
-                    space 
-                </xsl:if>
-            </xsl:variable>
-            <xsl:attribute name="class" select="normalize-space($cssClass)"/>
+        <div class="relative line-group">
+            <!-- id -->
+            <xsl:call-template name="tid"/>
             <xsl:call-template name="milestone"/>
             <xsl:apply-templates select="node()"/>
         </div>
     </xsl:template>
     
     <xsl:template match="tei:l[parent::tei:lg]">
-        <p>
-            <xsl:attribute name="class">
-                <xsl:value-of select="'glossarize'"/>
-            </xsl:attribute>
+        <p class="glossarize">
             <xsl:call-template name="milestone"/>
             <xsl:apply-templates select="node()"/>
         </p>
@@ -254,6 +236,13 @@
                 </h4>
             </xsl:when>
         </xsl:choose>
+    </xsl:template>
+    
+    <!-- Temporary id -->
+    <xsl:template name="tid">
+        <xsl:if test="@tid">
+            <xsl:attribute name="id" select="concat('node', '-', @tid)"/>
+        </xsl:if>
     </xsl:template>
     
     <!-- Milestone -->

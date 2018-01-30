@@ -132,9 +132,9 @@ declare function common:environment() as node()*
     doc('/db/env/environment.xml')/m:environments/m:environment[@id eq common:app-id()]
 };
 
-declare function common:test-path() as xs:string* 
+declare function common:test-conf() as node()* 
 {
-    common:environment()//m:test-path/text()
+    common:environment()//m:test-conf
 };
 
 declare function common:snapshot-conf() as node()* 

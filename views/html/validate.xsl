@@ -31,6 +31,7 @@
                             <tbody>
                                 <xsl:for-each select="//m:results/m:translation">
                                     <xsl:sort select="m:result/@status eq 'valid'"/>
+                                    <xsl:sort select="@id"/>
                                     <tr class="heading">
                                         <td>
                                             <xsl:choose>

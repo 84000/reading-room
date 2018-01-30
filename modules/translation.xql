@@ -108,7 +108,7 @@ declare function translation:translation($translation as node()) as node()* {
 declare function translation:summary($translation as node()) as node()* {
     <summary xmlns="http://read.84000.co/ns/1.0" prefix="s">
     { 
-        $translation//tei:front//*[@type='summary']/*[self::tei:p | self::tei:milestone | self::tei:lg ]/.
+        $translation//tei:front//tei:div[@type='summary']/*[self::tei:p | self::tei:milestone | self::tei:lg ]/.
     }
     </summary>
 };
@@ -116,17 +116,32 @@ declare function translation:summary($translation as node()) as node()* {
 declare function translation:acknowledgment($translation as node()) as node()* {
     <acknowledgment xmlns="http://read.84000.co/ns/1.0" prefix="ac">
     { 
-        $translation//tei:front//*[@type='acknowledgment']/*[self::tei:p | self::tei:milestone | self::tei:lg ]/.
+        $translation//tei:front//tei:div[@type='acknowledgment']/*[self::tei:p | self::tei:milestone | self::tei:lg ]/.
     }
     </acknowledgment>
+};
+
+declare function translation:nested-section($section as node()*) as node()* {
+    if($section) then
+        <nested-section xmlns="http://read.84000.co/ns/1.0">
+            {
+                $section/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]
+            }
+            {
+                for $sub-section in $section/tei:div[@type eq 'section']
+                return
+                    translation:nested-section($sub-section)
+            }
+        </nested-section>
+    else 
+        ()
 };
 
 declare function translation:introduction($translation as node()) as node()* {
     (: In the intro we flatten out the sections and only space by the heads :)
     <introduction xmlns="http://read.84000.co/ns/1.0" prefix="i">
-    { 
-        $translation//tei:front//*[@type='introduction']/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list ]/.
-        | $translation//tei:front//*[@type='introduction']/*[@type='section']/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list ]/.
+    {
+        translation:nested-section($translation//tei:front/tei:div[@type eq 'introduction'])
     }
     </introduction>
 };
@@ -134,15 +149,15 @@ declare function translation:introduction($translation as node()) as node()* {
 declare function translation:prologue($translation as node()) as node()* {
     <prologue xmlns="http://read.84000.co/ns/1.0" prefix="p">
     { 
-        $translation//tei:body//*[@type='prologue' or tei:head/text()[lower-case(.) = "prologue"]]//*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]/.
+        translation:nested-section($translation//tei:body/tei:div[@type='translation']/tei:div[@type='prologue' or tei:head/text()[lower-case(.) = "prologue"]])
     }
     </prologue>
 };
 
 declare function translation:body($translation as node()) as node()* {
     <body xmlns="http://read.84000.co/ns/1.0" prefix="tr">
-        <honoration>{ data($translation//tei:body/*[@type='translation']/tei:head[@type='titleHon']) }</honoration>
-        <main-title>{ data($translation//tei:body/*[@type='translation']/tei:head[@type='titleMain']) }</main-title>
+        <honoration>{ data($translation//tei:body/tei:div[@type='translation']/tei:head[@type='titleHon']) }</honoration>
+        <main-title>{ data($translation//tei:body/tei:div[@type='translation']/tei:head[@type='titleMain']) }</main-title>
         { 
             for $chapter at $chapter-index in $translation//tei:body//*[@type='translation']/*[@type=('section', 'chapter')][not(tei:head/text()[lower-case(.) = "prologue"])]
             return
@@ -154,7 +169,7 @@ declare function translation:body($translation as node()) as node()* {
                     </title>
                     <title-number>
                     {
-                        if($chapter/tei:head[@type eq 'chapterTitle']/text() and $chapter/tei:head[@type eq 'chapter']/text())then
+                        if($chapter/tei:head[@type eq 'chapter']/text())then
                             $chapter/tei:head[@type eq 'chapter']/text()
                         else if($chapter/tei:head[@type eq 'chapterTitle']/text())then
                             concat('Chapter ', $chapter-index)
@@ -173,7 +188,7 @@ declare function translation:body($translation as node()) as node()* {
 declare function translation:colophon($translation as node()) as node()* {
     <colophon xmlns="http://read.84000.co/ns/1.0" prefix="c">
     { 
-        $translation//tei:body//*[@type='colophon']//*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]/.
+        translation:nested-section($translation//tei:body/tei:div[@type='translation']/tei:div[@type='colophon'])
     }
     </colophon>
 };
@@ -256,18 +271,27 @@ declare function translation:notes($translation as node()) as node()* {
 declare function translation:bibliography($translation as node()) as node()* {
     <bibliography xmlns="http://read.84000.co/ns/1.0" prefix="b">
     {
-        for $section in $translation//tei:back/*[@type='listBibl']//*[@type='section']
+        for $section in $translation//tei:back/*[@type='listBibl']/*[@type='section']
         return
-            <section>
-                <title>{ $section/tei:head[@type='section']/text() }</title>
-                {
-                    for $item in $section/tei:bibl
-                    return
-                        <item>{ $item/node() }</item>
-                }
-            </section>
+            translation:bibliography-section($section)
     }
     </bibliography>
+};
+
+declare function translation:bibliography-section($section as node()) as node()* {
+    <nested-section xmlns="http://read.84000.co/ns/1.0">
+        <title>{ $section/tei:head[@type='section']/text() }</title>
+        {
+            for $item in $section/tei:bibl
+            return
+                <item>{ $item/node() }</item>
+        }
+        {
+            for $sub-section in $section/tei:div[@type='section']
+            return
+                translation:bibliography-section($sub-section)
+        }
+    </nested-section>
 };
 
 declare function translation:glossary($translation as node()) as node()* {

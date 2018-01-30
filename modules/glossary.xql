@@ -189,7 +189,7 @@ declare function glossary:translation-glossary($translation as node()) as node()
                 }
                 </alternatives>
                 <passages>
-                {(:
+                {
                     for $paragraph in 
                         $translation//tei:text//tei:p[ft:query(., $query, $options)]
                         | $translation//tei:text//tei:lg[ft:query(., $query, $options)]
@@ -197,7 +197,7 @@ declare function glossary:translation-glossary($translation as node()) as node()
                         | $translation//tei:text//tei:trailer[ft:query(., $query, $options)]
                     return
                         <passage tid="{ $paragraph/@tid }"/>
-                :)()}
+                }
                 </passages>
             </item>
     }

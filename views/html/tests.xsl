@@ -118,7 +118,7 @@
                                             <xsl:if test="@id eq /m:response/@translation-id">
                                                 <xsl:attribute name="selected" select="'selected'"/>
                                             </xsl:if>
-                                            <xsl:value-of select="concat(m:toh, ' / ', m:title)"/>
+                                            <xsl:value-of select="concat(@id, ' / ', m:toh, ' / ', m:title)"/>
                                         </option>
                                     </xsl:for-each>
                                 </select>
