@@ -165,25 +165,30 @@ declare function local:last-updated($doc) {
 
 declare function local:glossary-bo($doc) {
     (: Convert bo-ltn to bo term for glossary items :)
-    for $gloss-missing-bo in $doc//tei:div[@type='glossary']//tei:gloss[tei:term[lower-case(@xml:lang) = 'bo-ltn'] and not(tei:term[lower-case(@xml:lang) = 'bo'])]
-        let $bo-ltn := $gloss-missing-bo/tei:term[lower-case(@xml:lang) = 'bo-ltn']
+    for $gloss in $doc//tei:div[@type='glossary']//tei:gloss
     return
-        update insert <term xml:lang="bo">{ common:bo($bo-ltn) }</term> following $bo-ltn
+        if(count($gloss/tei:term[lower-case(@xml:lang) = 'bo']) ne count($gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn'])) then
+            (
+                update delete $gloss/tei:term[lower-case(@xml:lang) = 'bo'],
+                for $bo-ltn in $gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn']
+                return
+                    update insert <term xmlns="http://www.tei-c.org/ns/1.0" xml:lang="bo">{ common:bo($bo-ltn/text()) }</term> following $bo-ltn
+           )
+        else
+            ()
 
 };
 
 declare function local:glossary-bo-reset($doc) {
     (: Refreshes all the Tibetan :)
     (: Excluded by default - only use when global update required :)
-    for $gloss in $doc//tei:div[@type='glossary']//tei:gloss
-        let $bo := $gloss/tei:term[lower-case(@xml:lang) = 'bo']
-        let $bo-ltn := $gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn']
+    for $bo in $doc//tei:div[@type='glossary']//tei:gloss/tei:term[lower-case(@xml:lang) = 'bo']
     return
-        if($bo-ltn) then
-            update replace $bo/text() with common:bo($bo-ltn/text()) 
-        else
-            ()
-
+        update delete $bo
+    ,
+    for $bo-ltn in $doc//tei:div[@type='glossary']//tei:gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn']
+    return
+        update insert <term xmlns="http://www.tei-c.org/ns/1.0" xml:lang="bo">{ common:bo($bo-ltn/text()) }</term> following $bo-ltn
 };
 
 declare function local:glossary-prioritise($doc) {

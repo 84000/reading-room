@@ -76,7 +76,7 @@ declare function common:normalized-chars($string as xs:string) as xs:string{
 declare function common:bo($bo-ltn as xs:string*) as xs:string
 {
     if ($bo-ltn) then
-        converter:toUnicode(concat(replace(replace(normalize-space($bo-ltn), ' __,__', '__,__'), '__,__', ' __,__'), ' '))
+        converter:toUnicode(concat(replace(replace(normalize-space($bo-ltn), ' __,__', '__,__'), '__,__', ' __,__'), "/"))
     else
         ""
 };

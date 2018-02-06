@@ -125,7 +125,7 @@ declare function translation:nested-section($section as node()*) as node()* {
     if($section) then
         <nested-section xmlns="http://read.84000.co/ns/1.0">
             {
-                $section/*[self::tei:head | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]
+                $section/*[self::tei:head[not(lower-case(text()) = ("prologue", "colophon"))] | self::tei:p | self::tei:milestone | self::tei:ab | self::tei:lg | self::tei:lb | self::tei:q | self::tei:list | self::tei:trailer | self::tei:label ]
             }
             {
                 for $sub-section in $section/tei:div[@type eq 'section']
@@ -297,15 +297,15 @@ declare function translation:bibliography-section($section as node()) as node()*
 declare function translation:glossary($translation as node()) as node()* {
     <glossary xmlns="http://read.84000.co/ns/1.0" prefix="g">
     {
-        for $item in $translation//tei:back//*[@type='glossary']//tei:gloss
+        for $gloss in $translation//tei:back//*[@type='glossary']//tei:gloss
         return
             <item 
-                uid="{ $item/@xml:id/string() }" 
-                type="{ $item/@type/string() }" 
-                mode="{ $item/@mode/string() }">
-                <term xml:lang="en">{ normalize-space(functx:capitalize-first(data($item/tei:term[@xml:lang eq 'en'][not(@type)] | $item/tei:term[not(@xml:lang)][not(@type)]))) }</term>
+                uid="{ $gloss/@xml:id/string() }" 
+                type="{ $gloss/@type/string() }" 
+                mode="{ $gloss/@mode/string() }">
+                <term xml:lang="en">{ normalize-space(functx:capitalize-first($gloss/tei:term[not(@xml:lang)][not(@type)][1]/text())) }</term>
                 {
-                    for $item in $item/tei:term[@xml:lang = ('bo', 'Bo-Ltn', 'Sa-Ltn')][not(@type)]
+                    for $item in $gloss/tei:term[@xml:lang][not(@type)]
                     return 
                         <term xml:lang="{ lower-case($item/@xml:lang) }">
                         { 
@@ -318,14 +318,14 @@ declare function translation:glossary($translation as node()) as node()* {
                 }
                 <definitions>
                 {
-                    for $definition in $item/tei:term[@type = 'definition']
+                    for $definition in $gloss/tei:term[@type eq 'definition']
                     return
                         <definition>{ $definition/node() }</definition>
                 }
                 </definitions>
                 <alternatives>
                 {
-                    for $alternative in $item/tei:term[@type = 'alternative']
+                    for $alternative in $gloss/tei:term[@type eq 'alternative']
                     return
                         <alternative xml:lang="{ lower-case($alternative/@xml:lang) }">
                         { 

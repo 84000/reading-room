@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" exclude-result-prefixes="#all" version="2.0">
     
     <!-- Set cache-clearing version number -->
-    <xsl:variable name="version" select="'1.6'"/>
+    <xsl:variable name="version" select="'1.8'"/>
     
     <xsl:output method="html" indent="no" doctype-system="about:legacy-compat"/>
     
@@ -59,23 +59,8 @@
             </meta>
             <meta name="theme-color" content="#ffffff"/>
             
-            <script>
-                <xsl:attribute name="src" select="concat($resource-path, '/js/jquery.min.js')"/>
-            </script>
-            <script>
-                <xsl:attribute name="src" select="concat($resource-path, '/js/bootstrap.min.js')"/>
-            </script>
-            <script>
-                <xsl:attribute name="src" select="concat($resource-path, '/js/js-cookies.js')"/>
-            </script>
-            <script>
-                <xsl:attribute name="src" select="concat($resource-path, '/js/replace-text.min.js')"/>
-            </script>
-            <script>
-                <xsl:attribute name="src" select="concat($resource-path, '/js/ie10-viewport-bug-workaround.js')"/>
-            </script>
             <script defer="defer">
-                <xsl:attribute name="src" select="concat($resource-path, '/js/84000.js', '?v=', $version)"/>
+                <xsl:attribute name="src" select="concat($resource-path, '/js/84000-fe.min.js', '?v=', $version)"/>
             </script>
             
         </head>

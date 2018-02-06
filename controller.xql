@@ -245,7 +245,32 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
                     <add-parameter name="resource-id" value="{$resource-id}"/>
                     <add-parameter name="resource-suffix" value="xml"/>
                 </parameters>
-            )            
+            )
+            
+    (: Source texts :)
+    else if ($collection-path eq "source") then
+        if ($resource-suffix eq 'html') then
+            local:dispatch-html("/models/source.xq", "/views/html/source.xsl", 
+                <parameters xmlns="http://exist.sourceforge.net/NS/exist">
+                    <add-parameter name="resource-id" value="{$resource-id}"/>
+                    <add-parameter name="resource-suffix" value="html"/>
+                </parameters>
+            )
+        else if ($resource-suffix eq 'json') then
+            local:dispatch("/models/source.xq", "/views/json/xmlToJson.xq", 
+                <parameters xmlns="http://exist.sourceforge.net/NS/exist">
+                    <add-parameter name="resource-id" value="{$resource-id}"/>
+                    <add-parameter name="resource-suffix" value="json"/>
+                </parameters>
+            )
+        else
+            (: return the xml :)
+            local:dispatch("/models/source.xq", "", 
+                <parameters xmlns="http://exist.sourceforge.net/NS/exist">
+                    <add-parameter name="resource-id" value="{$resource-id}"/>
+                    <add-parameter name="resource-suffix" value="xml"/>
+                </parameters>
+            )
         
     else
         (: Everything else is passed through :)

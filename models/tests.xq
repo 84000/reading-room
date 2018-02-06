@@ -244,7 +244,7 @@ return
                     local:test-section($translation//tei:back//*[@type='appendix'], $translation-html//*[@id eq 'appendix'], 'appendix', 0, false())
                 }
                 {
-                    let $notes-count-html := count($translation-html//*[@id eq 'notes']/*[contains(@class, 'footnote')])
+                    let $notes-count-html := count($translation-html//*[@id eq 'notes']/*/*[contains(@class, 'footnote')])
                     let $notes-count-tei := count($translation//tei:text//tei:note)
                     return
                         <test>

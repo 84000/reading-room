@@ -3,7 +3,7 @@
     
     <xsl:import href="../../xslt/tei-to-xhtml.xsl"/>
     <xsl:import href="reading-room-page.xsl"/>
-    
+     
     <xsl:template match="/m:response">
         
         <xsl:variable name="app-id" select="@app-id"/>
@@ -145,7 +145,10 @@
                                                 <xsl:apply-templates select="m:translation/m:translation/m:publication-statement"/>
                                             </p>
                                         </div>
-    
+                                    
+                                    </div>
+                                    
+                                    <div class="page">
                                         <div id="license">
                                             <img>
                                                 <xsl:attribute name="src" select="m:translation/m:translation/m:license/@img-url"/>
@@ -383,7 +386,9 @@
                                         <xsl:value-of select="concat(m:translation/m:introduction/@prefix, '.')"/>
                                     </a>
                                     <h3>Introduction</h3>
-                                    <xsl:apply-templates select="m:translation/m:introduction"/>
+                                    <div class="render-in-viewport">
+                                        <xsl:apply-templates select="m:translation/m:introduction"/>
+                                    </div>
                                 </section>
     
                                 <hr class="hidden-print"/>
@@ -409,7 +414,10 @@
                                         <a href="#prologue" class="milestone" title="Bookmark this section">
                                             <xsl:value-of select="concat(m:translation/m:prologue/@prefix, '.')"/>
                                         </a>
-                                        <xsl:apply-templates select="m:translation/m:prologue"/>
+                                        <h4>Prologue</h4>
+                                        <div class="render-in-viewport">
+                                            <xsl:apply-templates select="m:translation/m:prologue"/>
+                                        </div>
                                     </section>
                                 </xsl:if>
                                 
@@ -453,7 +461,9 @@
                                                 
                                             </xsl:if>
                                             
-                                            <xsl:apply-templates select="tei:*"/>
+                                            <div class="render-in-viewport">
+                                                <xsl:apply-templates select="tei:*"/>
+                                            </div>
                                             
                                         </section>
                                         
@@ -468,8 +478,10 @@
                                         <a href="#colophon" class="milestone" title="Bookmark this section">
                                             <xsl:value-of select="concat(m:translation/m:colophon/@prefix, '.')"/>
                                         </a>
-                                        <h2>Colophon</h2>
-                                        <xsl:apply-templates select="m:translation/m:colophon"/>
+                                        <h4>Colophon</h4>
+                                        <div class="render-in-viewport">
+                                            <xsl:apply-templates select="m:translation/m:colophon"/>
+                                        </div>
                                     </section>
                                 </xsl:if>
                                 
@@ -482,24 +494,26 @@
                                             <xsl:value-of select="concat(m:translation/m:appendix/@prefix, '.')"/>
                                         </a>
                                         <h3>Appendix</h3>
-                                        <xsl:for-each select="m:translation/m:appendix/m:chapter">
-                                            <div class="relative chapter">
-                                                
-                                                <xsl:attribute name="id" select="concat('appendix-chapter-', @chapter-index/string())"/>
-                                                
-                                                <a class="milestone" title="Bookmark this section">
-                                                    <xsl:attribute name="href" select="concat('#appendix-chapter-', @chapter-index/string())"/>
-                                                    <xsl:value-of select="concat(@prefix, '.')"/>
-                                                </a>
-                                                
-                                                <h4>
-                                                    <xsl:apply-templates select="m:title"/>
-                                                </h4>
-                                                
-                                                <xsl:apply-templates select="tei:*"/>
-                                                
-                                            </div>
-                                        </xsl:for-each>
+                                        <div class="render-in-viewport">
+                                            <xsl:for-each select="m:translation/m:appendix/m:chapter">
+                                                <div class="relative chapter">
+                                                    
+                                                    <xsl:attribute name="id" select="concat('appendix-chapter-', @chapter-index/string())"/>
+                                                    
+                                                    <a class="milestone" title="Bookmark this section">
+                                                        <xsl:attribute name="href" select="concat('#appendix-chapter-', @chapter-index/string())"/>
+                                                        <xsl:value-of select="concat(@prefix, '.')"/>
+                                                    </a>
+                                                    
+                                                    <h4>
+                                                        <xsl:apply-templates select="m:title"/>
+                                                    </h4>
+                                                    
+                                                    <xsl:apply-templates select="tei:*"/>
+                                                    
+                                                </div>
+                                            </xsl:for-each>
+                                        </div>
                                     </section>
                                 </xsl:if>
                                 
@@ -512,31 +526,33 @@
                                             <xsl:value-of select="concat(m:translation/m:abbreviations/@prefix, '.')"/>
                                         </a>
                                         <h3>Abbreviations</h3>
-                                        <xsl:if test="m:translation/m:abbreviations/m:head">
-                                            <h5>
-                                                <xsl:apply-templates select="m:translation/m:abbreviations/m:head/text()"/>
-                                            </h5>
-                                        </xsl:if>
-                                        <table class="table contents-table">
-                                            <tbody>
-                                                <xsl:for-each select="m:translation/m:abbreviations/m:item">
-                                                    <xsl:sort select="m:abbreviation/text()"/>
-                                                    <tr>
-                                                        <th>
-                                                            <xsl:apply-templates select="m:abbreviation/text()"/>
-                                                        </th>
-                                                        <td>
-                                                            <xsl:apply-templates select="m:explanation/node()"/>
-                                                        </td>
-                                                    </tr>
-                                                </xsl:for-each>
-                                            </tbody>
-                                        </table>
-                                        <xsl:if test="m:translation/m:abbreviations/m:foot">
-                                            <p>
-                                                <xsl:apply-templates select="m:translation/m:abbreviations/m:foot/text()"/>
-                                            </p>
-                                        </xsl:if>
+                                        <div class="render-in-viewport">
+                                            <xsl:if test="m:translation/m:abbreviations/m:head">
+                                                <h5>
+                                                    <xsl:apply-templates select="m:translation/m:abbreviations/m:head/text()"/>
+                                                </h5>
+                                            </xsl:if>
+                                            <table class="table contents-table">
+                                                <tbody>
+                                                    <xsl:for-each select="m:translation/m:abbreviations/m:item">
+                                                        <xsl:sort select="m:abbreviation/text()"/>
+                                                        <tr>
+                                                            <th>
+                                                                <xsl:apply-templates select="m:abbreviation/text()"/>
+                                                            </th>
+                                                            <td>
+                                                                <xsl:apply-templates select="m:explanation/node()"/>
+                                                            </td>
+                                                        </tr>
+                                                    </xsl:for-each>
+                                                </tbody>
+                                            </table>
+                                            <xsl:if test="m:translation/m:abbreviations/m:foot">
+                                                <p>
+                                                    <xsl:apply-templates select="m:translation/m:abbreviations/m:foot/text()"/>
+                                                </p>
+                                            </xsl:if>
+                                        </div>
                                     </section>
                                     
                                 </xsl:if>
@@ -548,33 +564,37 @@
                                         <xsl:value-of select="concat(m:translation/m:notes/@prefix, '.')"/>
                                     </a>
                                     <h3>Notes</h3>
-                                    <xsl:for-each select="m:translation/m:notes/m:note">
-                                        <div class="footnote indent glossarize">
-                                            <xsl:attribute name="id" select="@uid"/>
-                                            <a class="scroll-to-anchor footnote-number">
-                                                <xsl:attribute name="href">
-                                                    <xsl:value-of select="concat('#link-to-', @uid)"/>
-                                                </xsl:attribute>
-                                                <xsl:attribute name="data-mark">
-                                                    <xsl:value-of select="concat('#link-to-', @uid)"/>
-                                                </xsl:attribute>
-                                                <xsl:apply-templates select="@index"/>
-                                            </a>
-                                            <xsl:apply-templates select="node()"/>
-                                        </div>
-                                    </xsl:for-each>
+                                    <div class="render-in-viewport">
+                                        <xsl:for-each select="m:translation/m:notes/m:note">
+                                            <div class="footnote indent glossarize">
+                                                <xsl:attribute name="id" select="@uid"/>
+                                                <a class="scroll-to-anchor footnote-number">
+                                                    <xsl:attribute name="href">
+                                                        <xsl:value-of select="concat('#link-to-', @uid)"/>
+                                                    </xsl:attribute>
+                                                    <xsl:attribute name="data-mark">
+                                                        <xsl:value-of select="concat('#link-to-', @uid)"/>
+                                                    </xsl:attribute>
+                                                    <xsl:apply-templates select="@index"/>
+                                                </a>
+                                                <xsl:apply-templates select="node()"/>
+                                            </div>
+                                        </xsl:for-each>
+                                    </div>
                                 </section>
                                 
                                 <hr class="hidden-print"/>
                                 
-                                <section id="bibliography" class="page indent">
+                                <section id="bibliography" class="page text indent">
                                     <a href="#bibliography" class="milestone" title="Bookmark this section">
                                         <xsl:value-of select="concat(m:translation/m:bibliography/@prefix, '.')"/>
                                     </a>
                                     <h3>Bibliography</h3>
-                                    <xsl:for-each select="m:translation/m:bibliography">
-                                        <xsl:apply-templates select="node()"/>
-                                    </xsl:for-each>
+                                    <div class="render-in-viewport">
+                                        <xsl:for-each select="m:translation/m:bibliography">
+                                            <xsl:apply-templates select="node()"/>
+                                        </xsl:for-each>
+                                    </div>
                                     
                                 </section>
     
@@ -585,7 +605,7 @@
                                         <xsl:value-of select="concat(m:translation/m:glossary/@prefix, '.')"/>
                                     </a>
                                     <h3>Glossary</h3>
-                                    <div class="">
+                                    <div class="render-in-viewport">
                                         <xsl:for-each select="m:translation/m:glossary/m:item">
                                             <xsl:sort select="common:standardized-sa(m:term[lower-case(@xml:lang) = 'en'][1])"/>
                                             <div class="glossary-item">
@@ -630,7 +650,7 @@
                                                         </xsl:for-each>
                                                         
                                                         <xsl:for-each select="m:definitions/m:definition">
-                                                            <p class="glossarize">
+                                                            <p class="definition glossarize">
                                                                 <xsl:apply-templates select="node()"/>
                                                             </p>
                                                         </xsl:for-each>
@@ -639,7 +659,7 @@
                                                     
                                                     <div class="col-sm-6 col-md-4 occurences hidden-print match-height-overflow print-height-override">
                                                         <xsl:attribute name="data-match-height" select="concat('g-', position())"/>
-                                                        <h6>Passages containing this term</h6>
+                                                        <h6>Finding passages containing this term...</h6>
                                                     </div>
                                                     
                                                 </div>
@@ -692,7 +712,6 @@
             </div>
     
             <div id="popup-footer" class="fixed-footer collapse hidden-print">
-                
                 <div class="container">
                     <div class="panel">
                         <div class="panel-body">
@@ -706,7 +725,6 @@
                         </div>
                     </div>
                 </div>
-                
                 <div class="fixed-btn-container close-btn-container">
                     <button type="button" class="btn-round close" aria-label="Close">
                         <span aria-hidden="true">
@@ -714,7 +732,21 @@
                         </span>
                     </button>
                 </div>
-                
+            </div>
+            
+            <div id="popup-footer-source" class="fixed-footer collapse hidden-print">
+                <div class="fix-height">
+                    <div class="data-container">
+                        
+                    </div>
+                </div>
+                <div class="fixed-btn-container close-btn-container">
+                    <button type="button" class="btn-round close" aria-label="Close">
+                        <span aria-hidden="true">
+                            <i class="fa fa-times"/>
+                        </span>
+                    </button>
+                </div>
             </div>
             
             <div id="contents-sidebar" class="fixed-sidebar collapse width hidden-print">

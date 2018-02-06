@@ -36,10 +36,10 @@
                     <xsl:attribute name="class" select="'ignore'"/>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:attribute name="class" select="concat('term ', ' glossarize-complete')"/>
+                    <xsl:attribute name="class" select="'term'"/>
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:apply-templates select="text()"/>
+            <xsl:apply-templates select="node()"/>
         </span>
     </xsl:template>
     
@@ -102,6 +102,14 @@
     
     <xsl:template match="tei:ref">
         <xsl:choose>
+            <xsl:when test="@cRef and not(@type) and upper-case(substring-before(@cRef, '.')) eq 'F'">
+                <xsl:if test="not(@rend) or @rend != 'hidden'">
+                    <a class="ref">
+                        <xsl:attribute name="href" select="concat('/source/', /m:response/m:translation/@id, '.html?folio=', substring-after(@cRef, '.'))"/>
+                        <xsl:attribute name="data-ajax-target" select="'#popup-footer-source .data-container'"/>
+                        [<xsl:apply-templates select="@cRef"/>]</a>
+                </xsl:if>
+            </xsl:when>
             <xsl:when test="@cRef">
                 <xsl:if test="not(@rend) or @rend != 'hidden'">
                     <span class="ref">[<xsl:apply-templates select="@cRef"/>]</span>
