@@ -59,19 +59,21 @@ declare function translation:long-titles($translation as node()) as node()* {
 };
 
 declare function translation:source($translation as node()) as node()* {
-    <source xmlns="http://read.84000.co/ns/1.0">
-        <toh>{ normalize-space(data($translation//tei:sourceDesc/tei:bibl/tei:ref)) }</toh>
-        <series>{ normalize-space(data($translation//tei:sourceDesc/tei:bibl/tei:series)) }</series>
-        <scope>{ normalize-space(data($translation//tei:sourceDesc/tei:bibl/tei:biblScope)) }</scope>
-        <range>{ normalize-space(data($translation//tei:sourceDesc/tei:bibl/tei:citedRange)) }</range>
-        <authors>
-        {
-            for $author in $translation//tei:sourceDesc/tei:bibl/tei:author
-            return 
-                <author>{ normalize-space($author/text()) }</author>
-        }
-        </authors>
-    </source>
+    let $default-bibl := $translation//tei:sourceDesc/tei:bibl[1]
+    return
+        <source xmlns="http://read.84000.co/ns/1.0" key="{ $default-bibl/@key }">
+            <toh>{ normalize-space(data($default-bibl/tei:ref)) }</toh>
+            <series>{ normalize-space(data($default-bibl/tei:series)) }</series>
+            <scope>{ normalize-space(data($default-bibl/tei:biblScope)) }</scope>
+            <range>{ normalize-space(data($default-bibl/tei:citedRange)) }</range>
+            <authors>
+            {
+                for $author in $default-bibl/tei:author
+                return 
+                    <author>{ normalize-space($author/text()) }</author>
+            }
+            </authors>
+        </source>
 };
 
 declare function translation:translation($translation as node()) as node()* {
@@ -280,7 +282,12 @@ declare function translation:bibliography($translation as node()) as node()* {
 
 declare function translation:bibliography-section($section as node()) as node()* {
     <nested-section xmlns="http://read.84000.co/ns/1.0">
-        <title>{ $section/tei:head[@type='section']/text() }</title>
+        {
+            if($section/tei:head[@type='section']/text())then
+                <title>{ $section/tei:head[@type='section']/text() }</title>
+            else
+                ()
+        }
         {
             for $item in $section/tei:bibl
             return

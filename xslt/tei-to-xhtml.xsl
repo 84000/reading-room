@@ -102,17 +102,19 @@
     
     <xsl:template match="tei:ref">
         <xsl:choose>
-            <xsl:when test="@cRef and not(@type) and upper-case(substring-before(@cRef, '.')) eq 'F'">
-                <xsl:if test="not(@rend) or @rend != 'hidden'">
-                    <a class="ref">
-                        <xsl:attribute name="href" select="concat('/source/', /m:response/m:translation/@id, '.html?folio=', substring-after(@cRef, '.'))"/>
-                        <xsl:attribute name="data-ajax-target" select="'#popup-footer-source .data-container'"/>
-                        [<xsl:apply-templates select="@cRef"/>]</a>
-                </xsl:if>
-            </xsl:when>
             <xsl:when test="@cRef">
-                <xsl:if test="not(@rend) or @rend != 'hidden'">
-                    <span class="ref">[<xsl:apply-templates select="@cRef"/>]</span>
+                <xsl:if test="(not(@rend) or @rend != 'hidden') and (not(@key) or @key eq /m:response/m:translation/m:source/@key)">
+                    <xsl:choose>
+                        <xsl:when test="@cRef and not(@type) and upper-case(substring-before(@cRef, '.')) eq 'F'">
+                            <a class="ref">
+                                <xsl:attribute name="href" select="concat('/source/', /m:response/m:translation/@id, '.html?folio=', substring-after(@cRef, '.'))"/>
+                                <xsl:attribute name="data-ajax-target" select="'#popup-footer-source .data-container'"/>
+                                [<xsl:apply-templates select="@cRef"/>]</a>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span class="ref">[<xsl:apply-templates select="@cRef"/>]</span>
+                        </xsl:otherwise>
+                    </xsl:choose>
                 </xsl:if>
             </xsl:when>
             <xsl:when test="@target">

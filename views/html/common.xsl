@@ -27,7 +27,7 @@
             </title>
             
             <link rel="stylesheet" type="text/css">
-                <xsl:attribute name="href" select="concat($resource-path, '/css/84000.css', '?v=', $version)"/>
+                <xsl:attribute name="href" select="concat($resource-path, '/css/84000-reading-room.css', '?v=', $version)"/>
             </link>
             <link rel="stylesheet" type="text/css">
                 <xsl:attribute name="href" select="concat($resource-path, '/css/ie10-viewport-bug-workaround.css')"/>
@@ -59,10 +59,6 @@
             </meta>
             <meta name="theme-color" content="#ffffff"/>
             
-            <script defer="defer">
-                <xsl:attribute name="src" select="concat($resource-path, '/js/84000-fe.min.js', '?v=', $version)"/>
-            </script>
-            
         </head>
         
     </xsl:template>
@@ -92,6 +88,19 @@
             <span class="visible-desktop"/>
             <span class="event-hover"/>
         </span>
+        
+        <script type="text/javascript">
+            function downloadJSAtOnload() {
+                var element = document.createElement("script");
+                element.src = "<xsl:value-of select="concat($resource-path, '/js/84000-fe.min.js', '?v=', $version)"/>";
+                document.body.appendChild(element);
+            }
+            if (window.addEventListener)
+                window.addEventListener("load", downloadJSAtOnload, false);
+            else if (window.attachEvent)
+                window.attachEvent("onload", downloadJSAtOnload);
+            else window.onload = downloadJSAtOnload;
+        </script>
         
         <xsl:if test="$ga-tracking-id != ''">
             <script xmlns="http://www.w3.org/1999/xhtml">

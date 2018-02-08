@@ -73,12 +73,6 @@
                                             </div>
                                         </xsl:if>
                                         
-                                        <div class="hidden-print">
-                                            <img class="logo">
-                                                <xsl:attribute name="src" select="concat($resource-path,'/imgs/logo-stacked.png')"/>
-                                            </img>
-                                        </div>
-                                        
                                     </div>
                                     
                                     <xsl:if test="count(m:translation/m:long-titles/m:title/text()) gt 1">
@@ -112,15 +106,13 @@
     
                                     <div class="page">
                                         
-                                        <div class="visible-print-block">
-                                            <img class="logo">
-                                                <xsl:attribute name="src" select="concat($resource-path,'/imgs/logo.png')"/>
-                                            </img>
-                                        </div>
+                                        <img class="logo">
+                                            <xsl:attribute name="src" select="concat($resource-path,'/imgs/logo.png')"/>
+                                        </img>
                                         
-                                        <div>
+                                        <div id="toh">
                                             <h4>
-                                                <strong id="toh">
+                                                <strong>
                                                     <xsl:apply-templates select="m:translation/m:source/m:toh"/>
                                                 </strong>
                                             </h4>
@@ -146,9 +138,6 @@
                                             </p>
                                         </div>
                                     
-                                    </div>
-                                    
-                                    <div class="page">
                                         <div id="license">
                                             <img>
                                                 <xsl:attribute name="src" select="m:translation/m:translation/m:license/@img-url"/>
@@ -366,7 +355,9 @@
                                         <xsl:value-of select="concat(m:translation/m:summary/@prefix, '.')"/>
                                     </a>
                                     <h3>Summary</h3>
-                                    <xsl:apply-templates select="m:translation/m:summary"/>
+                                    <div class="render-in-viewport">
+                                        <xsl:apply-templates select="m:translation/m:summary"/>
+                                    </div>
                                 </section>
     
                                  <hr class="hidden-print"/>
@@ -376,7 +367,9 @@
                                         <xsl:value-of select="concat(m:translation/m:acknowledgment/@prefix, '.')"/>
                                     </a>
                                     <h3>Acknowledgements</h3>
-                                    <xsl:apply-templates select="m:translation/m:acknowledgment"/>  
+                                    <div class="render-in-viewport">
+                                        <xsl:apply-templates select="m:translation/m:acknowledgment"/>
+                                    </div>
                                 </section>
     
                                 <hr class="hidden-print"/>
@@ -425,7 +418,7 @@
                                     
                                     <xsl:for-each select="m:translation/m:body/m:chapter">
                                         
-                                        <xsl:if test="m:title/text()">
+                                        <xsl:if test="m:title/text() or m:title-number/text()">
                                             <hr class="hidden-print"/>
                                         </xsl:if>
                                         
@@ -832,9 +825,11 @@
     
     <xsl:template match="m:nested-section[ancestor::m:bibliography]">
         <div class="nested-section margin">
-            <h5 class="relative section-label">
-                <xsl:apply-templates select="m:title/text()"/>
-            </h5>
+            <xsl:if test="m:title/text()">
+                <h5 class="relative section-label">
+                    <xsl:apply-templates select="m:title/text()"/>
+                </h5>
+            </xsl:if>
             <xsl:for-each select="m:item">
                 <p>
                     <xsl:apply-templates select="node()"/>
