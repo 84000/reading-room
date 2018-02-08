@@ -109,6 +109,7 @@
                             </a>
                         </td>
                     </tr>
+                    <!-- 
                     <tr class="sub">
                         <td>
                             <xsl:value-of select="fn:format-number(xs:integer(@glossaryCount),'#,##0')"/>
@@ -146,6 +147,7 @@
                         <td/>
                         <td/>
                     </tr>
+                     -->
                 </xsl:for-each>
             </tbody>
         </table>

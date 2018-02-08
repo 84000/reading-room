@@ -8,8 +8,8 @@ xquery version "3.0" encoding "UTF-8";
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace common="http://read.84000.co/common" at "../modules/common.xql";
+import module namespace source="http://read.84000.co/source" at "../modules/source.xql";
 import module namespace functx="http://www.functx.com";
-import module namespace converter="http://tbrc.org/xquery/ewts2unicode" at "java:org.tbrc.xquery.extensions.EwtsToUniModule";
 
 declare option exist:serialize "method=xml indent=no";
 
@@ -29,7 +29,7 @@ let $volume :=
 let $folio-page := substring-before($folio, '.')
 let $folio-side := substring-after($folio, '.')
 
-let $ekangyur-page := 
+let $ekangyur-page-number := 
     if(functx:is-a-number($folio-page)) then 
         if($folio-side eq 'a') then
             (xs:integer($folio-page) * 2) -1 
@@ -39,27 +39,8 @@ let $ekangyur-page :=
             0
     else
         0
-        
-let $ekangyur-volume := xs:string($volume + 126)
-let $ekangyur-title := concat('UT4CZ5369-I1KG9', $ekangyur-volume)
-let $bo := doc(concat('/db/apps/eKangyur/data/UT4CZ5369/', $ekangyur-title, '/', $ekangyur-title, '-0000.xml'))//tei:p[@n eq xs:string($ekangyur-page)]
-let $bo-ltn := 
-    <tei:p>
-    { 
-        for $line at $pos in $bo/text()[normalize-space(.)]
-        return
-        (
-            element tei:milestone {
-                attribute unit {'line'},
-                attribute n { $pos }
-            },
-            text {
-                converter:toWylie($line)
-            }
-            
-        )
-    }
-    </tei:p>
+
+let $ekangyur-volume-number := xs:integer($volume + 126)
 
 return
     <response 
@@ -71,8 +52,7 @@ return
         translation-id="{ $translation-id }"
         folio="{ $folio }"
         volume="{ $volume }">
-        <source name="ekangyur" page="{ $ekangyur-page }" volume="{ $ekangyur-volume }" title="{ $ekangyur-title }">
-            <language xml:lang="bo">{ $bo }</language>
-            <language xml:lang="bo-ltn">{ $bo-ltn }</language>
-        </source>
+        {
+            source:ekangyur-page($ekangyur-volume-number, $ekangyur-page-number)
+        }
     </response>

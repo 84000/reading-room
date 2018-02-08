@@ -194,7 +194,7 @@ return
                         </test>
                 }
                 {
-                    let $toh := $translation-html//*[@id eq 'toh']/text()
+                    let $toh := $translation-html//*[@id eq 'toh']//xhtml:h4/text()
                     let $location := $translation-html//*[@id eq 'location']/text()
                     let $authours-summary := $translation-html//*[@id eq 'authours-summary']/text()
                     let $edition := $translation-html//*[@id eq 'edition']/text()

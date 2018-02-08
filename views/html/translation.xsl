@@ -3,7 +3,7 @@
     
     <xsl:import href="../../xslt/tei-to-xhtml.xsl"/>
     <xsl:import href="reading-room-page.xsl"/>
-     
+    
     <xsl:template match="/m:response">
         
         <xsl:variable name="app-id" select="@app-id"/>
@@ -112,9 +112,7 @@
                                         
                                         <div id="toh">
                                             <h4>
-                                                <strong>
-                                                    <xsl:apply-templates select="m:translation/m:source/m:toh"/>
-                                                </strong>
+                                                <xsl:apply-templates select="m:translation/m:source/m:toh"/>
                                             </h4>
                                             <p id="location">
                                                 <xsl:value-of select="string-join(m:translation/m:source/m:series/text() | m:translation/m:source/m:scope/text() | m:translation/m:source/m:range/text(), ', ')"/>.
