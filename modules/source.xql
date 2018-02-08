@@ -16,7 +16,7 @@ declare function source:ekangyur-page($volume-number as xs:integer, $page-number
     let $volume-page-count := count($volume//tei:p)
     
     return
-        if($page-number gt $volume-page-count)then
+        if($volume-page-count and ($page-number gt $volume-page-count))then
             source:ekangyur-page($volume-number + 1, ($page-number - $volume-page-count) + 1)
         else
         
