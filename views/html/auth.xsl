@@ -28,9 +28,11 @@
         
         <!-- Compile with page template -->
         <xsl:call-template name="website-page">
+            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-url" select="''"/>
             <xsl:with-param name="page-type" select="'reading-room auth'"/>
             <xsl:with-param name="page-title" select="'Authorisation'"/>
-            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-description" select="'You are not authorised to access this resource.'"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
     

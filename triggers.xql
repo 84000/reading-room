@@ -21,7 +21,6 @@ declare function local:after-update-document-functions($doc) {
     local:footnote-indexes($doc),
     local:glossary-types($doc),
     local:glossary-bo($doc),
-    (: local:glossary-prioritise($doc), :)
     local:glossary-remove-term-ids($doc),
     local:permanent-ids($doc),
     local:temporary-ids($doc),

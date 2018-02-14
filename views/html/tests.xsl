@@ -223,9 +223,11 @@
         </xsl:variable>
         
         <xsl:call-template name="reading-room-page">
+            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-url" select="''"/>
             <xsl:with-param name="page-type" select="'reading-room utilities tests'"/>
             <xsl:with-param name="page-title" select="'Reading Room Tests'"/>
-            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-description" select="'Automated tests of the 84000 Reading Room app.'"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
         

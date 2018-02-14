@@ -121,9 +121,11 @@
         </xsl:variable>
         
         <xsl:call-template name="reading-room-page">
+            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-url" select="''"/>
             <xsl:with-param name="page-type" select="'reading-room utilities'"/>
             <xsl:with-param name="page-title" select="concat('Edit Toh', m:translation/m:source/m:toh)"/>
-            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-description" select="''"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
         

@@ -806,9 +806,11 @@
         
         <!-- Pass the content to the page -->
         <xsl:call-template name="reading-room-page">
+            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-url" select="concat('http://read.84000.co/translation/', m:translation/@id, '.html')"/>
             <xsl:with-param name="page-type" select="concat('reading-room translation ', if(@view-mode eq 'editor') then 'editor-mode' else '')"/>
             <xsl:with-param name="page-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']/text()"/>
-            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-description" select="normalize-space(data(m:translation/m:summary/tei:p[1]))"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
         

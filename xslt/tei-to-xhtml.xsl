@@ -105,7 +105,7 @@
             <xsl:when test="@cRef">
                 <xsl:if test="(not(@rend) or @rend != 'hidden') and (not(@key) or @key eq /m:response/m:translation/m:source/@key)">
                     <xsl:choose>
-                        <xsl:when test="@cRef and not(@type) and upper-case(substring-before(@cRef, '.')) eq 'F'">
+                        <xsl:when test="@cRef and not(@type) and upper-case(substring-before(@cRef, '.')) eq 'F' and 'function' eq 'live'">
                             <a class="ref">
                                 <xsl:attribute name="href" select="concat('/source/', /m:response/m:translation/@id, '.html?folio=', substring-after(@cRef, '.'))"/>
                                 <xsl:attribute name="data-ajax-target" select="'#popup-footer-source .data-container'"/>

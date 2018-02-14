@@ -6,8 +6,10 @@
     <xsl:template name="website-page">
         
         <xsl:param name="app-id"/>
+        <xsl:param name="page-url"/>
         <xsl:param name="page-type"/>
         <xsl:param name="page-title"/>
+        <xsl:param name="page-description"/>
         <xsl:param name="content"/>
         
         <!-- Look up environment variables -->
@@ -19,7 +21,9 @@
             <!-- Get the common <head> -->
             <xsl:call-template name="html-head">
                 <xsl:with-param name="app-id" select="$app-id"/>
+                <xsl:with-param name="page-url" select="$page-url"/>
                 <xsl:with-param name="page-title" select="$page-title"/>
+                <xsl:with-param name="page-description" select="$page-description"/>
             </xsl:call-template>
             
             <body id="top">

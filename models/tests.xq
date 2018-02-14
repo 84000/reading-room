@@ -290,15 +290,41 @@ return
                 {
                     let $glossary-count-html := count($translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')])
                     let $glossary-count-tei := count($translation//tei:back/tei:div[@type='glossary']//tei:gloss)
+                    let $html-terms := $translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')]//*[self::xhtml:h4 | self::xhtml:p]
+                    let $html-terms-strs := 
+                        for $html-term in $html-terms/tokenize(data(.), '·')
+                        return 
+                            normalize-space(lower-case($html-term))
+                    let $tei-terms := $translation//tei:back/tei:div[@type='glossary']//tei:gloss/tei:term[text()]/normalize-space(lower-case(data(.)))
+                    let $glossary-terms-count-html := count($html-terms-strs)
+                    let $glossary-terms-count-tei := count($tei-terms)
                     return
                         <test>
-                            <title>Glossary: The text has at least 1 glossary item and there are the same number in the HTML as in the TEI</title>
+                            <title>Glossary: The text has at least 1 glossary item and there are the same number of items and terms in the HTML as in the TEI</title>
                             <result>{ if(
                                     $glossary-count-html > 0
                                     and $glossary-count-html = $glossary-count-tei
+                                    and $glossary-terms-count-html = $glossary-terms-count-tei
                                 ) then 1 else 0 }</result>
                             <details>
-                                <detail>{$glossary-count-tei} term(s) in the TEI, {$glossary-count-html} term(s) in the HTML.</detail>
+                                <detail>{$glossary-count-tei} glossary item(s) in the TEI, {$glossary-count-html} glossary item(s) in the HTML.</detail>
+                                <detail>{$glossary-terms-count-tei} term(s) in the TEI, {$glossary-terms-count-html} term(s) in the HTML.</detail>
+                                {
+                                    if($glossary-count-html > $glossary-count-tei)then
+                                        for $missing-html-term in $html-terms-strs[not(. = $tei-terms)]
+                                        return 
+                                            <detail>{ $missing-html-term }</detail>
+                                    else
+                                        ()
+                                }
+                                {
+                                    if($glossary-count-html < $glossary-count-tei)then
+                                        for $missing-tei-term in $tei-terms[not(. = $html-terms-strs)]
+                                        return 
+                                            <detail>{ $missing-tei-term }</detail>
+                                    else
+                                        ()
+                                }
                             </details>
                         </test>
                 }

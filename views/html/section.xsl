@@ -366,7 +366,6 @@
                                             <span class="text-sa">
                                                 <xsl:value-of select="m:titles/m:title[@xml:lang='sa-ltn']/text()"/> 
                                             </span>
-                                            
                                         </xsl:if>
                                         
                                         <xsl:if test="m:summary/text() or m:title-variants/m:title/text()">
@@ -783,9 +782,11 @@
         
         <!-- Compile with page template -->
         <xsl:call-template name="website-page">
+            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-url" select="concat('http://read.84000.co/section/', m:section/m:id, '.html')"/>
             <xsl:with-param name="page-type" select="'reading-room section'"/>
             <xsl:with-param name="page-title" select="m:section/m:titles/m:title[@xml:lang = 'en']"/>
-            <xsl:with-param name="app-id" select="@app-id"/>
+            <xsl:with-param name="page-description" select="normalize-space(data(m:section/m:contents))"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
         

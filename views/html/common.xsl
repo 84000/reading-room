@@ -9,7 +9,9 @@
     <xsl:template name="html-head">
         
         <xsl:param name="app-id"/>
+        <xsl:param name="page-url"/>
         <xsl:param name="page-title"/>
+        <xsl:param name="page-description"/>
         
         <!-- Look up environment variables -->
         <xsl:variable name="environment" select="doc('/db/env/environment.xml')/m:environments/m:environment[@id = $app-id]"/>
@@ -58,7 +60,24 @@
                 <xsl:attribute name="content" select="concat($resource-path, '/favicon/browserconfig.xml')"/>
             </meta>
             <meta name="theme-color" content="#ffffff"/>
-            
+            <meta property="og:url">
+                <xsl:attribute name="content" select="$page-url"/>
+            </meta>
+            <meta property="og:title">
+                <xsl:attribute name="content" select="$page-title"/>
+            </meta>
+            <meta property="og:description">
+                <xsl:attribute name="content" select="$page-description"/>
+            </meta>
+            <meta property="og:image">
+                <xsl:attribute name="content" select="concat($resource-path, '/imgs/logo-stacked-sq.jpg')"/>
+            </meta>
+            <meta property="og:image:width" content="300"/>
+            <meta property="og:image:height" content="300"/>
+            <meta property="og:site_name" content="84000 Translating The Words of The Budda"/>
+            <meta name="twitter:card" content="summary"/>
+            <meta name="twitter:image:alt" content="84000 Translating The Words of The Budda Logo"/>
+            <meta name="twitter:site" content="@Translate84000"/>
         </head>
         
     </xsl:template>
@@ -73,8 +92,9 @@
         <xsl:variable name="ga-tracking-id" select="$environment/m:google-analytics/@tracking-id"/>
         
         <footer xmlns="http://www.w3.org/1999/xhtml" class="hidden-print">
-            <div class="container">
-                Copyright © 2011-2018 84000: Translating the Words of the Buddha - All Rights Reserved | <a href="mailto:info@84000.co">Contact Us</a>
+            <div class="container" itemscope="itemscope" itemtype="http://schema.org/Organization">
+                Copyright © 2011-2018 <span itemprop="name">84000: Translating the Words of the Buddha</span> - All Rights Reserved
+                <br/>Contact: <a href="mailto:info@84000.co" itemprop="email">info@84000.co</a> | Website: <a href="http://84000.co" itemprop="url">http://84000.co</a>
             </div>
         </footer>
         
