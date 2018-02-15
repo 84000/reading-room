@@ -129,7 +129,7 @@ return
                                 { 
                                 for $message in $validation-report//*:message
                                 return 
-                                    <detail>{$message/text()}</detail>
+                                    <detail type="debug">{$message/text()}</detail>
                                 }
                             </details>
                         </test>
@@ -149,7 +149,7 @@ return
                                         for $id in $distinct-ids
                                         return
                                             if($ids[. = $id][2]) then
-                                                <detail>{$ids[. = $id][2]} is duplicated</detail>
+                                                <detail type="debug">{$ids[. = $id][2]} is duplicated</detail>
                                             else ()
                                     else ()
                                 }
@@ -290,40 +290,35 @@ return
                 {
                     let $glossary-count-html := count($translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')])
                     let $glossary-count-tei := count($translation//tei:back/tei:div[@type='glossary']//tei:gloss)
-                    let $html-terms := $translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')]//*[self::xhtml:h4 | self::xhtml:p]
-                    let $html-terms-strs := 
-                        for $html-term in $html-terms/tokenize(data(.), '·')
+                    let $tei-terms := $translation//tei:back/tei:div[@type='glossary']//tei:gloss/tei:term[text()][not(tei:ptr)]/normalize-space(lower-case(string(.)))
+                    let $html-terms-untokenized := $translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')]//*[self::xhtml:h4 | self::xhtml:p]
+                    let $html-terms := 
+                        for $html-term in $html-terms-untokenized/tokenize(string(.), '·')
                         return 
                             normalize-space(lower-case($html-term))
-                    let $tei-terms := $translation//tei:back/tei:div[@type='glossary']//tei:gloss/tei:term[text()]/normalize-space(lower-case(data(.)))
-                    let $glossary-terms-count-html := count($html-terms-strs)
-                    let $glossary-terms-count-tei := count($tei-terms)
+                    let $anomalies := 
+                        for $tei-term in $tei-terms
+                        return
+                            if(not(count($tei-terms[. = $tei-term]) = count($html-terms[. = $tei-term]))) then
+                                concat($tei-term, ' (', xs:string(count($tei-terms[. = $tei-term])), ' occurrence(s) in the TEI and ', xs:string(count($html-terms[. = $tei-term])), ' occurrence(s) in the HTML)')
+                            else
+                                ()
                     return
                         <test>
-                            <title>Glossary: The text has at least 1 glossary item and there are the same number of items and terms in the HTML as in the TEI</title>
+                            <title>Glossary: The text has at least 1 glossary item and there are the same number in the HTML as in the TEI with no anomalies in the counts of each term.</title>
                             <result>{ if(
                                     $glossary-count-html > 0
                                     and $glossary-count-html = $glossary-count-tei
-                                    and $glossary-terms-count-html = $glossary-terms-count-tei
+                                    and count($anomalies) = 0
                                 ) then 1 else 0 }</result>
                             <details>
                                 <detail>{$glossary-count-tei} glossary item(s) in the TEI, {$glossary-count-html} glossary item(s) in the HTML.</detail>
-                                <detail>{$glossary-terms-count-tei} term(s) in the TEI, {$glossary-terms-count-html} term(s) in the HTML.</detail>
+                                <detail>{ count($anomalies) } anomalies detected.</detail>
                                 {
-                                    if($glossary-count-html > $glossary-count-tei)then
-                                        for $missing-html-term in $html-terms-strs[not(. = $tei-terms)]
-                                        return 
-                                            <detail>{ $missing-html-term }</detail>
-                                    else
-                                        ()
-                                }
-                                {
-                                    if($glossary-count-html < $glossary-count-tei)then
-                                        for $missing-tei-term in $tei-terms[not(. = $html-terms-strs)]
-                                        return 
-                                            <detail>{ $missing-tei-term }</detail>
-                                    else
-                                        ()
+                                    for $anomaly in $anomalies
+                                    return 
+                                        <detail type="debug">{ $anomaly }</detail>
+
                                 }
                             </details>
                         </test>

@@ -14,17 +14,8 @@
                         <xsl:value-of select="$page-title"/>
                     </h2>
                 </div>
-                <xsl:for-each select="m:translation/m:bibliography/m:section">
-                    <div>
-                        <h4>
-                            <xsl:apply-templates select="m:title/text()"/>
-                        </h4>
-                        <xsl:for-each select="m:item">
-                            <p class="bibl">
-                                <xsl:apply-templates select="node()"/>
-                            </p>
-                        </xsl:for-each>
-                    </div>
+                <xsl:for-each select="m:translation/m:bibliography">
+                    <xsl:apply-templates select="node()"/>
                 </xsl:for-each>
             </section>
         </xsl:variable>

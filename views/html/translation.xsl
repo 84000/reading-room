@@ -634,13 +634,13 @@
                                                             </p>
                                                         </xsl:if>
                                                         
-                                                        <xsl:for-each select="m:alternatives/m:alternative">
+                                                        <xsl:for-each select="m:alternative">
                                                             <p class="term alternative">
                                                                 <xsl:apply-templates select="text()"/>
                                                             </p>
                                                         </xsl:for-each>
                                                         
-                                                        <xsl:for-each select="m:definitions/m:definition">
+                                                        <xsl:for-each select="m:definition">
                                                             <p class="definition glossarize">
                                                                 <xsl:apply-templates select="node()"/>
                                                             </p>
@@ -814,29 +814,6 @@
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
         
-    </xsl:template>
-    
-    <xsl:template match="m:nested-section">
-        <div class="nested-section">
-            <xsl:apply-templates select="tei:*"/>
-            <xsl:apply-templates select="m:nested-section"/>
-        </div>
-    </xsl:template>
-    
-    <xsl:template match="m:nested-section[ancestor::m:bibliography]">
-        <div class="nested-section margin">
-            <xsl:if test="m:title/text()">
-                <h5 class="relative section-label">
-                    <xsl:apply-templates select="m:title/text()"/>
-                </h5>
-            </xsl:if>
-            <xsl:for-each select="m:item">
-                <p>
-                    <xsl:apply-templates select="node()"/>
-                </p>
-            </xsl:for-each>
-            <xsl:apply-templates select="m:nested-section"/>
-        </div>
     </xsl:template>
     
 </xsl:stylesheet>

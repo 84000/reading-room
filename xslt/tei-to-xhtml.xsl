@@ -268,4 +268,29 @@
         </xsl:if>
     </xsl:template>
     
+    <!-- Nested Sections -->
+    <xsl:template match="m:nested-section">
+        <div class="nested-section">
+            <xsl:apply-templates select="tei:*"/>
+            <xsl:apply-templates select="m:nested-section"/>
+        </div>
+    </xsl:template>
+    
+    <!-- Bibliography -->
+    <xsl:template match="m:nested-section[ancestor::m:bibliography]">
+        <div class="nested-section margin">
+            <xsl:if test="m:title/text()">
+                <h5 class="relative section-label">
+                    <xsl:apply-templates select="m:title/text()"/>
+                </h5>
+            </xsl:if>
+            <xsl:for-each select="m:item">
+                <p>
+                    <xsl:apply-templates select="node()"/>
+                </p>
+            </xsl:for-each>
+            <xsl:apply-templates select="m:nested-section"/>
+        </div>
+    </xsl:template>
+    
 </xsl:stylesheet>

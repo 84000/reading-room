@@ -310,37 +310,38 @@ declare function translation:glossary($translation as node()) as node()* {
                 uid="{ $gloss/@xml:id/string() }" 
                 type="{ $gloss/@type/string() }" 
                 mode="{ $gloss/@mode/string() }">
-                <term xml:lang="en">{ normalize-space(functx:capitalize-first($gloss/tei:term[not(@xml:lang)][not(@type)][1]/text())) }</term>
+                <term xml:lang="en">
+                { 
+                    normalize-space(functx:capitalize-first($gloss/tei:term[not(@xml:lang)][not(@type)][1]/text())) 
+                }
+                </term>
                 {
-                    for $item in $gloss/tei:term[@xml:lang][not(@type)]
+                    for $item in $gloss/tei:term
                     return 
-                        <term xml:lang="{ lower-case($item/@xml:lang) }">
-                        { 
-                            if ($item/@xml:lang eq 'Bo-Ltn') then
-                                common:bo-ltn($item/text())
-                            else
-                                $item/text() 
-                        }
-                        </term>
-                }
-                <definitions>
-                {
-                    for $definition in $gloss/tei:term[@type eq 'definition']
-                    return
-                        <definition>{ $definition/node() }</definition>
-                }
-                </definitions>
-                <alternatives>
-                {
-                    for $alternative in $gloss/tei:term[@type eq 'alternative']
-                    return
-                        <alternative xml:lang="{ lower-case($alternative/@xml:lang) }">
-                        { 
-                            normalize-space(data($alternative)) 
-                        }
-                        </alternative>
-                }
-                </alternatives>
+                        if($item[@type eq 'definition']) then
+                            <definition>
+                            { 
+                                $item/node() 
+                            }
+                            </definition>
+                        else if ($item[@type eq 'alternative']) then
+                            <alternative xml:lang="{ lower-case($item/@xml:lang) }">
+                            { 
+                                normalize-space(string($item)) 
+                            }
+                            </alternative>
+                        else if ($item[@xml:lang]) then
+                            <term xml:lang="{ lower-case($item/@xml:lang) }">
+                            { 
+                                if ($item/@xml:lang eq 'Bo-Ltn') then
+                                    common:bo-ltn($item/text())
+                                else
+                                    $item/text() 
+                            }
+                            </term>
+                        else 
+                            ()
+                 }
             </item>
     }
     </glossary>

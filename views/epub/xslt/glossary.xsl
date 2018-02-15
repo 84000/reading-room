@@ -22,18 +22,30 @@
                         <h4 class="term">
                             <xsl:apply-templates select="m:term[lower-case(@xml:lang) = 'en']"/>
                         </h4>
-                        <xsl:for-each select="m:term[lower-case(@xml:lang) != 'en']">
+                        <xsl:if test="m:term[lower-case(@xml:lang) eq 'bo-ltn']">
                             <p>
                                 <xsl:attribute name="class" select="common:lang-class(@xml:lang)"/>
-                                <xsl:apply-templates select="node()"/>
+                                <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'bo-ltn'], ' · ')"/>
                             </p>
-                        </xsl:for-each>
-                        <xsl:for-each select="m:alternatives/m:alternative">
+                        </xsl:if>
+                        <xsl:if test="m:term[lower-case(@xml:lang) eq 'bo']">
+                            <p>
+                                <xsl:attribute name="class" select="common:lang-class(@xml:lang)"/>
+                                <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'bo'], ' · ')"/>
+                            </p>
+                        </xsl:if>
+                        <xsl:if test="m:term[lower-case(@xml:lang) eq 'sa-ltn']">
+                            <p>
+                                <xsl:attribute name="class" select="common:lang-class(@xml:lang)"/>
+                                <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'sa-ltn'], ' · ')"/>
+                            </p>
+                        </xsl:if>
+                        <xsl:for-each select="m:alternative">
                             <p>
                                 <xsl:apply-templates select="text()"/>
                             </p>
                         </xsl:for-each>
-                        <xsl:for-each select="m:definitions/m:definition">
+                        <xsl:for-each select="m:definition">
                             <p>
                                 <xsl:apply-templates select="node()"/>
                             </p>

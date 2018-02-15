@@ -77,6 +77,9 @@
                 <ul>
                     <xsl:for-each select="$test-detail/m:detail">
                         <li>
+                            <xsl:if test="@type eq 'debug'">
+                                <xsl:attribute name="class" select="'debug'"/>
+                            </xsl:if>
                             <xsl:copy-of select="node()"/>
                         </li>
                     </xsl:for-each>
