@@ -8,7 +8,7 @@
     <xsl:template match="/m:response">
         
         <xsl:variable name="content">
-            <section>
+            <section epub:type="glossary">
                 
                 <div class="center header-lg">
                     <h2>

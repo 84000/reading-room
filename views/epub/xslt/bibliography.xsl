@@ -8,7 +8,7 @@
     <xsl:template match="/m:response">
         
         <xsl:variable name="content">
-            <section class="spaced">
+            <section class="spaced" epub:type="bibliography">
                 <div class="center header-lg">
                     <h2>
                         <xsl:value-of select="$page-title"/>

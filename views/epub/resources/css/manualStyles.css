@@ -130,12 +130,13 @@ h5.space-before {
 	margin-left: 60px;
 }
 .milestones p {
-  text-align: justify;
-	text-indent: 2em;
+    text-align: justify;
+    text-indent: 2em;
 }
 .milestones .line-group p {
-	margin-left: 0px;
-	text-indent: 0;
+    margin-left: 0px;
+    padding-left: 2em;
+    text-indent: -2em;
 }
 
 /* footnote links */
@@ -246,27 +247,16 @@ p.space-before {
   margin-top: 10px;
 }
 
-dl.inline:after {
-  content: "";
-  display: block;
-  width: 100%;
-  clear: both;
+/* Abbreviations */
+#abbreviations table {
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
-dl.inline dt, dl.inline dd {
-  float: left;
-}
-dl.inline dt {
-  clear: both;
-  font-weight: normal;
-}
-dl.inline dd {
-  clear: none;
-}
-dl.inline dd:before {
-  content: '-';
-  padding: 0px 8px;
+#abbreviations table th {
+  padding-right: 8px;
 }
 
+/* Glossary */
 .glossary-item {
   margin-bottom: 20px; 
 }

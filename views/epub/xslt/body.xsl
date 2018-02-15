@@ -28,7 +28,7 @@
             </xsl:if>
             
             <xsl:for-each select="m:translation/m:body/m:chapter">
-                <section epub:type="chapter" class="milestones">
+                <section class="milestones" epub:type="chapter">
                     <xsl:attribute name="id" select="concat('chapter-', @chapter-index/string())"/>
                     <xsl:variable name="chapter-index" select="@chapter-index/string()"/>
                     
@@ -62,7 +62,7 @@
             </xsl:if>
             
             <xsl:if test="m:translation/m:appendix//tei:p">
-                <section id="appendix">
+                <section id="appendix" class="milestones" epub:type="appendix">
                     <div class="center header-lg">
                         <h2>Appendix</h2>
                     </div>
@@ -88,17 +88,31 @@
                             Abbreviations
                         </h2>
                     </div>
-                    <dl class="inline">
-                        <xsl:for-each select="m:translation/m:abbreviations/m:item">
-                            <xsl:sort select="m:abbreviation/text()"/>
-                            <dt>
-                                <xsl:apply-templates select="m:abbreviation/text()"/>
-                            </dt>
-                            <dd>
-                                <xsl:apply-templates select="m:explanation/node()"/>
-                            </dd>
-                        </xsl:for-each>
-                    </dl>
+                    <xsl:if test="m:translation/m:abbreviations/m:head">
+                        <h5>
+                            <xsl:apply-templates select="m:translation/m:abbreviations/m:head/text()"/>
+                        </h5>
+                    </xsl:if>
+                    <table>
+                        <tbody>
+                            <xsl:for-each select="m:translation/m:abbreviations/m:item">
+                                <xsl:sort select="m:abbreviation/text()"/>
+                                <tr>
+                                    <th>
+                                        <xsl:apply-templates select="m:abbreviation/text()"/>
+                                    </th>
+                                    <td>
+                                        <xsl:apply-templates select="m:explanation/node()"/>
+                                    </td>
+                                </tr>
+                            </xsl:for-each>
+                        </tbody>
+                    </table>
+                    <xsl:if test="m:translation/m:abbreviations/m:foot">
+                        <p>
+                            <xsl:apply-templates select="m:translation/m:abbreviations/m:foot/text()"/>
+                        </p>
+                    </xsl:if>
                 </section>
             </xsl:if>
             
