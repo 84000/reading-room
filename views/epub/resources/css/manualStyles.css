@@ -28,24 +28,30 @@ p {
 a {
 	color: #003f5f;
 }
+a.milestone {
+  text-decoration: none;
+  color: inherit;
+  page-break-after: avoid;
+  font-size: 0.8em;
+}
 
 /* headings */
 h1 {
-	font-size: 1.7em;
+	font-size: 1.4em;
 	font-weight: 500;
 	line-height: 1.3em;
 }
 h2 {
-	font-size: 1.5em;
+	font-size: 1.3em;
 	font-weight: 500;
 	line-height: 1.4em;
 }
 h3 {
-	font-size: 1.3em;
+	font-size: 1.2em;
 	font-weight: 500;
 }	
 h4 {
-	font-size: 1.15em;
+	font-size: 1.1em;
 	font-weight: 600;
 	margin-top: 20px;
 }
@@ -119,24 +125,34 @@ h5.space-before {
 }
 
 /* milestone indents */
-.milestones .milestone, .footnote a:first-child {
-  position:absolute;
-  left:-60px;
-  width: 40px;
-  text-indent: 0;
+.milestones {
+  padding-left: 50px;
 }
-.milestones p, .milestones .line-group, p.footnote {
-	position:relative;
-	margin-left: 60px;
+.milestones p .milestone {
+  margin-left: -75px;
+  padding-right: 50px;
 }
 .milestones p {
     text-align: justify;
-    text-indent: 2em;
+    text-indent: 25px;
+}
+.milestones .line-group .milestone {
+  margin-left: -50px;
 }
 .milestones .line-group p {
     margin-left: 0px;
     padding-left: 2em;
     text-indent: -2em;
+}
+.milestones h2 {
+    font-weight: normal;
+}
+
+p.footnote {
+  margin-bottom: 12px;
+}
+p.footnote a.footnote-number {
+  margin-right: 15px;
 }
 
 /* footnote links */
@@ -195,27 +211,25 @@ img.logo-84000 {
 }
 
 /* title pages */
-.half-title, .colophon {
+.half-title, .full-title, .colophon {
 	padding-top: 20%;
 	padding-bottom: 20%;
 }
-.half-title h1, .half-title h2 {
-	margin-bottom: 45px;
+.full-title h1, .full-title h2, .half-title h1, .half-title h2, .full-title p {
+	margin-bottom: 30px;
+}
+.full-title h2 {
+    font-size: 1em;
 }
 .half-title .logo {
 	display: inline-block;
 	margin: 0px auto;
 	margin-top: 50px;
 }
-.full-title {
-	padding-top: 10%;
-}
-.full-title h1, .full-title h2, .full-title p {
-	margin-bottom: 35px;
-}
 .full-title .translator {
     padding: 15px;
     background-color: #f9eadb;
+    margin-bottom: 0px;
 }
 
 /* imprint */
@@ -254,6 +268,12 @@ p.space-before {
 }
 #abbreviations table th {
   padding-right: 8px;
+}
+
+/* Bibliography */
+#bibliography p {
+  padding-left: 2em;
+  text-indent: -2em;
 }
 
 /* Glossary */

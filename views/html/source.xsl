@@ -8,10 +8,12 @@
             <xsl:value-of select="concat('Folio ', @folio)"/>
         </h3>
         <hr/>
-        <xsl:apply-templates select="m:source[@name eq 'ekangyur']/m:language[@xml:lang eq 'bo']"/>
+        <div class="container">
+            <xsl:apply-templates select="m:source[@name eq 'ekangyur']/m:language[@xml:lang eq 'bo']"/>
+        </div>
         <hr/>
-        <p class="text-muted text-small">
-            <xsl:value-of select="concat('eKangyur ', m:source[@name eq 'ekangyur']/@title, ', page ', m:source[@name eq 'ekangyur']/@page, '.')"/>
+        <p class="footer">
+            <xsl:value-of select="concat('eKangyur ', m:source[@name eq 'ekangyur']/@ekangyur-id, ', page ', m:source[@name eq 'ekangyur']/@page, '.')"/>
         </p>
     </xsl:template>
     
@@ -23,7 +25,7 @@
     
     <xsl:template match="tei:milestone[@unit eq 'line']">
         <xsl:if test="@n ne '1'">
-            <br/>
+            <!-- <br/> -->
         </xsl:if>
     </xsl:template>
     

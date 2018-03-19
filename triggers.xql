@@ -7,7 +7,6 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 import module namespace translation="http://read.84000.co/translation" at "modules/translation.xql";
 import module namespace common="http://read.84000.co/common" at "modules/common.xql";
 import module namespace translations="http://read.84000.co/translations" at "modules/translations.xql";
-import module namespace converter="http://tbrc.org/xquery/ewts2unicode" at "java:org.tbrc.xquery.extensions.EwtsToUniModule";
 
 declare function trigger:after-update-document($uri as xs:anyURI) {
     
@@ -20,7 +19,7 @@ declare function local:after-update-document-functions($doc) {
     
     local:footnote-indexes($doc),
     local:glossary-types($doc),
-    local:glossary-bo($doc),
+    local:glossary-bo($doc, false()),
     local:glossary-remove-term-ids($doc),
     local:permanent-ids($doc),
     local:temporary-ids($doc),
@@ -162,32 +161,20 @@ declare function local:last-updated($doc) {
                 
 };
 
-declare function local:glossary-bo($doc) {
+declare function local:glossary-bo($doc, $do-all as xs:boolean) {
     (: Convert bo-ltn to bo term for glossary items :)
     for $gloss in $doc//tei:div[@type='glossary']//tei:gloss
     return
-        if(count($gloss/tei:term[lower-case(@xml:lang) = 'bo']) ne count($gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn'])) then
+        if($do-all or count($gloss/tei:term[lower-case(@xml:lang) = 'bo']) ne count($gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn'])) then
             (
                 update delete $gloss/tei:term[lower-case(@xml:lang) = 'bo'],
-                for $bo-ltn in $gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn']
+                for $bo-ltn in $gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn'][normalize-space(text())]
                 return
-                    update insert <term xmlns="http://www.tei-c.org/ns/1.0" xml:lang="bo">{ common:bo($bo-ltn/text()) }</term> following $bo-ltn
+                    update insert <term xmlns="http://www.tei-c.org/ns/1.0" xml:lang="bo">{ common:bo-term($bo-ltn/text()) }</term> following $bo-ltn
            )
         else
             ()
 
-};
-
-declare function local:glossary-bo-reset($doc) {
-    (: Refreshes all the Tibetan :)
-    (: Excluded by default - only use when global update required :)
-    for $bo in $doc//tei:div[@type='glossary']//tei:gloss/tei:term[lower-case(@xml:lang) = 'bo']
-    return
-        update delete $bo
-    ,
-    for $bo-ltn in $doc//tei:div[@type='glossary']//tei:gloss/tei:term[lower-case(@xml:lang) = 'bo-ltn']
-    return
-        update insert <term xmlns="http://www.tei-c.org/ns/1.0" xml:lang="bo">{ common:bo($bo-ltn/text()) }</term> following $bo-ltn
 };
 
 declare function local:glossary-prioritise($doc) {

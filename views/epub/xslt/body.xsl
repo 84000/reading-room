@@ -40,9 +40,9 @@
                                 </h4>
                             </xsl:if>
                             <xsl:if test="m:title/text()">
-                                <h4>
+                                <h2>
                                     <xsl:apply-templates select="m:title/text()"/>
-                                </h4>
+                                </h2>
                             </xsl:if>
                         </div>
                     </xsl:if>
@@ -123,7 +123,7 @@
                 <xsl:for-each select="m:translation/m:notes/m:note">
                     <p class="footnote" epub:type="footnote">
                         <xsl:attribute name="id" select="@uid"/>
-                        <a>
+                        <a class="footnote-number">
                             <xsl:attribute name="href">
                                 <xsl:value-of select="concat('body.xhtml#link-to-', @uid)"/>
                             </xsl:attribute>

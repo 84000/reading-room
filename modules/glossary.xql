@@ -40,7 +40,7 @@ declare function glossary:glossary-terms($type as xs:string) as node() {
                 
                 let $normalized-term := common:normalized-chars($main-term)
                 let $start-letter := substring($normalized-term, 1, 1)
-                let $count-occurrences := count($translations//tei:back//tei:gloss[ft:query(tei:term[not(@type = 'definition')], glossary:ft-query($main-term), glossary:ft-options())][@type = $type])
+                let $count-occurrences := count($translations//tei:back//tei:gloss[ft:query(tei:term[not(@type = 'definition')], glossary:ft-query($main-term), glossary:ft-options())])
                 
                 order by $normalized-term
             

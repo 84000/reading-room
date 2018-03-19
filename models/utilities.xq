@@ -14,21 +14,20 @@ import module namespace deployment="http://read.84000.co/deployment" at "../modu
 
 declare option exist:serialize "method=xml indent=no";
 
-let $tab := request:get-parameter('tab', 'progress')
-let $status := request:get-parameter('status', '')
-let $sort := request:get-parameter('sort', '')
+let $tab := request:get-parameter('tab', 'translations')
 let $action := request:get-parameter('action', '')
+let $sync-resource := request:get-parameter('resource', 'all')
+let $commit-msg := request:get-parameter('message', '')
 
 return
 
     <response 
         xmlns="http://read.84000.co/ns/1.0" 
-        model-type="home"
+        model-type="utilities"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
         user-name="{ common:user-name() }" >
         <tabs>
-            <tab active="{ if($tab eq 'progress')then 1 else 0 }" id="progress">Progress</tab>
             <tab active="{ if($tab eq 'translations')then 1 else 0 }" id="translations">Translations</tab>
             <tab active="{ if($tab eq 'sections')then 1 else 0 }" id="sections">Sections</tab>
             <tab active="{ if($tab eq 'tests')then 1 else 0 }" id="tests">Tests</tab>
@@ -52,16 +51,14 @@ return
                 outline:outline()
             else if($tab eq 'translations') then 
                 translations:translations(true())
-            else if($tab eq 'progress') then 
-                outline:progress($status, $sort)
             else if($tab eq 'requests') then 
                 log:requests()
             else if($tab eq 'client-errors') then 
                 log:client-errors()
             else if($tab eq 'snapshot') then 
-                deployment:snapshot()
+                deployment:snapshot($action, $sync-resource, $commit-msg)
             else if($tab eq 'deployment') then 
-                deployment:push-app()
+                deployment:push-app($action, $commit-msg)
             else
                 ()
                 

@@ -9,7 +9,7 @@ declare namespace m = "http://read.84000.co/ns/1.0";
 import module namespace common="http://read.84000.co/common" at "common.xql";
 import module namespace section="http://read.84000.co/outline-section" at "outline-section.xql";
 import module namespace text="http://read.84000.co/outline-text" at "outline-text.xql";
-
+import module namespace functx="http://www.functx.com";
 
 declare function outline:outline() {
     
@@ -83,7 +83,7 @@ declare function outline:outline() {
         </outline>
 };
 
-declare function outline:progress($status as xs:string, $sort as xs:string) as node() {
+declare function outline:progress($status as xs:string, $sort as xs:string, $range as xs:string, $filter as xs:string) as node() {
 
     let $outlines-path := common:outlines-path()
     let $outline := collection($outlines-path)//o:outline[@RID eq "O1JC11494"]
@@ -100,6 +100,7 @@ declare function outline:progress($status as xs:string, $sort as xs:string) as n
     let $all-text-count := count($all-texts)
     let $translated-text-count := count($all-texts[m:status/text() = ('available', 'missing')])
     let $in-progress-text-count := count($all-texts[m:status/text() = ('in-progress')])
+    let $sponsored-text-count := count($all-texts[xs:boolean(m:toh/@sponsored)])
     let $commissioned-text-count := $translated-text-count + $in-progress-text-count
     let $not-started-text-count := $all-text-count - $commissioned-text-count
     
@@ -110,10 +111,11 @@ declare function outline:progress($status as xs:string, $sort as xs:string) as n
         )
     let $translated-page-count := sum($all-texts[m:status/text() = ('available', 'missing')]/m:location[@count-pages != '?']/@count-pages)
     let $in-progress-page-count := sum($all-texts[m:status/text() = ('in-progress')]/m:location[@count-pages != '?']/@count-pages)
+    let $sponsored-page-count := sum($all-texts[xs:boolean(m:toh/@sponsored)]/m:location[@count-pages != '?']/@count-pages)
     let $commissioned-page-count := $translated-page-count + $in-progress-page-count
     let $not-started-page-count := $all-page-count - $commissioned-page-count
     
-    let $texts := 
+    let $status-texts := 
         if($status eq 'translated') then 
             $all-texts[m:status/text() = ('available', 'missing')]
         else if($status eq 'in-progress') then
@@ -123,20 +125,65 @@ declare function outline:progress($status as xs:string, $sort as xs:string) as n
         else
             $all-texts
     
+    let $page-size-ranges :=
+        <page-size-ranges xmlns="http://read.84000.co/ns/1.0">
+            <range id="1" min="0" max="99"/>
+            <range id="2" min="100" max="149"/>
+            <range id="3" min="150" max="199"/>
+            <range id="4" min="200" max="10000"/>
+        </page-size-ranges>
+        
+    let $selected-range := $page-size-ranges//m:range[xs:string(@id) eq $range]
+    
+    let $range-texts := 
+        if($selected-range) then
+            $status-texts[m:location/@count-pages[. >= xs:integer($selected-range/@min)][. <= xs:integer($selected-range/@max)]]
+        else
+            $status-texts
+    
+    let $texts := 
+        if($filter eq 'sponsored')then
+            $range-texts[xs:boolean(m:toh/@sponsored)]
+        else if($filter eq 'not-sponsored')then
+            $range-texts[not(xs:boolean(m:toh/@sponsored))]
+        else
+            $range-texts
+            
     let $texts-count := count($texts)
     let $texts-pages-count := sum($texts/m:location/@count-pages)
     
     return 
         <progress xmlns="http://read.84000.co/ns/1.0">
+            {
+                $page-size-ranges
+            }
             <summary>
-                <texts count="{ $all-text-count }" translated="{ $translated-text-count }" in-progress="{ $in-progress-text-count }" commissioned="{ $commissioned-text-count }" not-started="{ $not-started-text-count }"/>
-                <pages count="{ $all-page-count }" translated="{ $translated-page-count }" in-progress="{ $in-progress-page-count }" commissioned="{ $commissioned-page-count }" not-started="{ $not-started-page-count }"/>
+                <texts 
+                    count="{ $all-text-count }" 
+                    translated="{ $translated-text-count }" 
+                    in-progress="{ $in-progress-text-count }" 
+                    sponsored="{ $sponsored-text-count }" 
+                    commissioned="{ $commissioned-text-count }" 
+                    not-started="{ $not-started-text-count }"/>
+                <pages 
+                    count="{ $all-page-count }" 
+                    translated="{ $translated-page-count }" 
+                    in-progress="{ $in-progress-page-count }" 
+                    sponsored="{ $sponsored-page-count }" 
+                    commissioned="{ $commissioned-page-count }" 
+                    not-started="{ $not-started-page-count }"/>
             </summary>
-            <texts count="{ $texts-count }" count-pages="{ $texts-pages-count }"  status="{ $status }" sort="{ $sort }">
+            <texts 
+                count="{ $texts-count }" 
+                count-pages="{ $texts-pages-count }"  
+                status="{ $status }" 
+                sort="{ $sort }" 
+                range="{ $range }" 
+                filter="{ $filter }">
             { 
-                if($sort eq 'toh') then
+                if($sort = ('toh', '')) then
                     for $text in $texts
-                        order by xs:integer($text/m:toh/@first), xs:integer($text/m:toh/@sub)
+                        order by if($text/m:toh/@first eq '0') then 1 else 0, xs:integer($text/m:toh/@first), xs:integer($text/m:toh/@sub)
                     return $text
                 else if($sort eq 'longest') then
                     for $text in $texts

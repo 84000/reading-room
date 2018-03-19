@@ -31,11 +31,10 @@ declare function text:section($text-id, $outlines) as node()* {
 
 };
 
-declare function text:translation-exists($id) as xs:integer {
-    if(collection(common:translations-path())/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@xml:id = $id]) then 
-        1 
-    else 
-        0
+declare function text:translation-exists($id) as xs:boolean {
+
+    exists(collection(common:translations-path())/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno[@xml:id = $id])
+    
 };
 
 declare function text:titles($text) as node() {
@@ -46,7 +45,7 @@ declare function text:titles($text) as node() {
             let $bo-ltn := $text/o:title[not(@lang) or @encoding eq "extendedWylie"][1]/text()
             return 
                 if($bo-ltn) then
-                    common:bo($bo-ltn)
+                    common:bo-title($bo-ltn)
                 else
                     $text/o:title[@lang eq 'tibetan'][1]/text()
         }</title>
@@ -80,7 +79,15 @@ declare function text:toh($text as node()) as node() {
     
     (: Now we can sort by first, sub ascending :)
     return
-        <toh xmlns="http://read.84000.co/ns/1.0" first="{ $first }" sub="{ $sub }">{ $toh }</toh>
+        <toh 
+            xmlns="http://read.84000.co/ns/1.0" 
+            first="{ $first }" 
+            sub="{ $sub }"
+            sponsored="{ text:sponsored-sutra($first, $sub) }">
+            { 
+                $toh 
+            }
+        </toh>
 
 };
 
@@ -234,4 +241,14 @@ declare function text:text($text as node()*, $translated as xs:boolean, $ancesto
             }
             </downloads>
         </text>
+};
+
+declare function text:sponsored-sutra($toh as xs:integer, $chapter as xs:integer) as xs:boolean {
+    
+    let $sponsored-sutras := doc(concat(common:data-path(), '/operations/sponsors.xml'))
+    return
+        if($sponsored-sutras//m:sutra[xs:integer(@toh) eq $toh][$chapter eq 0 or xs:integer(@chapter) eq $chapter]) then
+            true()
+        else
+            false()
 };

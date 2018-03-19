@@ -8,9 +8,9 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 
 import module namespace functx="http://www.functx.com";
 import module namespace common="http://read.84000.co/common" at "common.xql";
-import module namespace converter="http://tbrc.org/xquery/ewts2unicode" at "java:org.tbrc.xquery.extensions.EwtsToUniModule";
 import module namespace text="http://read.84000.co/outline-text" at "outline-text.xql";
 import module namespace section="http://read.84000.co/outline-section" at "outline-section.xql";
+import module namespace translation-memory="http://read.84000.co/translation-memory" at "translation-memory.xql";
 
 declare function translation:id($translation as node()){
     $translation//tei:publicationStmt/tei:idno/@xml:id/string()
@@ -25,7 +25,7 @@ declare function translation:tei($translation-id) {
     such as readable urls.
     :)
     
-    collection(common:translations-path())//tei:TEI[lower-case(tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno/@xml:id/string()) eq $translation-id]
+    collection(common:translations-path())//tei:TEI[tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno/@xml:id/string() ! lower-case(.) eq lower-case($translation-id)]
 };
 
 declare function translation:title($translation as node()) as xs:string* {
@@ -161,7 +161,7 @@ declare function translation:body($translation as node()) as node()* {
         <honoration>{ data($translation//tei:body/tei:div[@type='translation']/tei:head[@type='titleHon']) }</honoration>
         <main-title>{ data($translation//tei:body/tei:div[@type='translation']/tei:head[@type='titleMain']) }</main-title>
         { 
-            for $chapter at $chapter-index in $translation//tei:body//*[@type='translation']/*[@type=('section', 'chapter')][not(tei:head/text()[lower-case(.) = "prologue"])]
+            for $chapter at $chapter-index in $translation//tei:body//tei:div[@type='translation']/*[@type=('section', 'chapter')][not(tei:head/text()[lower-case(.) = "prologue"])]
             return
                 <chapter chapter-index="{ $chapter-index }" prefix="{ $chapter-index }">
                     <title>
@@ -362,6 +362,103 @@ declare function translation:downloads($translation-id as xs:string) as node()* 
             ()
     }
     </downloads>
+};
+
+declare function translation:toh-key($translation as node(), $toh as xs:integer) as xs:integer {
+    let $toh := 
+        if(xs:integer($toh) eq 0) then
+            $translation//tei:sourceDesc/tei:bibl[1]/@key ! xs:integer(.)
+        else
+            $toh
+    return
+        if($toh) then
+            $toh
+        else
+            0
+};
+
+declare function translation:volume($translation-id as xs:string) as xs:integer {
+    let $translation-id-tokenized := tokenize($translation-id, '-')
+    return
+        if(count($translation-id-tokenized) eq 3) then
+            if(functx:is-a-number($translation-id-tokenized[2])) then
+                xs:integer($translation-id-tokenized[2])
+            else
+                0
+        else
+            0
+};
+
+declare function translation:folios($translation as node(), $toh as xs:integer) as node() {
+    
+    let $translation-id := translation:id($translation)
+    let $volume := translation:volume($translation-id)
+    let $toh-key := translation:toh-key($translation, $toh)
+    
+    return
+        <folios xmlns="http://read.84000.co/ns/1.0" volume="{ $volume }" toh-key="{ $toh-key }">
+        {
+            for $folio in $translation//tei:body//*[@type eq 'translation']//tei:ref[not(@key) or xs:integer(@key) eq $toh-key][not(@type)][lower-case(substring(@cRef,1,2)) eq 'f.']
+                
+                let $folio-ref := string($folio/@cRef)
+                let $page := substring-before(substring-after(lower-case($folio-ref), 'f.'), '.')
+                let $side := substring-after($folio-ref, concat($page,'.'))
+
+            return
+                <folio id="{ $folio-ref }" page="{ $page }" side="{ $side }" />
+                
+        }
+        </folios>
+};
+
+declare function translation:folio-content($translation as node(), $folio as xs:string, $toh as xs:integer) as node() {
+    
+    let $translation-id := translation:id($translation)
+    let $volume := translation:volume($translation-id)
+    let $toh-key := translation:toh-key($translation, $toh)
+    let $refs := $translation//tei:div[@type='translation']//tei:ref[not(@key) or xs:integer(@key) eq $toh-key][not(@type)][@cRef]
+    let $start-ref := $refs[@cRef eq $folio]
+    let $start-ref-index := functx:index-of-node($refs, $start-ref)
+    let $end-ref := $refs[$start-ref-index + 1]
+    
+    let $content := $translation//tei:body//tei:div[@type='translation']/*[@type=('section', 'chapter', 'colophon')]/*
+    let $start-passage := $content[.//$start-ref]
+    let $end-passage := $content[.//$end-ref]
+    let $start-passage-position := 
+        if($start-passage) then
+            functx:index-of-node($content, $start-passage)
+        else
+            1
+    let $end-passage-position := 
+        if($end-passage) then
+            functx:index-of-node($content, $end-passage)
+        else
+            count($content)
+    
+    let $folio-content := $content[position() ge $start-passage-position and position() le $end-passage-position]
+    let $folio-content-spaced := 
+        for $node in 
+            $folio-content//text()[not(tei:note) and not(parent::tei:note)]
+            | $folio-content//tei:ref[@cRef][not(@key) or xs:integer(@key) eq $toh-key][not(@type)]
+        return
+            if($node[self::text()]) then
+                if($node[normalize-space(.) != '']) then
+                    concat(normalize-space($node), ' ')
+                else
+                    ''
+            else
+                $node
+    
+    return
+        <folio-content 
+            xmlns="http://read.84000.co/ns/1.0" 
+            volume="{ $volume }" 
+            start-ref="{ $start-ref/@cRef }" 
+            end-ref="{ $end-ref/@cRef }">
+        {
+            $folio-content-spaced
+        }
+        </folio-content>
 };
 
 declare function translation:update($translation as node(), $request-parameters as xs:string*){

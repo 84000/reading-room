@@ -45,7 +45,7 @@ declare function translations:translations($count-words as xs:boolean)
                </title>
                <toh>
                {
-                    $translation//tei:sourceDesc/tei:bibl/tei:ref/text()
+                    $translation//tei:sourceDesc/tei:bibl[1]/tei:ref/text()
                }
                </toh>
             </translation>

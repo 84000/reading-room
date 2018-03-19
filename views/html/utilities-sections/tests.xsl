@@ -21,6 +21,12 @@
                 </p>
             </li>
             <li>
+                <a href="http://resources.84000-translate.org" target="resources">84000 Resources</a>
+                <p class="text-muted small">
+                    Check the resources browser.
+                </p>
+            </li>
+            <li>
                 <a href="/invalid-route.html" target="server-error">Server Error Page</a>
                 <p class="text-muted small">
                     This is the page returned by a server error.

@@ -6,16 +6,18 @@
         <p>
             <xsl:apply-templates select="node()"/>
         </p>
-        <div class="indent">
-            <xsl:for-each select="//tei:note">
-                <p class="footnote">
-                    <a class="footnote-number">
-                        <xsl:value-of select="@index"/>
-                    </a>
-                    <xsl:apply-templates select="node()"/>
-                </p>
-            </xsl:for-each>
-        </div>
+        <xsl:if test="tei:note | tei:l/tei:note">
+            <div class="indent">
+                <xsl:for-each select="tei:note | tei:l/tei:note">
+                    <p class="footnote">
+                        <a class="footnote-number">
+                            <xsl:value-of select="@index"/>
+                        </a>
+                        <xsl:apply-templates select="node()"/>
+                    </p>
+                </xsl:for-each>
+            </div>
+        </xsl:if>
     </xsl:template>
     
     <xsl:template match="tei:note">
@@ -72,6 +74,28 @@
     <xsl:template match="tei:l">
         <xsl:apply-templates select="node()"/>
         <br/>
+    </xsl:template>
+    
+    <xsl:template match="tei:ref">
+        <xsl:choose>
+            <xsl:when test="@cRef">
+                <span class="ref">[<xsl:apply-templates select="@cRef"/>]</span>
+            </xsl:when>
+            <xsl:when test="@target">
+                <a target="_blank">
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="@target"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="title">
+                        <xsl:value-of select="@target"/>
+                    </xsl:attribute>
+                    <xsl:apply-templates select="text()"/>
+                </a>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:apply-templates select="text()"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     
 </xsl:stylesheet>

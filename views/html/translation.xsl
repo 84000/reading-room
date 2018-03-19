@@ -176,7 +176,7 @@
                                     </a>
                                     
                                 </aside>
-    
+
                                 <hr class="hidden-print"/>
     
                                 <aside id="contents" class="page indent">
@@ -576,7 +576,7 @@
                                 
                                 <hr class="hidden-print"/>
                                 
-                                <section id="bibliography" class="page text indent">
+                                <section id="bibliography" class="page indent">
                                     <a href="#bibliography" class="milestone" title="Bookmark this section">
                                         <xsl:value-of select="concat(m:translation/m:bibliography/@prefix, '.')"/>
                                     </a>
@@ -683,7 +683,15 @@
                     </a>
                     
                 </div>
-                
+                <!-- 
+                <div id="tts-btn-container" class="fixed-btn-container">
+                    
+                    <button class="btn-round text-to-speech" title="Read the text for me">
+                        <i class="fa fa-volume-up" aria-hidden="true"/>
+                    </button>
+                    
+                </div>
+                 -->
                 <div id="rewind-btn-container" class="fixed-btn-container hidden">
                     
                     <button class="btn-round" title="Return to the last location">

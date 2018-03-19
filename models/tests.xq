@@ -290,29 +290,45 @@ return
                 {
                     let $glossary-count-html := count($translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')])
                     let $glossary-count-tei := count($translation//tei:back/tei:div[@type='glossary']//tei:gloss)
-                    let $tei-terms := $translation//tei:back/tei:div[@type='glossary']//tei:gloss/tei:term[text()][not(tei:ptr)]/normalize-space(lower-case(string(.)))
-                    let $html-terms-untokenized := $translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')]//*[self::xhtml:h4 | self::xhtml:p]
-                    let $html-terms := 
-                        for $html-term in $html-terms-untokenized/tokenize(string(.), '·')
+                    let $tei-terms-raw := $translation//tei:back/tei:div[@type='glossary']//tei:gloss/tei:term[text()][not(tei:ptr)]
+                    let $tei-terms := 
+                        for $tei-term in $tei-terms-raw
                         return 
-                            normalize-space(lower-case($html-term))
-                    let $anomalies := 
-                        for $tei-term in $tei-terms
-                        return
-                            if(not(count($tei-terms[. = $tei-term]) = count($html-terms[. = $tei-term]))) then
-                                concat($tei-term, ' (', xs:string(count($tei-terms[. = $tei-term])), ' occurrence(s) in the TEI and ', xs:string(count($html-terms[. = $tei-term])), ' occurrence(s) in the HTML)')
+                            if($tei-term[@xml:lang eq "Bo-Ltn"])then
+                                string($tei-term) ! lower-case(.) ! normalize-space() ! common:bo-ltn(.)
                             else
-                                ()
+                                string($tei-term) ! lower-case(.) ! normalize-space()
+                    let $terms-count-tei := count($tei-terms)
+                    
+                    let $html-terms-untokenized := $translation-html//*[@id eq 'glossary']//*[contains(@class, 'glossary-item')]//*[self::xhtml:h4 | self::xhtml:p[not(xhtml:a/@class[contains(., 'internal-ref')])]]
+                    let $html-terms := 
+                        for $html-term in $html-terms-untokenized/string(.) ! tokenize(., '·')
+                        return 
+                            lower-case($html-term) ! normalize-space(.)
+                    let $terms-count-html := count($html-terms)
+                    
+                    let $anomalies := 
+                        for $term in $html-terms
+                        return
+                            let $term-count-tei := count($tei-terms[. = $term])
+                            let $term-count-html := count($html-terms[. = $term])
+                            return 
+                                if(not($term-count-tei = $term-count-html)) then
+                                    concat($term, ' (', xs:string($term-count-tei), ' occurrence(s) in the TEI and ', xs:string($term-count-html), ' occurrence(s) in the HTML)')
+                                else
+                                    ()
                     return
                         <test>
                             <title>Glossary: The text has at least 1 glossary item and there are the same number in the HTML as in the TEI with no anomalies in the counts of each term.</title>
                             <result>{ if(
                                     $glossary-count-html > 0
                                     and $glossary-count-html = $glossary-count-tei
+                                    and $terms-count-html = $terms-count-tei
                                     and count($anomalies) = 0
                                 ) then 1 else 0 }</result>
                             <details>
                                 <detail>{$glossary-count-tei} glossary item(s) in the TEI, {$glossary-count-html} glossary item(s) in the HTML.</detail>
+                                <detail>{$terms-count-tei} glossary term(s) in the TEI, {$terms-count-html} glossary term(s) in the HTML.</detail>
                                 <detail>{ count($anomalies) } anomalies detected.</detail>
                                 {
                                     for $anomaly in $anomalies

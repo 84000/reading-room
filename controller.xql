@@ -99,7 +99,7 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
         local:redirect("http://resources.84000-translate.org")
     
     (: Trap no path :) (: Trap index/home :)
-    else if ($exist:path = ('', '/')) then
+    else if ($exist:path = ('', '/', '/old-app/')) then
         local:dispatch-html("/models/section.xq", "/views/html/section.xsl", 
             <parameters>
                 <add-parameter name="resource-id" value="lobby"/>
@@ -122,6 +122,13 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
             local:dispatch-html("/models/utilities.xq", "/views/html/utilities.xsl", <parameters/>)
         else
             local:auth('utilities.html')
+    
+    (: Operations :)
+    else if (lower-case($exist:resource) eq 'operations.html') then
+        if(local:has-access("/models/operations.xq")) then
+            local:dispatch-html("/models/operations.xq", "/views/html/operations.xsl", <parameters/>)
+        else
+            local:auth('operations.html')
             
     (: Tests :)
     else if (lower-case($exist:resource) eq 'tests.html') then
@@ -137,6 +144,21 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
         else
             local:auth('validate.html')
     
+    (: Translation Memory :)
+    else if (lower-case($exist:resource) eq 'translation-memory.html') then
+        if(local:has-access("/models/translation-memory.xq")) then
+            local:dispatch-html("/models/translation-memory.xq", "/views/html/translation-memory.xsl", <parameters/>)
+        else
+            local:auth('translation-memory.html')
+    
+    (: tmx files :)
+    else if (lower-case($exist:resource) eq 'tmx.zip') then
+        local:dispatch("/models/tmx-files.xq", "", <parameters/>)
+    
+    (: Spreadsheet test :)
+    else if (lower-case($exist:resource) eq 'spreadsheet.xlsx') then
+        local:dispatch("/views/spreadsheet/spreadsheet.xq", "", <parameters/>)
+
     (: Translation :)
     else if ($collection-path eq "translation") then
         if ($resource-suffix eq 'tei') then
@@ -217,7 +239,7 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
     else if ($collection-path eq "glossary") then
         if($resource-id eq 'items') then
             if($resource-suffix eq 'html') then
-                local:dispatch-html("/models/glossary-items.xq", "/views/html/glossary-items.xsl", 
+                local:dispatch-html("/models/glossary-items.xq", "/views/html/translator-tools-sections/glossary-items.xsl", 
                     <parameters/>
                 )
             else

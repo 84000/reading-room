@@ -50,6 +50,10 @@ declare function common:outlines-path() as xs:string {
     concat(common:data-path(), '/outlines')
 };
 
+declare function common:ekangyur-path() as xs:string {
+    '/db/apps/eKangyur/data/W4CZ5369'
+};
+
 declare function common:xml-lang($node) as xs:string {
 
     if($node/@encoding="extendedWylie") then
@@ -73,13 +77,73 @@ declare function common:normalized-chars($string as xs:string) as xs:string{
         translate(lower-case($string), $in, $out)
 };
 
-declare function common:bo($bo-ltn as xs:string*) as xs:string
+declare function common:bo-title($bo-ltn as xs:string*) as xs:string
 {
-    let $bo :=
+    (: correct the spacing and spacing around underscores :)
+    let $bo-ltn-underscores:= 
         if ($bo-ltn) then
-            converter:toUnicode(concat(replace(replace(normalize-space($bo-ltn), ' __,__', '__,__'), '__,__', ' __,__'), "/"))
+            replace(replace(normalize-space($bo-ltn), ' __,__', '__,__'), '__,__', ' __,__')
         else
             ""
+    (: convert to Tibetan unicode :)
+    let $bo :=
+        if ($bo-ltn-underscores ne "") then
+            converter:toUnicode($bo-ltn-underscores)
+        else
+            ""
+    
+    return 
+        xs:string($bo)
+};
+
+declare function common:bo-term($bo-ltn as xs:string*) as xs:string
+{   
+    
+    (: correct the spacing and spacing around underscores :)
+    let $bo-ltn-underscores:= 
+        if ($bo-ltn) then
+            replace(replace(normalize-space($bo-ltn), ' __,__', '__,__'), '__,__', ' __,__')
+        else
+            ""
+    
+    (: add a shad :)
+    let $bo-ltn-length := string-length($bo-ltn-underscores)
+    let $bo-ltn-shad :=
+        if (
+            (: check there isn't already a shad :)
+            substring($bo-ltn-underscores, $bo-ltn-length, 1) ne "/"
+            
+        ) then
+        
+            (: these cases add a tshek and a shad :)
+            if(substring($bo-ltn-underscores, ($bo-ltn-length - 2), 3) = ('ang','eng','ing','ong','ung')) then
+                concat($bo-ltn-underscores, " /")
+            
+            (: these cases no shad :)
+            else if((
+                    substring($bo-ltn-underscores, ($bo-ltn-length - 1), 2) = ('ag', 'eg', 'ig', 'og', 'ug')
+                )
+                or (
+                    substring($bo-ltn-underscores, ($bo-ltn-length - 2), 1) = ('_', ' ', 'g','d','b','m',"'")
+                    and substring($bo-ltn-underscores, ($bo-ltn-length - 1), 2) = ('ga','ge','gi','go','gu','ka','ke','ki','ko','ku')
+                )
+            ) then
+                $bo-ltn-underscores
+            
+            (: otherwise end in a shad :)
+            else
+                concat($bo-ltn-underscores, "/")
+                
+        else
+            $bo-ltn-underscores
+    
+    (: convert to Tibetan unicode :)
+    let $bo :=
+        if ($bo-ltn-shad ne "") then
+            converter:toUnicode($bo-ltn-shad)
+        else
+            ""
+    
     return 
         xs:string($bo)
 };

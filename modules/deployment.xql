@@ -7,11 +7,8 @@ declare namespace m="http://read.84000.co/ns/1.0";
 import module namespace common="http://read.84000.co/common" at "../modules/common.xql";
 import module namespace translations="http://read.84000.co/translations" at "../modules/translations.xql";
 
-declare function deployment:snapshot() {
+declare function deployment:snapshot($action as xs:string, $sync-resource as xs:string, $commit-msg as xs:string) {
 
-    let $action := request:get-parameter('action', '')
-    let $sync-resource := request:get-parameter('resource', 'all')
-    let $commit-msg := request:get-parameter('message', '')
     let $snapshot-conf := common:snapshot-conf()
     let $sync-path := $snapshot-conf/m:sync-path/text()
     
@@ -66,10 +63,8 @@ declare function deployment:snapshot() {
     
 };
 
-declare function deployment:push-app() {
+declare function deployment:push-app($action as xs:string, $commit-msg as xs:string) {
 
-    let $action := request:get-parameter('action', '')
-    let $commit-msg := request:get-parameter('message', '')
     let $deployment-conf := common:deployment-conf()
     let $sync-path := $deployment-conf/m:sync-path/text()
     

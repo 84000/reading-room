@@ -7,13 +7,13 @@ import module namespace translation = "http://read.84000.co/translation" at "../
 
 let $data := request:get-data()
 let $translation-id := $data//m:translation/@id
-let $translation-title := $data//m:translation/m:titles/m:title[@xml:lang eq 'en']
+let $translation-title := $data//m:translation/m:titles/m:title[@xml:lang eq 'en']/string()
 let $epub-id := concat('http://read.84000.co/translation', $translation-id, '.epub')
 
 let $parameters := 
-        <parameters>
-            <param name="epub-id" value="{ $epub-id }"/>
-        </parameters>
+    <parameters>
+        <param name="epub-id" value="{ $epub-id }"/>
+    </parameters>
 
 let $entries := (
     <entry name="mimetype" type="text" method="store">application/epub+zip</entry>,

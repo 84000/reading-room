@@ -80,7 +80,7 @@ declare function section:titles($section) as node() {
             let $bo-ltn := section:title($section, "bo-ltn")
             return 
                 if(not($bo) and $bo-ltn) then
-                    common:bo($bo-ltn)
+                    common:bo-title($bo-ltn)
                 else
                     $bo
         }</title>
