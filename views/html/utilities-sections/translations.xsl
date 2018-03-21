@@ -10,7 +10,8 @@
         <table class="table table-responsive">
             <thead>
                 <tr>
-                    <th>Words</th>
+                    <th>Translation</th>
+                    <th>Glossary</th>
                     <th>Path</th>
                     <th>ID</th>
                     <th>TEI</th>
@@ -26,7 +27,7 @@
                 <xsl:for-each select="//m:translations/m:translation">
                     <xsl:sort select="@id"/>
                     <tr class="header">
-                        <td colspan="10">
+                        <td colspan="11">
                             <xsl:value-of select="concat(m:toh/text(), ' / ', m:title/text())"/>  
                             <xsl:choose>
                                 <xsl:when test="@status = 'not-started'">
@@ -46,7 +47,10 @@
                     </tr>
                     <tr class="sub">
                         <td>
-                            <xsl:value-of select="fn:format-number(xs:integer(@wordCount),'#,##0')"/>
+                            <xsl:value-of select="fn:format-number(xs:integer(@wordCount),'#,##0')"/> words
+                        </td>
+                        <td>
+                            <xsl:value-of select="fn:format-number(xs:integer(@glossaryCount),'#,##0')"/> items
                         </td>
                         <td>translation/</td>
                         <td>
@@ -150,6 +154,17 @@
                      -->
                 </xsl:for-each>
             </tbody>
+            <tfoot>
+                <tr>
+                    <th>
+                        <xsl:value-of select="fn:format-number(xs:integer(sum(//m:translations/m:translation/@wordCount)),'#,##0')"/> words
+                    </th>
+                    <th>
+                        <xsl:value-of select="fn:format-number(xs:integer(sum(//m:translations/m:translation/@glossaryCount)),'#,##0')"/> items
+                    </th>
+                    <td colspan="9"/>
+                </tr>
+            </tfoot>
         </table>
     </xsl:template>
 </xsl:stylesheet>

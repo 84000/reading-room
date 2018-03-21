@@ -29,7 +29,7 @@ declare function translation:tei($translation-id) {
 };
 
 declare function translation:title($translation as node()) as xs:string* {
-    normalize-space(data($translation//tei:titleStmt/tei:title[@type='mainTitle'][lower-case(@xml:lang) = ('eng', 'en')]))
+    normalize-space($translation//tei:teiHeader/tei:fileDesc//tei:title[@type='mainTitle'][lower-case(@xml:lang) = ('eng', 'en')][1]/text())
 };
 
 declare function translation:title-listing($translation-title as xs:string*) as xs:string* {
@@ -438,7 +438,7 @@ declare function translation:folio-content($translation as node(), $folio as xs:
     let $folio-content := $content[position() ge $start-passage-position and position() le $end-passage-position]
     let $folio-content-spaced := 
         for $node in 
-            $folio-content//text()[not(tei:note) and not(parent::tei:note)]
+            $folio-content//text()[not(ancestor::tei:note)]
             | $folio-content//tei:ref[@cRef][not(@key) or xs:integer(@key) eq $toh-key][not(@type)]
         return
             if($node[self::text()]) then

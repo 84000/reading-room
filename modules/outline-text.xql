@@ -10,11 +10,11 @@ import module namespace common="http://read.84000.co/common" at "common.xql";
 import module namespace section="http://read.84000.co/outline-section" at "outline-section.xql";
 
 declare function text:translation-id($text) as xs:string* {
-    $text/o:node[@type = 'translation']/o:description[@type='text']/text()
+    $text/o:node[@type eq 'translation']/o:description[@type = 'text']/text()
 };
 
 declare function text:translation($text-id, $outlines) as node()* {
-    $outlines//o:node[@type = 'text'][o:node[@type = 'translation']/o:description[@type='text']/text() eq $text-id][1]
+    $outlines//o:node[@type = 'text'][o:node[@type = 'translation']/o:description[@type = 'text']/text() eq $text-id][1]
 };
 
 declare function text:section($text-id, $outlines) as node()* {

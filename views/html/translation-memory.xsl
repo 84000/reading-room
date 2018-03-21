@@ -58,25 +58,36 @@
                                         </select>
                                     </div>
                                     
+                                    <div class="form-group">
+                                        <button class="btn btn-default" type="submit">
+                                            <i class="fa fa-refresh"/>
+                                        </button>
+                                    </div>
+                                    
                                     <div class="form-group text text-muted italic">
                                         <xsl:value-of select="concat('eKangyur volume ', m:source/@volume, ', page ', m:source/@page, '.')"/>
                                     </div>
                                 </form>
                             </div>
                             <div class="col-sm-3">
-                                <a href="/tmx.zip" class="btn btn-success pull-right">Download .tmx files</a>
+                                <a href="/tmx.zip" class="pull-right center-vertical">
+                                    <span>
+                                        <i class="fa fa-cloud-download"/>
+                                    </span>
+                                    <span>Download All (.tmx)</span>
+                                </a>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-8">
                                 
-                                <div class="text-overlay glossarize-section">
+                                <div id="translation-text" class="text-overlay">
                                     <div class="text divided">
                                         <xsl:call-template name="text-marked">
                                             <xsl:with-param name="data" select="m:folio-content"/>
                                         </xsl:call-template>
                                     </div>
-                                    <div class="text plain glossarize" data-mouseup-set-input="#remember-translation-form [name='translation']" data-mouseup-clear-input="#remember-translation-form [name='tuid']">
+                                    <div class="text plain" data-mouseup-set-input="#tmx-form [name='translation']">
                                         <xsl:call-template name="text-plain">
                                             <xsl:with-param name="data" select="m:folio-content"/>
                                         </xsl:call-template>
@@ -85,13 +96,13 @@
                                 
                                 <hr/>
                                 
-                                <div class="text-overlay">
+                                <div id="source-text" class="text-overlay">
                                     <div class="text divided text-bo">
                                         <xsl:call-template name="text-marked">
                                             <xsl:with-param name="data" select="m:source/m:language[@xml:lang eq 'bo']"/>
                                         </xsl:call-template>
                                     </div>
-                                    <div class="text plain text-bo" data-mouseup-set-input="#remember-translation-form [name='source']" data-mouseup-clear-input="#remember-translation-form [name='tuid']">
+                                    <div class="text plain text-bo" data-mouseup-set-input="#tmx-form [name='source']">
                                         <xsl:call-template name="text-plain">
                                             <xsl:with-param name="data" select="m:source/m:language[@xml:lang eq 'bo']//tei:p"/>
                                         </xsl:call-template>
@@ -100,7 +111,7 @@
                                 
                             </div>
                             <div class="col-sm-4">
-                                <form action="translation-memory.html" method="post" id="remember-translation-form">
+                                <form action="translation-memory.html" method="post" id="tmx-form">
                                     
                                     <input type="hidden" name="action" value="remember-translation"/>
                                     
@@ -116,8 +127,6 @@
                                         <xsl:attribute name="value" select="m:request/@folio"/>
                                     </input>
                                     
-                                    <input type="hidden" name="tuid"/>
-                                    
                                     <div class="form-group">
                                         <label for="translation" class="sr-only">Translation</label>
                                         <textarea name="translation" class="form-control" rows="6" required="required"/>
@@ -125,11 +134,11 @@
                                     
                                     <div class="form-group">
                                         <label for="source" class="sr-only">Source</label>
-                                        <textarea name="source" class="form-control" rows="6" required="required"/>
+                                        <textarea name="source" class="form-control text-bo" rows="6" required="required"/>
                                     </div>
                                     
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-danger pull-left" data-mouseup-clear-input="#remember-translation-form [name='translation']" data-mouseup-submit="#remember-translation-form">Delete</button>
+                                        <button type="button" class="btn btn-danger pull-left" data-mouseup-clear-input="#tmx-form [name='source']" data-mouseup-submit="#tmx-form">Delete</button>
                                     </div>
                                     
                                     <div class="form-group">
@@ -138,14 +147,22 @@
                                     
                                 </form>
                                 
-                                <div id="glossary">
+                                <div id="translation-memory-units">
                                     <xsl:for-each select="m:translation-memory/tmx:tu">
-                                        <div class="glossary-item">
-                                            <xsl:attribute name="id" select="concat('glossary-', @id)"/>
-                                            <xsl:attribute name="data-tuid" select="@id"/>
-                                            <p class="term translated">
-                                                <a href="#glossary-2" class="glossary-link">
-                                                    <xsl:attribute name="href" select="concat('#glossary-', @id)"/>
+                                        <div class="unit">
+                                            <xsl:attribute name="id" select="concat('unit-', @tuid)"/>
+                                            <xsl:variable name="onclick-set">
+                                            {
+                                                <xsl:value-of select="concat('&#34;#tmx-form [name=\&#34;source\&#34;]&#34; : &#34;#unit-', @tuid, ' .source&#34;')"/>,
+                                                <xsl:value-of select="concat('&#34;#tmx-form [name=\&#34;translation\&#34;]&#34; : &#34;#unit-', @tuid, ' .translation&#34;')"/>
+                                            }
+                                            </xsl:variable>
+                                            <p class="translation">
+                                                <a class="mark">
+                                                    <xsl:attribute name="href" select="concat('#unit-', @tuid)"/>
+                                                    <xsl:attribute name="data-onclick-set" select="normalize-space($onclick-set)"/>
+                                                    <xsl:attribute name="data-onload-replace-translation" select="'#translation-text .text.plain'"/>
+                                                    <xsl:attribute name="data-onclick-replace-source" select="'#source-text .text.plain'"/>
                                                     <xsl:value-of select="tmx:tuv[@xml:lang eq 'en']/tmx:seg/text()"/>
                                                 </a>
                                             </p>
@@ -168,7 +185,7 @@
         <xsl:call-template name="reading-room-page">
             <xsl:with-param name="app-id" select="@app-id"/>
             <xsl:with-param name="page-url" select="''"/>
-            <xsl:with-param name="page-type" select="'reading-room utilities tests'"/>
+            <xsl:with-param name="page-type" select="'reading-room utilities'"/>
             <xsl:with-param name="page-title" select="'Reading Room Tests'"/>
             <xsl:with-param name="page-description" select="'Automated tests of the 84000 Reading Room app.'"/>
             <xsl:with-param name="content" select="$content"/>

@@ -213,7 +213,7 @@
                     </div>
                 </div>
                 
-                <div id="fixed-footer-close-container" class="fixed-btn-container">
+                <div id="fixed-footer-close-container" class="fixed-btn-container close-btn-container">
                     <button type="button" class="btn-round close" aria-label="Close">
                         <span aria-hidden="true">
                             <i class="fa fa-times"/>

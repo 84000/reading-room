@@ -70,34 +70,44 @@
                 
             </div>
             
-            <form action="translator-tools.html" method="get" class="filter-form">
+            <form action="translator-tools.html" method="get" class="filter-form form-inline">
+                <div class="form-group">
+                    <a href="cumulative-glossary.zip" class="center-vertical">
+                        <span>
+                            <i class="fa fa-cloud-download"/>
+                        </span>
+                        <span>Download All (.xml)</span>
+                    </a>
+                </div>
                 <input type="hidden" name="tab" value="glossary"/>
-                <select name="type" class="form-control">
-                    <option value="term">
-                        <xsl:if test="m:glossary/@type eq 'term'">
-                            <xsl:attribute name="selected" select="'selected'"/>
-                        </xsl:if>
-                        Terms
-                    </option>
-                    <option value="person">
-                        <xsl:if test="m:glossary/@type eq 'person'">
-                            <xsl:attribute name="selected" select="'selected'"/>
-                        </xsl:if>
-                        Persons
-                    </option>
-                    <option value="place">
-                        <xsl:if test="m:glossary/@type eq 'place'">
-                            <xsl:attribute name="selected" select="'selected'"/>
-                        </xsl:if>
-                        Places
-                    </option>
-                    <option value="text">
-                        <xsl:if test="m:glossary/@type eq 'text'">
-                            <xsl:attribute name="selected" select="'selected'"/>
-                        </xsl:if>
-                        Texts
-                    </option>
-                </select>
+                <div class="form-group">
+                    <select name="type" class="form-control">
+                        <option value="term">
+                            <xsl:if test="m:glossary/@type eq 'term'">
+                                <xsl:attribute name="selected" select="'selected'"/>
+                            </xsl:if>
+                            Terms
+                        </option>
+                        <option value="person">
+                            <xsl:if test="m:glossary/@type eq 'person'">
+                                <xsl:attribute name="selected" select="'selected'"/>
+                            </xsl:if>
+                            Persons
+                        </option>
+                        <option value="place">
+                            <xsl:if test="m:glossary/@type eq 'place'">
+                                <xsl:attribute name="selected" select="'selected'"/>
+                            </xsl:if>
+                            Places
+                        </option>
+                        <option value="text">
+                            <xsl:if test="m:glossary/@type eq 'text'">
+                                <xsl:attribute name="selected" select="'selected'"/>
+                            </xsl:if>
+                            Texts
+                        </option>
+                    </select>
+                </div>
             </form>
             
         </div>

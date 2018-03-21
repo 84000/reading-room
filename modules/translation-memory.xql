@@ -7,10 +7,11 @@ declare namespace tmx="http://www.lisa.org/tmx14";
 import module namespace common="http://read.84000.co/common" at "../modules/common.xql";
 import module namespace translation="http://read.84000.co/translation" at "../modules/translation.xql";
 import module namespace xmldb="http://exist-db.org/xquery/xmldb";
+import module namespace functx="http://www.functx.com";
 
 declare function translation-memory:folio($translation-id as xs:string, $folio as xs:string) as node() {
     
-    let $doc := doc(concat(common:data-path(), '/translation-memory/', $translation-id, '.tmx'))
+    let $doc := doc(concat(common:data-path(), '/translation-memory/', $translation-id, '.xml'))
     
     return
         <translation-memory 
@@ -23,44 +24,59 @@ declare function translation-memory:folio($translation-id as xs:string, $folio a
         </translation-memory>
 };
 
-declare function translation-memory:remember($translation-id as xs:string, $folio as xs:string, $tuid-request as xs:string, $source as xs:string, $translation as xs:string) as node() {
+declare function translation-memory:remember($translation-id as xs:string, $folio as xs:string, $source-str as xs:string, $translation-str as xs:string) as node() {
     
     let $filepath := concat(common:data-path(), '/translation-memory/')
-    let $filename := concat($translation-id, '.tmx')
+    let $filename := concat($translation-id, '.xml')
     let $doc := doc(concat($filepath, $filename))
+    let $source-str := normalize-space($source-str)
+    let $translation-str := normalize-space($translation-str)
+    let $folio-content := translation:folio-content(translation:tei($translation-id), $folio, 0)
+    let $translation-memory := translation-memory:folio($translation-id, $folio)
+    
+    let $translation-str-id := $translation-memory/tmx:tu[tmx:tuv[@xml:lang = "en"][compare(normalize-space(tmx:seg/text()), $translation-str) eq 0]][1]/@tuid
     
     let $tuid := 
-        if($doc//tmx:tu[@id eq $tuid-request]) then
-            $tuid-request
+        if($doc//tmx:tu[@tuid eq $translation-str-id]) then
+            $translation-str-id
         else if($doc) then
-            xs:string(max($doc//tmx:tu/@id ! xs:integer(concat('0', .))) + 1)
+            xs:string(max($doc//tmx:tu/@tuid ! xs:integer(concat('0', .))) + 1)
         else
             '1'
+        
+    let $translation-str-index := functx:index-of-string-first(data($folio-content), $translation-str)
     
     let $tu := 
-        <tu xmlns="http://www.lisa.org/tmx14" id="{ $tuid }">
+        <tu xmlns="http://www.lisa.org/tmx14" tuid="{ $tuid }">
             <prop name="folio">{ $folio }</prop>
-            <tuv xml:lang="bo">
-                <seg>{ $source }</seg>
+            <prop name="position">{ $translation-str-index }</prop>
+            <tuv 
+                xml:lang="bo"
+                creationdate="{ current-dateTime() }"
+                creationid="{ common:user-name() }">
+                <seg>{ $source-str }</seg>
             </tuv>
-            <tuv xml:lang="en">
-                <seg>{ $translation }</seg>
+            <tuv 
+                xml:lang="en"
+                creationdate="{ current-dateTime() }"
+                creationid="{ common:user-name() }">
+                <seg>{ $translation-str }</seg>
             </tuv>
         </tu>
     
     return
-        if($tuid eq $tuid-request and $source ne '' and $translation ne '') then
+        if($tuid eq $translation-str-id and $source-str ne '' and $translation-str ne '') then
             (: update :)
             <updated xmlns="http://read.84000.co/ns/1.0">
             {
-                update replace $doc//tmx:tu[@id eq $tuid] with $tu
+                update replace $doc//tmx:tu[@tuid eq $tuid] with $tu
             }
             </updated>
-        else if($tuid eq $tuid-request) then
+        else if($tuid eq $translation-str-id) then
             (: remove :)
             <updated xmlns="http://read.84000.co/ns/1.0">
             {
-                update delete $doc//tmx:tu[@id eq $tuid]
+                update delete $doc//tmx:tu[@tuid eq $tuid]
             }
             </updated>
         else if($doc) then
@@ -76,7 +92,16 @@ declare function translation-memory:remember($translation-id as xs:string, $foli
             {
                 xmldb:store($filepath, $filename, 
                     <tmx xmlns="http://www.lisa.org/tmx14">
-                        <header creationtool="84000-translation-memory" creationtoolversion="1.0.0.0" segtype="phrase" adminlang="en" srclang="bo" o-tmf="tei" datatype="Text"/>
+                        <header 
+                            creationtool="84000-translation-memory" 
+                            creationtoolversion="1.0.0.0" 
+                            datatype="PlainText"
+                            segtype="phrase" 
+                            adminlang="en" 
+                            srclang="bo" 
+                            o-tmf="TEI" 
+                            creationdate="{ current-dateTime() }"
+                            creationid="{ common:user-name() }"/>
                         <body>
                         {
                             $tu

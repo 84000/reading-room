@@ -152,6 +152,10 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
             local:auth('translation-memory.html')
     
     (: tmx files :)
+    else if (lower-case($exist:resource) eq 'cumulative-glossary.zip') then
+        local:dispatch("/models/cumulative-glossary.xq", "", <parameters/>)
+        
+    (: tmx files :)
     else if (lower-case($exist:resource) eq 'tmx.zip') then
         local:dispatch("/models/tmx-files.xq", "", <parameters/>)
     

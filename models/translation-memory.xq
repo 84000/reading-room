@@ -30,7 +30,7 @@ let $folio :=
 
 let $action := 
     if(request:get-parameter('action', '') eq 'remember-translation') then
-        translation-memory:remember($translation-id, $folio, request:get-parameter('tuid', ''), request:get-parameter('source', ''), request:get-parameter('translation', ''))
+        translation-memory:remember($translation-id, $folio, request:get-parameter('source', ''), request:get-parameter('translation', ''))
     else
         ()
 
@@ -48,7 +48,7 @@ return
     <response 
         xmlns="http://read.84000.co/ns/1.0" 
         model-type="translation-memory"
-        timestamp="{current-dateTime()}"
+        timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
         user-name="{ common:user-name() }">
         <request translation-id="{ $translation-id }" folio="{ $folio }" />

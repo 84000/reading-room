@@ -9,9 +9,9 @@ import module namespace glossary="http://read.84000.co/glossary" at "glossary.xq
 
 declare namespace tei="http://www.tei-c.org/ns/1.0";
 
-declare function translations:word-count($element as element()*) as xs:integer
+declare function translations:word-count($node as node()*) as xs:integer
 {
-  count(tokenize($element, '\W+')[. != ''])
+  count(tokenize($node, '\W+')[. != ''])
 };
 
 declare function translations:translations($count-words as xs:boolean)
@@ -25,9 +25,16 @@ declare function translations:translations($count-words as xs:boolean)
          for $translation in collection(common:translations-path())
             let $text-id := $translation/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno/@xml:id
             let $outline-text := text:translation($text-id, $outlines)
+            let $translated-text := 
+                <translated>
+                {
+                    $translation/tei:TEI/tei:text/tei:body/tei:div[@type = "translation"]/tei:div[@type = ("section", "chapter", "colophon")]//*[not(self::tei:note) and not(parent::tei:note)]
+                }
+                </translated>
             let $word-count := 
                 if ($count-words eq true()) then
-                    translations:word-count($translation/tei:TEI/tei:text)
+                    (: Count of translated words :)
+                    translations:word-count($translated-text)
                 else
                     0
          return
