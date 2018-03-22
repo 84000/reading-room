@@ -11,11 +11,15 @@ import module namespace translations="http://read.84000.co/translations" at "../
 import module namespace converter="http://tbrc.org/xquery/ewts2unicode" at "java:org.tbrc.xquery.extensions.EwtsToUniModule";
 import module namespace functx="http://www.functx.com";
 
+declare function source:folio-to-number($folio as xs:string) as numeric {
+    number(translate($folio, 'ab', '05'))
+};
+
 declare function source:ekangyur-mappings($volume as xs:integer, $page as xs:string) as node() {
 
     let $mapping := collection(concat(common:data-path(), '/source'))//m:folio-mappings/m:mapping[@source eq "ekangyur"]
     
-    let $range := $mapping/m:range[xs:integer(@volume) eq $volume][compare(@start, $page) le 0][compare(@end, $page) ge 0]
+    let $range := $mapping/m:range[xs:integer(@volume) eq $volume][source:folio-to-number(@start) le source:folio-to-number($page)][source:folio-to-number(@end) ge source:folio-to-number($page)]
     
     let $page-offset := 
         if($range)then
@@ -87,27 +91,47 @@ declare function source:ekangyur-volume($ekangyur-id as xs:string) as node()*{
 declare function source:ekangyur-page($ekangyur-volume-number as xs:integer, $ekangyur-page-number as xs:integer, $add-context as xs:boolean) as node() {
     
     let $ekangyur-id := source:ekangyur-id($ekangyur-volume-number)
-    let $volume := source:ekangyur-volume($ekangyur-id)
-    let $volume-page-count := count($volume//tei:p)
+    let $ekangyur-volume := source:ekangyur-volume($ekangyur-id)
+    let $ekangyur-volume-page-count := count($ekangyur-volume//tei:p)
     
     return
-        if($volume-page-count and ($ekangyur-page-number gt $volume-page-count))then
+        if($ekangyur-volume-page-count and ($ekangyur-page-number gt $ekangyur-volume-page-count))then
             
             (: Recurse to find it in the next volume :)
-            source:ekangyur-page($ekangyur-volume-number + 1, ($ekangyur-page-number - $volume-page-count) + 1, $add-context)
-            
+            source:ekangyur-page(($ekangyur-volume-number + 1), ($ekangyur-page-number - $ekangyur-volume-page-count), $add-context)
+        
         else
-            let $boundary-line := 6
+            
+            let $page := $ekangyur-volume//tei:p[xs:integer(@n) eq $ekangyur-page-number]
+            let $preceding-page := $ekangyur-volume//tei:p[xs:integer(@n) eq $ekangyur-page-number - 1]
+            let $trailing-page := $ekangyur-volume//tei:p[xs:integer(@n) eq $ekangyur-page-number + 1]
+            let $preceding-lines := 1
+            let $preceding-milestone-n := count($preceding-page/tei:milestone[@unit eq 'line']) - ($preceding-lines - 1)
+            let $trailing-lines := 3
+            let $trailing-milestone-n := ($trailing-lines + 1)
+            
             let $bo := 
                 if($add-context) then (
-                    <tei:p>{ 
-                        $volume//tei:p[xs:integer(@n) eq $ekangyur-page-number - 1]/tei:milestone[@unit eq 'line'][xs:integer(@n) eq $boundary-line]
-                        | $volume//tei:p[xs:integer(@n) eq $ekangyur-page-number - 1]/child::node()[preceding-sibling::tei:milestone[@unit eq 'line'][xs:integer(@n) ge $boundary-line]] }</tei:p>,
-                    <tei:p class="selected">{ $volume//tei:p[xs:integer(@n) eq $ekangyur-page-number]/child::node() }</tei:p>,
-                    <tei:p>{ $volume//tei:p[xs:integer(@n) eq $ekangyur-page-number + 1]/child::node() }</tei:p>
+                    <tei:p>
+                    { 
+                        $preceding-page/tei:milestone[@unit eq 'line'][xs:integer(@n) eq $preceding-milestone-n]
+                        | $preceding-page/child::node()[preceding-sibling::tei:milestone[@unit eq 'line'][xs:integer(@n) ge $preceding-milestone-n]] 
+                    }
+                    </tei:p>,
+                    <tei:p class="selected">
+                    { 
+                        $page/child::node() 
+                    }
+                    </tei:p>,
+                    <tei:p>
+                    { 
+                        $trailing-page/tei:milestone[@unit eq 'line'][xs:integer(@n) eq $trailing-milestone-n]
+                        | $trailing-page/child::node()[following-sibling::tei:milestone[@unit eq 'line'][xs:integer(@n) le $trailing-milestone-n]] 
+                    }
+                    </tei:p>
                 )
                 else
-                    $volume//tei:p[xs:integer(@n) eq $ekangyur-page-number]
+                    $page
             
             return 
                 <source
@@ -116,7 +140,7 @@ declare function source:ekangyur-page($ekangyur-volume-number as xs:integer, $ek
                     volume="{ $ekangyur-volume-number }" 
                     ekangyur-id="{ $ekangyur-id }"
                     page="{ $ekangyur-page-number }" 
-                    volume-page-count="{ $volume-page-count }" >
+                    volume-page-count="{ $ekangyur-volume-page-count }" >
                     <language xml:lang="bo">{ $bo }</language>
                 </source>
         

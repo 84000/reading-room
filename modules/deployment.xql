@@ -16,7 +16,7 @@ declare function deployment:snapshot($action as xs:string, $sync-resource as xs:
     let $sync :=
         if($action eq 'sync' and $sync-path) then
             (
-                for $collection in ('translations', 'schema', 'outlines')
+                for $collection in ('translations', 'schema', 'outlines', 'translation-memory')
                 return
                     file:sync(
                         concat(common:data-path(), '/', $collection), 
@@ -29,10 +29,12 @@ declare function deployment:snapshot($action as xs:string, $sync-resource as xs:
     
     (: Only add specified file to commit :)    
     let $git-add := 
-        if ($sync-resource ne 'all') then
-            concat("translations/", $sync-resource)
-        else
+        if ($sync-resource eq 'all') then
             "."
+        else if($sync-resource eq 'translation-memory') then
+            "translation-memory/."
+        else
+            concat("translations/", $sync-resource)
             
     let $commit-msg := 
         if(not($commit-msg))then

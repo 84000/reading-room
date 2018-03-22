@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:common="http://read.84000.co/common" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" xmlns:tmx="http://www.lisa.org/tmx14" version="2.0" exclude-result-prefixes="#all">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:common="http://read.84000.co/common" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" xmlns:tmx="http://www.lisa.org/tmx14" version="3.0" exclude-result-prefixes="#all">
     
     <xsl:include href="reading-room-page.xsl"/>
     <xsl:include href="../../xslt/functions.xsl"/>
@@ -27,7 +27,7 @@
                                     
                                     <div class="form-group">
                                         <label for="translation-id" class="sr-only">Translation</label>
-                                        <select name="translation-id" class="form-control" id="translation-id">
+                                        <select name="translation-id" class="form-control" id="translation-id" title="Translation">
                                             <xsl:for-each select="m:translations/m:translation">
                                                 <xsl:sort select="@id"/>
                                                 <option>
@@ -43,7 +43,7 @@
                                     
                                     <div class="form-group">
                                         <label for="folio" class="sr-only">Folio</label>
-                                        <select name="folio" class="form-control" id="folio">
+                                        <select name="folio" class="form-control" id="folio" title="Folio">
                                             <xsl:for-each select="m:folios/m:folio">
                                                 <xsl:sort select="xs:integer(@page)"/>
                                                 <xsl:sort select="@side"/>
@@ -57,6 +57,18 @@
                                             </xsl:for-each>
                                         </select>
                                     </div>
+                                    
+                                    <!-- 
+                                    <div class="form-group">
+                                        <label for="preceding-lines" class="sr-only">Preceding lines</label>
+                                        <input type="number" name="preceding-lines" id="preceding-lines" value="2" class="form-control" min="1" max="7" title="Preceding lines"/>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="trailing-lines" class="sr-only">Preceding lines</label>
+                                        <input type="number" name="trailing-lines" id="trailing-lines" value="2" class="form-control"  min="1" max="7" title="Trailing lines"/>
+                                    </div>
+                                    -->
                                     
                                     <div class="form-group">
                                         <button class="btn btn-default" type="submit">
@@ -81,21 +93,6 @@
                         <div class="row">
                             <div class="col-sm-8">
                                 
-                                <div id="translation-text" class="text-overlay">
-                                    <div class="text divided">
-                                        <xsl:call-template name="text-marked">
-                                            <xsl:with-param name="data" select="m:folio-content"/>
-                                        </xsl:call-template>
-                                    </div>
-                                    <div class="text plain" data-mouseup-set-input="#tmx-form [name='translation']">
-                                        <xsl:call-template name="text-plain">
-                                            <xsl:with-param name="data" select="m:folio-content"/>
-                                        </xsl:call-template>
-                                    </div>
-                                </div>
-                                
-                                <hr/>
-                                
                                 <div id="source-text" class="text-overlay">
                                     <div class="text divided text-bo">
                                         <xsl:call-template name="text-marked">
@@ -105,6 +102,21 @@
                                     <div class="text plain text-bo" data-mouseup-set-input="#tmx-form [name='source']">
                                         <xsl:call-template name="text-plain">
                                             <xsl:with-param name="data" select="m:source/m:language[@xml:lang eq 'bo']//tei:p"/>
+                                        </xsl:call-template>
+                                    </div>
+                                </div>
+                                
+                                <hr/>
+                                
+                                <div id="translation-text" class="text-overlay">
+                                    <div class="text divided">
+                                        <xsl:call-template name="text-marked">
+                                            <xsl:with-param name="data" select="m:folio-content"/>
+                                        </xsl:call-template>
+                                    </div>
+                                    <div class="text plain" data-mouseup-set-input="#tmx-form [name='translation']">
+                                        <xsl:call-template name="text-plain">
+                                            <xsl:with-param name="data" select="m:folio-content"/>
                                         </xsl:call-template>
                                     </div>
                                 </div>
@@ -128,13 +140,13 @@
                                     </input>
                                     
                                     <div class="form-group">
-                                        <label for="translation" class="sr-only">Translation</label>
-                                        <textarea name="translation" class="form-control" rows="6" required="required"/>
+                                        <label for="source" class="sr-only">Source</label>
+                                        <textarea name="source" class="form-control text-bo" rows="6" required="required"/>
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label for="source" class="sr-only">Source</label>
-                                        <textarea name="source" class="form-control text-bo" rows="6" required="required"/>
+                                        <label for="translation" class="sr-only">Translation</label>
+                                        <textarea name="translation" class="form-control" rows="6" required="required"/>
                                     </div>
                                     
                                     <div class="form-group">
@@ -157,17 +169,27 @@
                                                 <xsl:value-of select="concat('&#34;#tmx-form [name=\&#34;translation\&#34;]&#34; : &#34;#unit-', @tuid, ' .translation&#34;')"/>
                                             }
                                             </xsl:variable>
-                                            <p class="translation">
+                                            <xsl:variable name="onload-replace">
+                                            {
+                                                <xsl:value-of select="concat('&#34;#source-text .text.plain&#34; : &#34;#unit-', @tuid, ' .source a.mark&#34;')"/>
+                                            }
+                                            </xsl:variable>
+                                            <xsl:variable name="onclick-mark">
+                                            {
+                                                <xsl:value-of select="concat('&#34;#translation-text .text.plain&#34; : &#34;#unit-', @tuid, ' .translation&#34;')"/>
+                                            }
+                                            </xsl:variable>
+                                            <p class="source text-bo">
                                                 <a class="mark">
                                                     <xsl:attribute name="href" select="concat('#unit-', @tuid)"/>
                                                     <xsl:attribute name="data-onclick-set" select="normalize-space($onclick-set)"/>
-                                                    <xsl:attribute name="data-onload-replace-translation" select="'#translation-text .text.plain'"/>
-                                                    <xsl:attribute name="data-onclick-replace-source" select="'#source-text .text.plain'"/>
-                                                    <xsl:value-of select="tmx:tuv[@xml:lang eq 'en']/tmx:seg/text()"/>
+                                                    <xsl:attribute name="data-onload-replace" select="normalize-space($onload-replace)"/>
+                                                    <xsl:attribute name="data-onclick-mark" select="normalize-space($onclick-mark)"/>
+                                                    <xsl:value-of select="tmx:tuv[@xml:lang eq 'bo']/tmx:seg/text() ! normalize-space(.)"/>
                                                 </a>
                                             </p>
-                                            <p class="source text-bo">
-                                                <xsl:value-of select="tmx:tuv[@xml:lang eq 'bo']/tmx:seg/text()"/>
+                                            <p class="translation">
+                                                <xsl:value-of select="tmx:tuv[@xml:lang eq 'en']/tmx:seg/text() ! normalize-space(.)"/>
                                             </p>
                                         </div>
                                     </xsl:for-each>
