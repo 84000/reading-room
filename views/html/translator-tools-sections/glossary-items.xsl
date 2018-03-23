@@ -14,7 +14,7 @@
                      in
                      <a href="#">
                          <xsl:attribute name="href" select="concat('/translation/', @translation-id, '.html', '#', $uid)"/>
-                         <xsl:apply-templates select="m:title/text()"/>
+                         <xsl:apply-templates select="m:translation/m:title/text()"/>
                      </a>
                      <label class="label label-default pull-right">
                          <xsl:choose>

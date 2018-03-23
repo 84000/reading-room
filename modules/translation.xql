@@ -29,7 +29,7 @@ declare function translation:tei($translation-id) {
 };
 
 declare function translation:title($translation as node()) as xs:string* {
-    normalize-space($translation//tei:teiHeader/tei:fileDesc//tei:title[@type='mainTitle'][lower-case(@xml:lang) = ('eng', 'en')][1]/text())
+    normalize-space($translation//tei:fileDesc//tei:title[@type='mainTitle'][lower-case(@xml:lang) = ('eng', 'en')][1]/text())
 };
 
 declare function translation:title-listing($translation-title as xs:string*) as xs:string* {
@@ -364,17 +364,15 @@ declare function translation:downloads($translation-id as xs:string) as node()* 
     </downloads>
 };
 
-declare function translation:toh-key($translation as node(), $toh as xs:integer) as xs:integer {
-    let $toh := 
-        if(xs:integer($toh) eq 0) then
-            $translation//tei:sourceDesc/tei:bibl[1]/@key ! xs:integer(.)
+declare function translation:toh-key($translation as node(), $toh as xs:string) as xs:string {
+    
+    let $toh-key := $translation//tei:sourceDesc/tei:bibl[@key eq $toh]/@key
+    
+    return 
+        if($toh-key) then
+            string($toh-key)
         else
-            $toh
-    return
-        if($toh) then
-            $toh
-        else
-            0
+            string($translation//tei:sourceDesc/tei:bibl[1]/@key)
 };
 
 declare function translation:volume($translation-id as xs:string) as xs:integer {
@@ -389,7 +387,7 @@ declare function translation:volume($translation-id as xs:string) as xs:integer 
             0
 };
 
-declare function translation:folios($translation as node(), $toh as xs:integer) as node() {
+declare function translation:folios($translation as node(), $toh as xs:string) as node() {
     
     let $translation-id := translation:id($translation)
     let $volume := translation:volume($translation-id)
@@ -398,7 +396,7 @@ declare function translation:folios($translation as node(), $toh as xs:integer) 
     return
         <folios xmlns="http://read.84000.co/ns/1.0" volume="{ $volume }" toh-key="{ $toh-key }">
         {
-            for $folio in $translation//tei:body//*[@type eq 'translation']//tei:ref[not(@key) or xs:integer(@key) eq $toh-key][not(@type)][lower-case(substring(@cRef,1,2)) eq 'f.']
+            for $folio in $translation//tei:body//*[@type eq 'translation']//tei:ref[not(@key) or @key eq $toh-key][not(@type)][lower-case(substring(@cRef,1,2)) eq 'f.']
                 
                 let $folio-ref := string($folio/@cRef)
                 let $page := substring-before(substring-after(lower-case($folio-ref), 'f.'), '.')
@@ -416,7 +414,7 @@ declare function translation:folio-content($translation as node(), $folio as xs:
     let $translation-id := translation:id($translation)
     let $volume := translation:volume($translation-id)
     let $toh-key := translation:toh-key($translation, $toh)
-    let $refs := $translation//tei:div[@type='translation']//tei:ref[not(@key) or xs:integer(@key) eq $toh-key][not(@type)][@cRef]
+    let $refs := $translation//tei:div[@type='translation']//tei:ref[not(@key) or @key eq $toh-key][not(@type)][@cRef]
     let $start-ref := $refs[@cRef eq $folio]
     let $start-ref-index := functx:index-of-node($refs, $start-ref)
     let $end-ref := $refs[$start-ref-index + 1]
@@ -439,7 +437,7 @@ declare function translation:folio-content($translation as node(), $folio as xs:
     let $folio-content-spaced := 
         for $node in 
             $folio-content//text()[not(ancestor::tei:note)]
-            | $folio-content//tei:ref[@cRef][not(@key) or xs:integer(@key) eq $toh-key][not(@type)]
+            | $folio-content//tei:ref[@cRef][not(@key) or @key eq $toh-key][not(@type)]
         return
             if($node[self::text()]) then
                 if($node[normalize-space(.) != '']) then

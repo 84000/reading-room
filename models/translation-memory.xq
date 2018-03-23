@@ -20,7 +20,7 @@ let $translations := translations:translations(false())
 let $translation-id := request:get-parameter('translation-id', $translations/m:translation[1]/@id)
 let $volume := translation:volume($translation-id)
 let $translation := translation:tei($translation-id)
-let $folios := translation:folios($translation, 0)
+let $folios := translation:folios($translation, '')
 let $folio-request := request:get-parameter('folio', '')
 let $folio := 
     if($folios/m:folio[@id eq $folio-request]) then

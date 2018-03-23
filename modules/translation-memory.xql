@@ -34,17 +34,17 @@ declare function translation-memory:remember($translation-id as xs:string, $foli
     let $folio-content := translation:folio-content(translation:tei($translation-id), $folio, 0)
     let $translation-memory := translation-memory:folio($translation-id, $folio)
     
-    let $translation-str-id := $translation-memory/tmx:tu[tmx:tuv[@xml:lang = "en"][compare(normalize-space(tmx:seg/text()), $translation-str) eq 0]][1]/@tuid
+    let $str-id := $translation-memory/tmx:tu[tmx:tuv[@xml:lang = "bo"][compare(normalize-space(tmx:seg/text()), $source-str) eq 0]][1]/@tuid
     
     let $tuid := 
-        if($doc//tmx:tu[@tuid eq $translation-str-id]) then
-            $translation-str-id
+        if($doc//tmx:tu[@tuid eq $str-id]) then
+            $str-id
         else if($doc) then
             xs:string(max($doc//tmx:tu/@tuid ! xs:integer(concat('0', .))) + 1)
         else
             '1'
-        
-    let $translation-str-index := functx:index-of-string-first(data($folio-content), $translation-str)
+    
+    let $translation-str-index := functx:index-of-string-first(normalize-space(data($folio-content)), $translation-str)
     
     let $tu := 
         <tu xmlns="http://www.lisa.org/tmx14" tuid="{ $tuid }">
@@ -65,14 +65,14 @@ declare function translation-memory:remember($translation-id as xs:string, $foli
         </tu>
     
     return
-        if($tuid eq $translation-str-id and $source-str ne '' and $translation-str ne '') then
+        if($tuid eq $str-id and $source-str ne '' and $translation-str ne '') then
             (: update :)
             <updated xmlns="http://read.84000.co/ns/1.0">
             {
                 update replace $doc//tmx:tu[@tuid eq $tuid] with $tu
             }
             </updated>
-        else if($tuid eq $translation-str-id) then
+        else if($tuid eq $str-id) then
             (: remove :)
             <updated xmlns="http://read.84000.co/ns/1.0">
             {

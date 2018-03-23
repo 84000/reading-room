@@ -30,9 +30,17 @@ declare function local:after-update-document-functions($doc) {
 declare function local:footnote-indexes($doc) {
     (: Add indexes to footnotes :)
     (: This supports stable numbering accross all sections :)
+    let $count-notes := count($doc/tei:TEI/tei:text//tei:note)
+    let $max-note-index := max($doc/tei:TEI/tei:text//tei:note/@index ! xs:integer(concat('0', .)))
+    let $count-distinct-note-indexes := count(distinct-values($doc/tei:TEI/tei:text//tei:note/@index))
     let $count-notes-missing-index := count($doc/tei:TEI/tei:text//tei:note[not(@index) or @index eq ''])
+    
     return 
-        if($count-notes-missing-index > 0) then
+        if(
+            $count-notes-missing-index > 0
+            or $count-notes ne $count-distinct-note-indexes
+            or $count-notes ne $max-note-index
+        ) then
             for $note at $index in $doc/tei:TEI/tei:text//tei:note
             return
                 update insert attribute index {$index} into $note

@@ -150,7 +150,7 @@
                                     </div>
                                     
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-danger pull-left" data-mouseup-clear-input="#tmx-form [name='source']" data-mouseup-submit="#tmx-form">Delete</button>
+                                        <button type="button" class="btn btn-danger pull-left" data-mouseup-clear-input="#tmx-form [name='translation']" data-mouseup-submit="#tmx-form">Delete</button>
                                     </div>
                                     
                                     <div class="form-group">

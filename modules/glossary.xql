@@ -68,7 +68,12 @@ declare function glossary:cumulative-glossary() as node() {
         <cumulative-glossary
             xmlns="http://read.84000.co/ns/1.0"
             model-type="cumulative-glossary"
-            timestamp="{ current-dateTime() }">
+            timestamp="{ current-dateTime() }"
+            app-id="{ common:app-id() }">
+        <disclaimer>
+            Please bear in mind that we are constantly revising the glossaries and we will continue to add more glossaries as we publish translations.  
+            To keep up to date please regularly download the latest version from the website.
+        </disclaimer>
         {
             for $main-term in distinct-values($translations//*[@type="glossary"]//tei:gloss/tei:term[(lower-case(@xml:lang) = ('eng', 'en') or not(@xml:lang))][not(@type = 'definition')][not(@type = 'alternative')]/text()/normalize-space(.))
                 
@@ -103,9 +108,10 @@ declare function glossary:glossary-items($term as xs:string) as node() {
                 for $item in $translations//tei:back//tei:gloss[ft:query(tei:term[not(@type = 'definition')], glossary:ft-query($term), glossary:ft-options())]
                     
                     let $translation := $item/ancestor::tei:TEI
-                    let $translation-id := translation:id($translation)
                     let $translation-title := translation:title($translation)
+                    let $translation-id := translation:id($translation)
                     let $glossary-id := $item/@xml:id/string()
+                    let $uri := concat('http://read.84000.co/translation/', $translation-id, '.html#', $glossary-id)
                     
                     order by ft:score($item) descending
                     
@@ -113,13 +119,36 @@ declare function glossary:glossary-items($term as xs:string) as node() {
                     <item 
                         translation-id="{ $translation-id }"
                         uid="{ $glossary-id }"
-                        uri="{ concat('http://read.84000.co/translation/', $translation-id, '.html#', $glossary-id) }"
+                        uri="{ $uri }"
                         type="{ $item/@type/string() }">
-                        <title>
-                        { 
-                            $translation-title 
-                        }
-                        </title>
+                        <translation>
+                            <toh>
+                            {
+                                $translation//tei:sourceDesc/tei:bibl[1]/tei:ref/text()
+                            }
+                            </toh>
+                            <title>
+                            { 
+                                $translation-title 
+                            }
+                            </title>
+                            <authors>
+                                {
+                                    for $author in $translation//tei:titleStmt/tei:author[not(@role = 'translatorMain')]
+                                    return 
+                                        <author>{ normalize-space($author/text()) }</author>
+                                }
+                                <summary>{ $translation//tei:titleStmt/tei:author[@role = 'translatorMain'][1]/text() ! concat(normalize-space(.), ' ') ! normalize-space(.) }</summary>
+                            </authors>
+                            <editors>
+                            {
+                                for $editor in $translation//tei:titleStmt/tei:editor
+                                return 
+                                    <editor>{ normalize-space($editor/text()) }</editor>
+                            }
+                            </editors>
+                            <edition>{ $translation//tei:editionStmt/tei:edition[1]/text() ! concat(normalize-space(.), ' ') ! normalize-space(.) }</edition>
+                        </translation>
                         <term xml:lang="en">
                         { 
                             normalize-space(functx:capitalize-first(data($item/tei:term[@xml:lang eq 'en'][not(@type)] | $item/tei:term[not(@xml:lang)][not(@type)]))) 
