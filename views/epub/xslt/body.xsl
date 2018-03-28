@@ -33,7 +33,7 @@
                     <xsl:variable name="chapter-index" select="@chapter-index/string()"/>
                     
                     <xsl:if test="m:title/text() or m:title-number/text()">
-                        <div class="center header-lg">
+                        <div class="center header">
                             <xsl:if test="m:title-number/text()">
                                 <h4 class="chapter-number">
                                     <xsl:apply-templates select="m:title-number/text()"/>
@@ -54,7 +54,7 @@
             
             <xsl:if test="m:translation/m:colophon/tei:p">
                 <section id="colophon" class="milestones" epub:type="colophon">
-                    <div class="center header-lg">
+                    <div class="center header">
                         <h2>Colophon</h2>
                     </div>
                     <xsl:apply-templates select="m:translation/m:colophon"/>
@@ -63,7 +63,7 @@
             
             <xsl:if test="m:translation/m:appendix//tei:p">
                 <section id="appendix" class="milestones" epub:type="appendix">
-                    <div class="center header-lg">
+                    <div class="center header">
                         <h2>Appendix</h2>
                     </div>
                     <xsl:for-each select="m:translation/m:appendix/m:chapter">
@@ -83,7 +83,7 @@
             
             <xsl:if test="m:translation/m:abbreviations/m:item">
                 <section id="abbreviations">
-                    <div class="center header-lg">
+                    <div class="center header">
                         <h2>
                             Abbreviations
                         </h2>
@@ -117,7 +117,7 @@
             </xsl:if>
             
             <aside id="notes">
-                <div class="center header-lg">
+                <div class="center header">
                     <h2>Notes</h2>
                 </div>
                 <xsl:for-each select="m:translation/m:notes/m:note">

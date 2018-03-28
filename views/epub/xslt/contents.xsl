@@ -7,7 +7,7 @@
     
     <xsl:template match="/m:response">
         <xsl:variable name="content">
-            <div class="center header-lg">
+            <div class="center header">
                 <h2>Table of Contents</h2>
             </div>
             <nav epub:type="toc" class="contents">

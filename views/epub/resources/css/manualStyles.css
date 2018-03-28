@@ -32,7 +32,7 @@ a.milestone {
   text-decoration: none;
   color: inherit;
   page-break-after: avoid;
-  font-size: 0.8em;
+  font-size: .85em;
 }
 
 /* headings */
@@ -113,13 +113,10 @@ h5.space-before {
 
 /* section header */
 .header {
-	padding-top: 25%;
-}
-.header-lg {
 	padding-top: 20%;
 	padding-bottom: 20px;
 }
-.header h1, .header h2, .header-lg h1, .header-lg h2, .header-lg h3, .header-lg h4 {
+.header h1, .header h2, .header h3, .header h4 {
   margin-top:0px;
 	margin-bottom: 20px;
 }
@@ -157,7 +154,7 @@ p.footnote a.footnote-number {
 
 /* footnote links */
 .footnote-link {
-	font-size: 75%;
+	font-size: .75em;
   line-height: 0;
   position: relative;
   vertical-align: baseline;
@@ -234,8 +231,7 @@ img.logo-84000 {
 
 /* imprint */
 .imprint {
-	padding-top: 25%;
-	font-size: .9em;
+	padding-top: 20%;
 	margin-left: 15%;
 	margin-right: 15%;
 }
@@ -286,4 +282,3 @@ p.space-before {
 .glossary-item .alternative {
   display: none;
 }
-

@@ -12,9 +12,22 @@
             <xsl:apply-templates select="m:source[@name eq 'ekangyur']/m:language[@xml:lang eq 'bo']"/>
         </div>
         <hr/>
-        <p class="footer">
-            <xsl:value-of select="concat('eKangyur ', m:source[@name eq 'ekangyur']/@ekangyur-id, ', page ', m:source[@name eq 'ekangyur']/@page, '.')"/>
-        </p>
+        <div class="footer" id="source-footer">
+            <p>
+                <xsl:value-of select="concat('eKangyur ', m:source[@name eq 'ekangyur']/@ekangyur-id, ', page ', m:source[@name eq 'ekangyur']/@page, '.')"/>
+                <a href="#popover-content" class="info" role="button" tabindex="0" data-toggle="popover" data-placement="top" data-trigger="focus" data-container="#source-footer">
+                    <i class="fa fa-info-circle"/>
+                </a>
+            </p>
+            <div id="popover-content" class="hidden">
+                <h4 class="title">
+                    <xsl:value-of select="normalize-space(m:app-text[@key eq 'source.ekangyur-description-title'])"/>
+                </h4>
+                <div class="content">
+                    <xsl:copy-of select="m:app-text[@key eq 'source.ekangyur-description-content']/*"/>
+                </div>
+            </div>
+        </div>
     </xsl:template>
     
     <xsl:template match="tei:p">

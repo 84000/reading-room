@@ -227,3 +227,7 @@ declare function common:auth-environment() as xs:boolean {
     else
         false()
 };
+
+declare function common:app-text($key as xs:string) as node()* {
+    doc(concat(common:data-path(), '/config/app-text.xml'))//m:item[@key eq $key]/child::node()
+};

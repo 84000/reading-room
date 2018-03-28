@@ -439,11 +439,9 @@ declare function translation:folio-content($translation as node(), $folio as xs:
             $folio-content//text()[not(ancestor::tei:note)]
             | $folio-content//tei:ref[@cRef][not(@key) or @key eq $toh-key][not(@type)]
         return
-            if($node[self::text()]) then
-                if($node[normalize-space(.) != '']) then
-                    concat(normalize-space($node), ' ')
-                else
-                    ''
+            (: Catch instances where the string ends in a punctuation mark. Assume a space has been dropped. Add a space to concat to the next string. :)
+            if($node[self::text()] and substring($node, string-length($node), 1) = ('.',',','!','?','”', ':', ';')) then
+                concat($node, ' ')
             else
                 $node
     

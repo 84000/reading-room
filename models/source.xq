@@ -39,4 +39,14 @@ return
         {
             source:ekangyur-page($ekangyur-volume-number, $ekangyur-page-number, false())
         }
+        <app-text key="source.ekangyur-description-title">
+        {
+            common:app-text('source.ekangyur-description-title')
+        }
+        </app-text>
+        <app-text key="source.ekangyur-description-content">
+        {
+            common:app-text('source.ekangyur-description-content')
+        }
+        </app-text>
     </response>

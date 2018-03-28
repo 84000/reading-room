@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fn="http://www.w3.org/2005/xpath-functions" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" version="2.0" exclude-result-prefixes="#all">
+<xsl:stylesheet xmlns="http://www.w3.org/1999/xhtml" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" xmlns:xhtml="http://www.w3.org/1999/xhtml" version="3.0" exclude-result-prefixes="#all">
     
     <xsl:include href="translator-tools-sections/search.xsl"/>
     <xsl:include href="translator-tools-sections/glossary.xsl"/>
-    <xsl:include href="translator-tools-sections/translation-search.xsl"/>
     <xsl:include href="website-page.xsl"/>
     
     <xsl:output method="html" indent="no" doctype-system="about:legacy-compat"/>
     
     <xsl:template match="/m:response">
+        
+        <xsl:variable name="additional-tabs" select="doc('../../../data/translator-tools/additional-tabs.xml')"/>
+        
         <xsl:variable name="content">
+            
+            <xsl:variable name="requested-tab" select="/m:response/@tab"/>
             
             <div class="panel-heading panel-heading-bold hidden-print center-vertical">
                 
@@ -25,44 +29,60 @@
             
             <div class="panel-body">
                 
+                <!-- Tabs -->
                 <ul class="nav nav-tabs" role="tablist">
+                    
+                    <!-- Search tab -->
                     <li role="presentation">
-                        <xsl:if test="m:search">
+                        <xsl:if test="$requested-tab eq 'search'">
                             <xsl:attribute name="class" select="'active'"/>
                         </xsl:if>
                         <a href="?tab=search">Search</a>
                     </li>
+                    
+                    <!-- Glossary tab -->
                     <li role="presentation">
-                        <xsl:if test="m:glossary">
+                        <xsl:if test="$requested-tab eq 'glossary'">
                             <xsl:attribute name="class" select="'active'"/>
                         </xsl:if>
                         <a href="?tab=glossary">Glossary</a>
                     </li>
-                    <!-- 
-                    <li role="presentation">
-                        <xsl:if test="m:translation-search">
-                            <xsl:attribute name="class" select="'active'"/>
-                        </xsl:if>
-                        <a href="?tab=translation-search">Translation Search</a>
-                    </li> -->
+                    
+                    <!-- Additional tabs -->
+                    <xsl:for-each select="$additional-tabs//m:tab">
+                        <li role="presentation">
+                            <xsl:if test="$requested-tab eq @id">
+                                <xsl:attribute name="class" select="'active'"/>
+                            </xsl:if>
+                            <a>
+                                <xsl:attribute name="href" select="concat('?tab=', @id)"/>
+                                <xsl:value-of select="text()"/>
+                            </a>
+                        </li>
+                    </xsl:for-each>
+                    
                 </ul>
                 
+                <!-- Content -->
                 <div class="tab-content">
                     
-                    <!-- Cumulative Glossary -->
-                    <xsl:if test="m:glossary">
-                        <xsl:call-template name="glossary"/>
-                    </xsl:if>
-                    
-                    <!-- Search results -->
-                    <xsl:if test="m:search">
-                        <xsl:call-template name="search"/>
-                    </xsl:if>
-                    
-                    <!-- Translation search -->
-                    <xsl:if test="m:translation-search">
-                        <xsl:call-template name="translation-search"/>
-                    </xsl:if>
+                    <xsl:choose>
+                        
+                        <!-- Search results -->
+                        <xsl:when test="$requested-tab eq 'search'">
+                            <xsl:call-template name="search"/>
+                        </xsl:when>
+                        
+                        <!-- Cumulative Glossary -->
+                        <xsl:when test="$requested-tab eq 'glossary'">
+                            <xsl:call-template name="glossary"/>
+                        </xsl:when>
+                        
+                        <xsl:otherwise>
+                            <xsl:copy-of select="article/*"/>
+                        </xsl:otherwise>
+                        
+                    </xsl:choose>
                     
                 </div>
             </div>

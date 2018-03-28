@@ -21,7 +21,7 @@
                 <div class="space-before">
                     <img src="image/CC_logo.png" alt="Creative Commons Logo" class="logo"/>
                     <xsl:for-each select="m:translation/m:translation/m:license/tei:p">
-                        <p class="small italic">
+                        <p class="small">
                             <xsl:apply-templates select="node()"/>
                         </p>
                     </xsl:for-each>

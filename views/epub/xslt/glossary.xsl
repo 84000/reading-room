@@ -10,7 +10,7 @@
         <xsl:variable name="content">
             <section epub:type="glossary">
                 
-                <div class="center header-lg">
+                <div class="center header">
                     <h2>
                         <xsl:value-of select="$page-title"/>
                     </h2>

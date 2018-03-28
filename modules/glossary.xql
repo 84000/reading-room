@@ -71,8 +71,9 @@ declare function glossary:cumulative-glossary() as node() {
             timestamp="{ current-dateTime() }"
             app-id="{ common:app-id() }">
         <disclaimer>
-            Please bear in mind that we are constantly revising the glossaries and we will continue to add more glossaries as we publish translations.  
-            To keep up to date please regularly download the latest version from the website.
+        {
+            common:app-text('cumulative-glossary.disclaimer')
+        }
         </disclaimer>
         {
             for $main-term in distinct-values($translations//*[@type="glossary"]//tei:gloss/tei:term[(lower-case(@xml:lang) = ('eng', 'en') or not(@xml:lang))][not(@type = 'definition')][not(@type = 'alternative')]/text()/normalize-space(.))

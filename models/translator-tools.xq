@@ -19,6 +19,7 @@ let $search := request:get-parameter('search', '')
 let $volume := request:get-parameter('volume', 1)
 let $page := request:get-parameter('page', 1)
 let $results-mode := request:get-parameter('results-mode', 'translations')
+let $additional-content := doc(concat(common:data-path(), '/translator-tools/sections/', $tab, '.xml'))
 
 return
 
@@ -37,7 +38,7 @@ return
             else if($tab eq 'translation-search') then 
                 search:translation-search(xs:string($search), xs:integer($volume), xs:integer($page), $results-mode)
             else
-                ()
+                $additional-content
                 
         }
     </response>

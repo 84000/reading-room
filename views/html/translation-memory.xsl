@@ -208,8 +208,8 @@
             <xsl:with-param name="app-id" select="@app-id"/>
             <xsl:with-param name="page-url" select="''"/>
             <xsl:with-param name="page-type" select="'reading-room utilities'"/>
-            <xsl:with-param name="page-title" select="'Reading Room Tests'"/>
-            <xsl:with-param name="page-description" select="'Automated tests of the 84000 Reading Room app.'"/>
+            <xsl:with-param name="page-title" select="'Translation Memory'"/>
+            <xsl:with-param name="page-description" select="'84000 Translation Memory Generator.'"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
         
