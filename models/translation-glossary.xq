@@ -27,6 +27,7 @@ return
         doc-type="www"
         view-mode="{ $view-mode }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" >
             <translation-glossary 
                 xmlns="http://read.84000.co/ns/1.0" 

@@ -14,15 +14,18 @@
         
         <!-- Look up environment variables -->
         <xsl:variable name="environment" select="doc('/db/env/environment.xml')/m:environments/m:environment[@id = $app-id]"/>
+        <xsl:variable name="app-version" select="doc('../../app-config.xml')/m:app-config/m:version/text()"/>
         
         <html>
             
             <!-- Get the common <head> -->
             <xsl:call-template name="html-head">
                 <xsl:with-param name="app-id" select="$app-id"/>
+                <xsl:with-param name="app-version" select="$app-version"/>
                 <xsl:with-param name="page-url" select="$page-url"/>
                 <xsl:with-param name="page-title" select="$page-title"/>
                 <xsl:with-param name="page-description" select="$page-description"/>
+                <xsl:with-param name="page-type" select="$page-type"/>
             </xsl:call-template>
             
             <body id="top">
@@ -32,7 +35,7 @@
                 <!-- Environment alert -->
                 <xsl:if test="$environment/m:warning/text()">
                     <div class="environment-warning">
-                        <xsl:value-of select="$environment/m:warning/text()"/> : <xsl:value-of select="@user-name"/>
+                        <xsl:value-of select="$environment/m:warning/text()"/> v<xsl:value-of select="$app-version"/> / <xsl:value-of select="@user-name"/>
                     </div>
                 </xsl:if>
                 
@@ -47,6 +50,7 @@
                 <!-- Get the common <footer> -->
                 <xsl:call-template name="html-footer">
                     <xsl:with-param name="app-id" select="$app-id"/>
+                    <xsl:with-param name="app-version" select="$app-version"/>
                 </xsl:call-template>
                 
             </body>

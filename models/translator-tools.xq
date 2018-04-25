@@ -22,12 +22,12 @@ let $results-mode := request:get-parameter('results-mode', 'translations')
 let $additional-content := doc(concat(common:data-path(), '/translator-tools/sections/', $tab, '.xml'))
 
 return
-
     <response 
         xmlns="http://read.84000.co/ns/1.0" 
         model-type="home"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" 
         tab="{ $tab }">
         {

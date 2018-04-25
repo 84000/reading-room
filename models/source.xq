@@ -33,6 +33,7 @@ return
         model-type="source"
         timestamp="{current-dateTime()}"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" 
         translation-id="{ $translation-id }"
         folio="{ $folio }">

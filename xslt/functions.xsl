@@ -50,7 +50,7 @@
         <xsl:param name="sa-string" as="xs:string"/>
         <xsl:variable name="in" select="'āḍḥīḷḹṃṇñṅṛṝṣśṭūṁ'"/>
         <xsl:variable name="out" select="'adhillmnnnrrsstum'"/>
-        <xsl:value-of select="translate(lower-case($sa-string), $in, $out)"/>
+        <xsl:value-of select="translate(common:alphanumeric(lower-case($sa-string)), $in, $out)"/>
     </xsl:function>
     
     <xsl:function name="common:glossarize-class" as="xs:string*">
@@ -59,6 +59,11 @@
         <xsl:if test="$css-class and $glossarize eq true()">
             <xsl:value-of select="concat(' ', $css-class)"/>
         </xsl:if>
+    </xsl:function>
+    
+    <xsl:function name="common:alphanumeric" as="xs:string*">
+        <xsl:param name="string" as="xs:string"/>
+        <xsl:value-of select="replace($string, '[^a-zA-Z0-9]', '')"/>
     </xsl:function>
     
 </xsl:stylesheet>

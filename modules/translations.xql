@@ -23,12 +23,12 @@ declare function translations:translations($count-words as xs:boolean)
         <translations xmlns="http://read.84000.co/ns/1.0">
         {
          for $translation in collection(common:translations-path())
-            let $text-id := $translation/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno/@xml:id
-            let $outline-text := text:translation($text-id, $outlines)
+            let $translation-id := $translation/tei:TEI/tei:teiHeader/tei:fileDesc/tei:publicationStmt/tei:idno/@xml:id
+            let $outline-text := text:translation($translation-id, $outlines)
             let $translated-text := 
                 <translated>
                 {
-                    $translation/tei:TEI/tei:text/tei:body/tei:div[@type = "translation"]/tei:div[@type = ("section", "chapter", "colophon")]//*[not(self::tei:note) and not(parent::tei:note)]
+                    $translation/tei:TEI/tei:text/tei:body/tei:div[@type = "translation"]/*[self::tei:div[@type = ("section", "chapter", "colophon")] or self::tei:head[@type ne 'translation']]//text()[not(ancestor::tei:note)]
                 }
                 </translated>
             let $word-count := 
@@ -41,7 +41,7 @@ declare function translations:translations($count-words as xs:boolean)
              <translation 
                   uri="{ base-uri($translation) }"
                   fileName="{ util:unescape-uri(replace(base-uri($translation), ".+/(.+)$", "$1"), 'UTF-8') }"
-                  id="{ $text-id }" 
+                  id="{ $translation-id }" 
                   wordCount="{ $word-count }"
                   glossaryCount="{ glossary:item-count($translation) }"
                   status="{ text:status-str($outline-text) }">

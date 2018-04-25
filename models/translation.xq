@@ -17,6 +17,7 @@ import module namespace glossary="http://read.84000.co/glossary" at "../modules/
 declare option exist:serialize "method=xml indent=no";
 
 let $resource-id := request:get-parameter('resource-id', '')
+
 let $doc-type := 
     if (request:get-parameter('resource-suffix', '') eq 'epub') then
         'epub'
@@ -29,7 +30,7 @@ let $outlines := collection(common:outlines-path())
 let $outline-text := text:translation($translation-id, $outlines)
 let $view-mode := request:get-parameter('view-mode', '')
 
-return
+let $response := 
     <response 
         xmlns="http://read.84000.co/ns/1.0" 
         model-type="translation"
@@ -37,6 +38,7 @@ return
         doc-type="{ $doc-type }"
         view-mode="{ $view-mode }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" >
             <translation 
                 xmlns="http://read.84000.co/ns/1.0" 
@@ -59,7 +61,12 @@ return
                 { translation:notes($translation) }
                 { translation:bibliography($translation) }
                 { translation:glossary($translation) }
-                {(::)()}
             </translation>
     </response>
+
+let $milestones := transform:transform($response, doc(concat(common:app-path(), "/xslt/milestones.xsl")), <parameters/>)
+let $internal-refs := transform:transform($milestones, doc(concat(common:app-path(), "/xslt/internal-refs.xsl")), <parameters/>)
+
+return
+    $internal-refs
     

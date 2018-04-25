@@ -133,7 +133,7 @@
                         
                         <hr/>
                         
-                        <table class="table table-responsive">
+                        <table class="table table-responsive table-icons">
                             <thead>
                                 <tr>
                                     <th>Text</th>

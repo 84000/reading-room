@@ -79,20 +79,18 @@ declare function text:toh($text as node()) as node() {
     
     (: Now we can sort by first, sub ascending :)
     return
-        <toh 
-            xmlns="http://read.84000.co/ns/1.0" 
-            first="{ $first }" 
-            sub="{ $sub }"
-            sponsored="{ text:sponsored-sutra($first, $sub) }">
-            { 
-                $toh 
-            }
-        </toh>
+        <toh xmlns="http://read.84000.co/ns/1.0" first="{ $first }" sub="{ $sub }">{ $toh }</toh>
 
 };
 
 declare function text:status($text) as node() {
-    <status xmlns="http://read.84000.co/ns/1.0">{ text:status-str($text) }</status>
+    <status 
+        xmlns="http://read.84000.co/ns/1.0"
+        translation-id="{ text:translation-id($text) }">
+    { 
+        text:status-str($text) 
+    }
+    </status>
 };
 
 declare function text:title($text) as node() {
@@ -243,12 +241,3 @@ declare function text:text($text as node()*, $translated as xs:boolean, $ancesto
         </text>
 };
 
-declare function text:sponsored-sutra($toh as xs:integer, $chapter as xs:integer) as xs:boolean {
-    
-    let $sponsored-sutras := doc(concat(common:data-path(), '/operations/sponsors.xml'))
-    return
-        if($sponsored-sutras//m:sutra[xs:integer(@toh) eq $toh][$chapter eq 0 or xs:integer(@chapter) eq $chapter]) then
-            true()
-        else
-            false()
-};

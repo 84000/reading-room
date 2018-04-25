@@ -1,284 +1,363 @@
 /* base styles */
-body, div, dl, dt, dd, h1, h2, h3, h4, h5, h6, p, pre, code, blockquote {
-	margin: 0;
-	padding: 0;
-	border-width: 0;
+body,
+div,
+dl,
+dt,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+pre,
+code,
+blockquote{
+    margin: 0;
+    padding: 0;
+    border-width: 0;
 }
-body {
-	color:#000000;
-	font-family: Georgia,"Times New Roman",Times,serif;
-	margin: 5px;
+body{
+    color: #000000;
+    font-family: "IndUni-P";
 }
-h1, h2, h3, h4, h5, h6 {
-  display: block;
-  width: 100%;
-  text-align: inherit;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6{
+    display: block;
+    width: 100%;
+    text-align: inherit;
+    font-weight: bold;
 }
-section, aside {
-  display: block;
-	page-break-before:always;
-	max-width: 100%;
+section,
+aside{
+    display: block;
+    page-break-before: always;
+    max-width: 100%;
 }
-p {
-	line-height:1.6;
-	page-break-after:auto;
-	page-break-before:auto;
-	text-align: left;
+p{
+    line-height: 1.5;
+    page-break-after: auto;
+    page-break-before: auto;
+    text-align: left;
 }
-a {
-	color: #003f5f;
-}
-a.milestone {
-  text-decoration: none;
-  color: inherit;
-  page-break-after: avoid;
-  font-size: .85em;
+a{
+    color: #003f5f;
 }
 
 /* headings */
-h1 {
-	font-size: 1.4em;
-	font-weight: 500;
-	line-height: 1.3em;
+h1{
+    font-size: 1.4em;
 }
-h2 {
-	font-size: 1.3em;
-	font-weight: 500;
-	line-height: 1.4em;
+h2{
+    font-size: 1.3em;
 }
-h3 {
-	font-size: 1.2em;
-	font-weight: 500;
-}	
-h4 {
-	font-size: 1.1em;
-	font-weight: 600;
-	margin-top: 20px;
+h3{
+    font-size: 1.2em;
 }
-h5 {
-	font-size: 1em;
-	font-weight: normal;
-	line-height: 1.4em;
+h4{
+    font-size: 1.1em;
 }
-h5.space-before {
-	margin-top: 40px;
+h5{
+    font-size: 1em;
+}
+h5.space-before,
+h5.section-label{
+    margin-top: 40pt;
+}
+
+/* blockquote */
+blockquote{
+    padding: 0;
+    margin-bottom: 0;
+    margin-left: -5pt;
+}
+blockquote p{
+    padding-left: 22pt;
+}
+blockquote .line-group .line{
+    padding-left: 22pt;
 }
 
 /* helpers */
-.bold {
-  font-weight: bold;
+.bold,
+.text-bold{
+    font-weight: bold;
 }
-.center {
-	text-align: center;
+.center{
+    text-align: center;
 }
-.center p {
-	text-align: center;
+.center p{
+    text-align: center;
 }
-.italic {
-	font-style: italic;
+.italic{
+    font-style: italic;
 }
-.title {
-	font-style: italic;
+.title{
+    font-style: italic;
 }
-.foreign {
-	font-style: italic;
+.name{
+    font-style: italic;
+    font-weight: bold;
 }
-.name {
-  font-weight: bold;
-  font-style: italic;
+.uppercase{
+    text-transform: uppercase;
 }
-.uppercase {
-	text-transform: uppercase;
+.small{
+    font-size: .75em;
 }
-.small {
-	font-size: .85em;
+.speaker{
+    font-style: italic;
 }
-.speaker {
-	font-style: italic;
+.trailer{
+    font-style: italic;
 }
-.trailer {
-  font-style: italic;
-}
-.section-label {
-  font-weight: bold;
+.trailer .ref,
+.trailer .footnote-link{
+    font-style: normal;
 }
 
 /* other scripts */
-.text-bo {
-    font-family:"Tibetan" !important;
+.text-bo{
+    font-family: "DDC Uchen";
+    line-height: 2em;
 }
-.text-zh {
+.text-sa{
+    font-style: italic;
+}
+.text-wylie{
+    font-style: italic;
+}
+.text-zh{
     font-style: normal !important;
 }
 
 /* section header */
-.header {
-	padding-top: 20%;
-	padding-bottom: 20px;
+.header{
+    padding-top: 20%;
+    padding-bottom: 20pt;
+    page-break-after: avoid;
 }
-.header h1, .header h2, .header h3, .header h4 {
-  margin-top:0px;
-	margin-bottom: 20px;
+.header h1,
+.header h2,
+.header h3,
+.header h4{
+    margin-top: 0;
+    margin-bottom: 20pt;
 }
 
-/* milestone indents */
-.milestones {
-  padding-left: 50px;
-}
-.milestones p .milestone {
-  margin-left: -75px;
-  padding-right: 50px;
-}
-.milestones p {
-    text-align: justify;
-    text-indent: 25px;
-}
-.milestones .line-group .milestone {
-  margin-left: -50px;
-}
-.milestones .line-group p {
-    margin-left: 0px;
-    padding-left: 2em;
-    text-indent: -2em;
-}
-.milestones h2 {
+/* text section */
+.text h2{
     font-weight: normal;
 }
-
-p.footnote {
-  margin-bottom: 12px;
+.text h4{
+    margin-top: 22px;
 }
-p.footnote a.footnote-number {
-  margin-right: 15px;
+.text br{
+    display: none;
+}
+.text p{
+    text-align: justify;
+    text-indent: 22pt;
+}
+.text p.mantra{
+    text-indent: 0;
+    padding: 0 22pt;
+}
+.text p br{
+    display: block;
+}
+/* Spaced paragraphs */
+.text h2 + p,
+.text h3 + p,
+.text h4 + p,
+.text br + *,
+.text .space,
+.text .space + *,
+.text .space-after + *
+{
+    margin-top: 14pt;
+}
+.text .list .space-after + *{
+    margin-top: 14pt;
+}
+/* Remove line indent */
+.rw:first-child p,
+.rw.first-child p,
+h2 + .rw p,
+h3 + .rw p,
+h4 + .rw p,
+br + .rw p,
+.space + .rw p,
+.space-after + .rw p,
+.trailer p,
+.footnote-number{
+    text-indent: 0;
+}
+
+/* Gutter for Milestones */
+.rw{
+    display: block;
+    padding-left: 35pt;
+}
+.rw .rw{
+    margin-left: -35pt;
+}
+.gtr{
+    display: block;
+    float: left;
+    margin-left: -35pt;
+    width: 30pt;
+    font-size: .75em;
+    line-height: 2em;
+    vertical-align: baseline;
+    overflow-wrap: break-word;
+    page-break-after: avoid;
+}
+
+/* list incl. indented lists */
+.list p,
+.section-label{
+    margin-top: 0;
+    margin-bottom: 11pt;
+}
+.list .list-item p,
+.list .list-item .section-label{
+    padding-left: 22pt;
+}
+.list .list-item .list-item p,
+.list .list-item .list-item .section-label{
+    padding-left: 44pt;
+}
+.list .list-item .list-item .list-item p,
+.list .list-item .list-item .list-item .section-label{
+    padding-left: 66pt;
+}
+.list .list-item .list-item .list-item .list-item p,
+.list .list-item .list-item .list-item .list-item .section-label{
+    padding-left: 88pt;
+}
+
+/* Footnotes */
+.footnote{
+    margin-bottom: 12pt;
 }
 
 /* footnote links */
-.footnote-link {
-	font-size: .75em;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-  top: -0.5em;
-}
-
-/* paragraph spacers */
-.space {
-  margin-top: 20px;
-}
-p.space-before {
-	margin-top: 20px;
-}
-p.space-after {
-	margin-bottom: 20px;
-}
-/* div spacers */
-div.space-before {
-	margin-top: 50px;
-}
-div.space-after {
-	margin-bottom: 50px;
-}
-.spaced p {
-  margin-top: 20px;
+.footnote-link{
+    font-size: .75em;
+    vertical-align: super;
 }
 
 /* Images */
-img.illustration {
-	display: block;
-	page-break-before: always;
-	max-width: 100%;
-	max-height: 100%;
-	margin: 0px auto;
+img.illustration{
+    display: block;
+    page-break-before: always;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0 auto;
 }
-img.divider {
-	display: block;
-	margin: 30px auto 30px auto;
-	page-break-after: always;
+img.divider{
+    display: block;
+    margin: 30pt auto 30pt auto;
+    page-break-after: always;
 }
-img.logo-84000 {
-    width: 170px;
+img.logo-84000{
+    width: 25%;
 }
 
 /* line-groups */
-.line-group {
-  position: relative;
-}
-.line-group .line-group {
-  margin-top: 12px;
+.line-group .line{
+    padding-left: 22pt;
+    text-indent: -22pt;
 }
 
 /* title pages */
-.half-title, .full-title, .colophon {
-	padding-top: 20%;
-	padding-bottom: 20%;
+.half-title,
+.full-title,
+.colophon{
+    padding-top: 20%;
 }
-.full-title h1, .full-title h2, .half-title h1, .half-title h2, .full-title p {
-	margin-bottom: 30px;
+.full-title h1,
+.full-title h2,
+.half-title h1,
+.half-title h2,
+.full-title p{
+    margin-bottom: 15pt;
 }
-.full-title h2 {
-    font-size: 1em;
+.half-title .logo{
+    display: inline-block;
+    margin: 0 auto;
+    margin-top: 20%;
 }
-.half-title .logo {
-	display: inline-block;
-	margin: 0px auto;
-	margin-top: 50px;
+.half-title h2,
+.full-title h2,
+.full-title h3,
+.full-title p{
+    font-size: 13pt;
+    font-weight: normal;
 }
-.full-title .translator {
-    padding: 15px;
-    background-color: #f9eadb;
-    margin-bottom: 0px;
+.full-title .translator{
+    padding: 10pt 15pt;
+    background-color: #eee;
+    margin-bottom: 0;
 }
 
 /* imprint */
-.imprint {
-	padding-top: 20%;
-	margin-left: 15%;
-	margin-right: 15%;
+.imprint{
+    padding-top: 20%;
 }
-.imprint .logo {
-	display: inline-block;
-	margin: 10px auto;
+.imprint h5{
+    margin-bottom: 11pt;
 }
-p.space-before {
-	margin-top: 40px;
+.imprint .logo{
+    display: block;
+    margin: 0 auto;
+    margin-top: 5%;
+    margin-bottom: 22px;
 }
 
 /* contents */
-.contents a {
-	text-decoration: none;
+.contents a{
+    text-decoration: none;
 }
-.contents > ol {
-  list-style-type: disc;
+.contents > ol{
+    list-style-type: disc;
 }
-.contents > ol ol {
-  list-style-type: circle;
+.contents > ol ol{
+    list-style-type: circle;
 }
-.contents li {
-  margin-top: 10px;
+.contents li{
+    margin-top: 5pt;
 }
 
 /* Abbreviations */
-#abbreviations table {
-  margin-top: 8px;
-  margin-bottom: 8px;
+#abbreviations table{
+    margin-top: 8pt;
+    margin-bottom: 8pt;
 }
-#abbreviations table th {
-  padding-right: 8px;
+#abbreviations table th{
+    padding-right: 8pt;
 }
 
 /* Bibliography */
-#bibliography p {
-  padding-left: 2em;
-  text-indent: -2em;
+#bibliography p{
+    padding-left: 2em;
+    text-indent: -2em;
+    margin-top: 14pt;
 }
 
 /* Glossary */
-.glossary-item {
-  margin-bottom: 20px; 
+.glossary-item{
+    margin-bottom: 20pt;
 }
-.glossary-item .term {
-  margin-top: 0px;
+.glossary-item .term{
+    margin-top: 0pt;
 }
-.glossary-item .alternative {
-  display: none;
+.glossary-item .alternative{
+    display: none;
 }

@@ -8,13 +8,15 @@
     <xsl:template match="/m:response">
         
         <xsl:variable name="content">
-            <section class="milestones">
+            <section>
                 <div class="center header">
                     <h2>
                         <xsl:value-of select="$page-title"/>
                     </h2>
                 </div>
-                <xsl:apply-templates select="m:translation/m:introduction"/>
+                <div class="text">
+                    <xsl:apply-templates select="m:translation/m:introduction"/>
+                </div>
             </section>
         </xsl:variable>
         

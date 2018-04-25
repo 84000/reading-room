@@ -8,7 +8,7 @@ import module namespace translation = "http://read.84000.co/translation" at "../
 let $data := request:get-data()
 let $translation-id := $data//m:translation/@id
 let $translation-title := $data//m:translation/m:titles/m:title[@xml:lang eq 'en']/string()
-let $epub-id := concat('http://read.84000.co/translation', $translation-id, '.epub')
+let $epub-id := concat('http://read.84000.co/translation/', $translation-id, '.epub')
 
 let $parameters := 
     <parameters>
@@ -36,13 +36,19 @@ let $entries := (
                 <meta refines="#dc-title" property="title-type">main</meta>
                 <meta refines="#dc-title" property="file-as">{ translation:title-listing($translation-title) }</meta>
                 <meta property="dcterms:modified">{ current-dateTime() }</meta><!-- Published now? -->
+                <meta property="belongs-to-collection" id="kangyur-84000">84000 Kangyur</meta>
+                <meta refines="#kangyur-84000" property="collection-type">series</meta>
             </metadata>
             <manifest>
                 <item id="manualStyles" href="css/manualStyles.css" media-type="text/css"/>
                 <item id="fontStyles" href="css/fontStyles.css" media-type="text/css"/>
                 <item id="logo" href="image/logo-stacked.png" media-type="image/png"/>
                 <item id="creative-commons-logo" href="image/CC_logo.png" media-type="image/png"/>
-                <item id="tibetan-font" href="fonts/DDC_Uchen.ttf" media-type="application/vnd.ms-opentype"/>
+                <item id="tibetan-font" href="fonts/DDC_Uchen.ttf" media-type="application/x-font-truetype"/>
+                <item id="english-font-regular" href="fonts/IndUni-P-Regular.otf" media-type="application/vnd.ms-opentype"/>
+                <item id="english-font-bold" href="fonts/IndUni-P-Bold.otf" media-type="application/vnd.ms-opentype"/>
+                <item id="english-font-italic" href="fonts/IndUni-P-Italic.otf" media-type="application/vnd.ms-opentype"/>
+                <item id="english-font-bold-italic" href="fonts/IndUni-P-BoldItalic.otf" media-type="application/vnd.ms-opentype"/>
                 <item id="half-title" href="half-title.xhtml" media-type="application/xhtml+xml"/>
                 <item id="full-title" href="full-title.xhtml" media-type="application/xhtml+xml"/>
                 <item id="imprint" href="imprint.xhtml" media-type="application/xhtml+xml"/>
@@ -51,6 +57,7 @@ let $entries := (
                 <item id="acknowledgements" href="acknowledgements.xhtml" media-type="application/xhtml+xml"/>
                 <item id="introduction" href="introduction.xhtml" media-type="application/xhtml+xml"/>
                 <item id="body" href="body.xhtml" media-type="application/xhtml+xml"/>
+                <item id="notes" href="notes.xhtml" media-type="application/xhtml+xml"/>
                 <item id="bibliography" href="bibliography.xhtml" media-type="application/xhtml+xml"/>
                 <item id="glossary" href="glossary.xhtml" media-type="application/xhtml+xml"/>
                 <item id="toc" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
@@ -64,6 +71,7 @@ let $entries := (
                 <itemref idref="acknowledgements"/>
                 <itemref idref="introduction"/>
                 <itemref idref="body"/>
+                <itemref idref="notes"/>
                 <itemref idref="bibliography"/>
                 <itemref idref="glossary"/>
             </spine>
@@ -74,6 +82,10 @@ let $entries := (
     <entry name="OEBPS/image/logo-stacked.png" type="binary">{ common:epub-resource('image/logo-stacked.png') }</entry>,
     <entry name="OEBPS/image/CC_logo.png" type="binary">{ common:epub-resource('image/CC_logo.png') }</entry>,
     <entry name="OEBPS/fonts/DDC_Uchen.ttf" type="binary">{ common:epub-resource('fonts/DDC_Uchen.ttf') }</entry>,
+    <entry name="OEBPS/fonts/IndUni-P-Regular.otf" type="binary">{ common:epub-resource('fonts/IndUni-P-Regular.otf') }</entry>,
+    <entry name="OEBPS/fonts/IndUni-P-Bold.otf" type="binary">{ common:epub-resource('fonts/IndUni-P-Bold.otf') }</entry>,
+    <entry name="OEBPS/fonts/IndUni-P-Italic.otf" type="binary">{ common:epub-resource('fonts/IndUni-P-Italic.otf') }</entry>,
+    <entry name="OEBPS/fonts/IndUni-P-BoldItalic.otf" type="binary">{ common:epub-resource('fonts/IndUni-P-BoldItalic.otf') }</entry>,
     <entry name="OEBPS/half-title.xhtml" type="xml">{transform:transform($data, doc("xslt/half-title.xsl"), ())}</entry>,
     <entry name="OEBPS/full-title.xhtml" type="xml">{transform:transform($data, doc("xslt/full-title.xsl"), ())}</entry>,
     <entry name="OEBPS/imprint.xhtml" type="xml">{transform:transform($data, doc("xslt/imprint.xsl"), ())}</entry>,
@@ -82,6 +94,7 @@ let $entries := (
     <entry name="OEBPS/acknowledgements.xhtml" type="xml">{transform:transform($data, doc("xslt/acknowledgements.xsl"), ())}</entry>,
     <entry name="OEBPS/introduction.xhtml" type="xml">{transform:transform($data, doc("xslt/introduction.xsl"), ())}</entry>,
     <entry name="OEBPS/body.xhtml" type="xml">{transform:transform($data, doc("xslt/body.xsl"), ())}</entry>,
+    <entry name="OEBPS/notes.xhtml" type="xml">{transform:transform($data, doc("xslt/notes.xsl"), ())}</entry>,
     <entry name="OEBPS/bibliography.xhtml" type="xml">{transform:transform($data, doc("xslt/bibliography.xsl"), ())}</entry>,
     <entry name="OEBPS/glossary.xhtml" type="xml">{transform:transform($data, doc("xslt/glossary.xsl"), ())}</entry>,
     <entry name="OEBPS/toc.ncx" type="xml">{transform:transform(transform:transform($data, doc("xslt/toc.xsl"), $parameters), doc("xslt/play-order.xsl"), ())}</entry>

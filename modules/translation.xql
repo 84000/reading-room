@@ -104,6 +104,11 @@ declare function translation:translation($translation as node()) as node()* {
             $translation//tei:publicationStmt/tei:publisher/node()
         }
         </publication-statement>
+        <tantric-restriction>
+        {
+            $translation//tei:publicationStmt/tei:availability/tei:p[@type eq 'tantricRestriction']
+        }
+        </tantric-restriction>
     </translation>
 };
 
@@ -261,7 +266,9 @@ declare function translation:notes($translation as node()) as node()* {
     {
         for $note in $translation//tei:text//tei:note
         return
-            <note index="{ $note/@index/string() }" uid="{ $note/@xml:id/string() }">
+            <note 
+                index="{ $note/@index/string() }" 
+                uid="{ $note/@xml:id/string() }">
             {  
                 $note/node()
             }
@@ -332,8 +339,10 @@ declare function translation:glossary($translation as node()) as node()* {
                             </alternative>
                         else if ($item[@xml:lang]) then
                             <term xml:lang="{ lower-case($item/@xml:lang) }">
-                            { 
-                                if ($item/@xml:lang eq 'Bo-Ltn') then
+                            {
+                                if (not($item/text())) then
+                                    common:app-text(concat('glossary.term-empty-', lower-case($item/@xml:lang)))
+                                else if ($item/@xml:lang eq 'Bo-Ltn') then
                                     common:bo-ltn($item/text())
                                 else
                                     $item/text() 
@@ -440,8 +449,10 @@ declare function translation:folio-content($translation as node(), $folio as xs:
             | $folio-content//tei:ref[@cRef][not(@key) or @key eq $toh-key][not(@type)]
         return
             (: Catch instances where the string ends in a punctuation mark. Assume a space has been dropped. Add a space to concat to the next string. :)
-            if($node[self::text()] and substring($node, string-length($node), 1) = ('.',',','!','?','”', ':', ';')) then
+            if($node[self::text()] and substring($node, string-length($node), 1) = ('.',',','!','?','”',':',';')) then
                 concat($node, ' ')
+            else if($node[self::text()] and $node[parent::tei:head]) then
+                concat($node, '. ')
             else
                 $node
     

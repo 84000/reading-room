@@ -12,16 +12,20 @@
         <!-- PAGE CONTENT -->
         <xsl:variable name="content">
             
-            <div class="panel-body">
-                
-                <h1>
-                    You are not authorised to access this resource.
-                </h1>
-                
-                <p>
-                    Please choose an alternative navigation option.
-                </p>
-                
+            <div class="container">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        
+                        <h1>
+                            You are not authorised to access this resource.
+                        </h1>
+                        
+                        <p>
+                            Please choose an alternative navigation option.
+                        </p>
+                        
+                    </div>
+                </div>
             </div>
             
         </xsl:variable>
@@ -34,6 +38,7 @@
             <xsl:with-param name="page-title" select="'Authorisation'"/>
             <xsl:with-param name="page-description" select="'You are not authorised to access this resource.'"/>
             <xsl:with-param name="content" select="$content"/>
+            <xsl:with-param name="nav-tab" select="''"/>
         </xsl:call-template>
     
     </xsl:template>

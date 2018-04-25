@@ -11,19 +11,23 @@
         <xsl:param name="page-title"/>
         <xsl:param name="page-description"/>
         <xsl:param name="content"/>
+        <xsl:param name="nav-tab"/>
         
         <!-- Look up environment variables -->
         <xsl:variable name="environment" select="doc('/db/env/environment.xml')/m:environments/m:environment[@id = $app-id]"/>
         <xsl:variable name="resource-path" select="$environment/m:resource-path/text()"/>
+        <xsl:variable name="app-version" select="doc('../../app-config.xml')/m:app-config/m:version/text()"/>
         
         <html>
             
             <!-- Get the common <head> -->
             <xsl:call-template name="html-head">
                 <xsl:with-param name="app-id" select="$app-id"/>
+                <xsl:with-param name="app-version" select="$app-version"/>
                 <xsl:with-param name="page-url" select="$page-url"/>
                 <xsl:with-param name="page-title" select="$page-title"/>
                 <xsl:with-param name="page-description" select="$page-description"/>
+                <xsl:with-param name="page-type" select="$page-type"/>
             </xsl:call-template>
             
             <body id="top">
@@ -33,7 +37,7 @@
                 <!-- Environment alert -->
                 <xsl:if test="$environment/m:warning/text()">
                     <div class="environment-warning">
-                        <xsl:value-of select="$environment/m:warning/text()"/> : <xsl:value-of select="@user-name"/>
+                        <xsl:value-of select="$environment/m:warning/text()"/> v<xsl:value-of select="$app-version"/> / <xsl:value-of select="@user-name"/>
                     </div>
                 </xsl:if>
                 
@@ -77,21 +81,27 @@
                             
                             <ul class="nav navbar-nav">
                                 <li class="home">
+                                    <xsl:attribute name="class" select="concat('home', if($nav-tab eq 'home') then ' active' else '')"/>
                                     <a href="http://84000.co">Home</a>
                                 </li>
                                 <li class="news">
+                                    <xsl:attribute name="class" select="concat('news', if($nav-tab eq 'news') then ' active' else '')"/>
                                     <a href="http://84000.co/news">News</a>
                                 </li>
-                                <li class="reading-room active">
+                                <li class="reading-room">
+                                    <xsl:attribute name="class" select="concat('reading-room', if($nav-tab eq 'reading-room') then ' active' else '')"/>
                                     <a href="/section/lobby.html">Reading Room</a>
                                 </li>
                                 <li class="about">
+                                    <xsl:attribute name="class" select="concat('about', if($nav-tab eq 'about') then ' active' else '')"/>
                                     <a href="http://84000.co/about/vision">About</a>
                                 </li>
                                 <li class="resources">
+                                    <xsl:attribute name="class" select="concat('resources', if($nav-tab eq 'resources') then ' active' else '')"/>
                                     <a href="http://84000.co/resources/translator-training">Resources</a>
                                 </li>
                                 <li class="how-to-help">
+                                    <xsl:attribute name="class" select="concat('how-to-help', if($nav-tab eq 'how-to-help') then ' active' else '')"/>
                                     <a href="http://84000.co/how-you-can-help/donate/#sap">How you can help</a>
                                 </li>
                             </ul>
@@ -135,11 +145,7 @@
                 </nav>
                 
                 <!-- Content -->
-                <div class="container">
-                    <div class="panel panel-default">
-                        <xsl:copy-of select="$content"/>
-                    </div>
-                </div>
+                <xsl:copy-of select="$content"/>
                 
                 <!-- Link to top of page -->
                 <div class="hidden-print">
@@ -153,6 +159,7 @@
                 <!-- Get the common <footer> -->
                 <xsl:call-template name="html-footer">
                     <xsl:with-param name="app-id" select="$app-id"/>
+                    <xsl:with-param name="app-version" select="$app-version"/>
                 </xsl:call-template>
                 
             </body>

@@ -117,7 +117,7 @@
                     <navLabel>
                         <text>Notes</text>
                     </navLabel>
-                    <content src="body.xhtml#notes"/>
+                    <content src="notes.xhtml"/>
                 </navPoint>
                 <navPoint id="bibliography">
                     <navLabel>

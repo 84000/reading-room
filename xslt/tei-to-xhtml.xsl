@@ -55,7 +55,7 @@
     <xsl:template match="tei:emph">
         <em>
             <xsl:attribute name="class">
-                <xsl:value-of select="concat(normalize-space(common:lang-class(@xml:lang)), ' glossarize')"/>
+                <xsl:value-of select="concat(normalize-space(common:lang-class(@xml:lang)), ' glossarize', if(@rend eq 'bold') then ' text-bold' else '')"/>
             </xsl:attribute>
             <xsl:apply-templates select="node()"/>
         </em>
@@ -71,12 +71,17 @@
     </xsl:template>
     
     <xsl:template match="tei:note">
-        <a class="footnote-link pop-up">
-            <xsl:attribute name="href" select="concat('#', @xml:id)"/>
+        <a class="footnote-link">
             <xsl:attribute name="id" select="concat('link-to-', @xml:id)"/>
-            <xsl:if test="ancestor::*[exists(@doc-type)][1]/@doc-type eq 'epub'">
-                <xsl:attribute name="epub:type" select="'noteref'"/>
-            </xsl:if>
+            <xsl:choose>
+                <xsl:when test="/m:response/@doc-type eq 'epub'">
+                    <xsl:attribute name="href" select="concat('notes.xhtml#', @xml:id)"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="href" select="concat('#', @xml:id)"/>
+                    <xsl:attribute name="class" select="'footnote-link pop-up'"/>
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:apply-templates select="@index"/>
         </a>
     </xsl:template>
@@ -86,12 +91,6 @@
             <xsl:apply-templates select="text()"/>
         </span>
     </xsl:template>
-    
-    <!-- 
-    <xsl:template match="tei:item">
-        <xsl:apply-templates select="node()"/>
-        <br/>
-    </xsl:template> -->
     
     <xsl:template match="tei:gloss">
         <a class="glossary">
@@ -105,12 +104,14 @@
             <xsl:when test="@cRef">
                 <xsl:if test="(not(@rend) or @rend != 'hidden') and (not(@key) or @key eq /m:response/m:translation/m:source/@key)">
                     <xsl:choose>
-                        <xsl:when test="@cRef and not(@type) and upper-case(substring-before(@cRef, '.')) eq 'F'">
-                            <a class="ref">
+                        <!-- Conditions for creating a link... -->
+                        <xsl:when test="/m:response/@doc-type ne 'epub' and @cRef and not(@type) and upper-case(substring-before(@cRef, '.')) eq 'F'">
+                            <a class="ref log-click">
                                 <xsl:attribute name="href" select="concat('/source/', /m:response/m:translation/@id, '.html?folio=', substring-after(@cRef, '.'))"/>
                                 <xsl:attribute name="data-ajax-target" select="'#popup-footer-source .data-container'"/>
                                 [<xsl:apply-templates select="@cRef"/>]</a>
                         </xsl:when>
+                        <!-- ...or just output the text. -->
                         <xsl:otherwise>
                             <span class="ref">[<xsl:apply-templates select="@cRef"/>]</span>
                         </xsl:otherwise>
@@ -141,111 +142,197 @@
     </xsl:template>
     
     <xsl:template match="tei:ptr">
-        <a class="internal-ref scroll-to-anchor">
-            <xsl:attribute name="href" select="@target"/>
+        <a class="internal-ref">
+            <xsl:choose>
+                <xsl:when test="/m:response/@doc-type eq 'epub'">
+                    <xsl:attribute name="href">
+                        <xsl:choose>
+                            <xsl:when test="@location eq 'missing'">
+                                <xsl:attribute name="href" select="'#'"/>
+                                <xsl:attribute name="class" select="'internal-ref disabled'"/>
+                            </xsl:when>
+                            <xsl:when test="@location eq 'glossary'">
+                                <xsl:value-of select="concat('glossary.xhtml', @target)"/>
+                            </xsl:when>
+                            <xsl:when test="@location eq 'notes'">
+                                <xsl:value-of select="concat('notes.xhtml', @target)"/>
+                            </xsl:when>
+                            <xsl:when test="@location eq 'introduction'">
+                                <xsl:value-of select="concat('introduction.xhtml', @target)"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="concat('body.xhtml', @target)"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="href" select="@target"/>
+                    <xsl:attribute name="class" select="'internal-ref scroll-to-anchor'"/>
+                </xsl:otherwise>
+            </xsl:choose>
+            
             <xsl:apply-templates select="text()"/>
         </a>
     </xsl:template>
     
     <xsl:template match="tei:q">
-        <xsl:choose>
-            <xsl:when test="parent::tei:p">
-                <span class="blockquote">
-                    <xsl:apply-templates select="node()"/>
-                </span>
-            </xsl:when>
-            <xsl:otherwise>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
                 <blockquote>
-                    <xsl:attribute name="class" select="'relative'"/>
-                    <xsl:call-template name="milestone"/>
                     <xsl:apply-templates select="node()"/>
                 </blockquote>
-            </xsl:otherwise>
-        </xsl:choose>
+            </xsl:with-param>
+            <xsl:with-param name="row-classes" select="'space'"/>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:p | tei:ab | tei:trailer | tei:bibl">
-        <p>
-            <!-- id -->
-            <xsl:call-template name="tid"/>
-            <!-- class -->
-            <xsl:variable name="cssClass">
-                glossarize 
-                <xsl:if test="self::tei:ab[@type = 'mantra']">
-                    mantra
-                </xsl:if>
-                <xsl:if test="self::tei:trailer">
-                    trailer 
-                </xsl:if>
-            </xsl:variable>
-            <xsl:attribute name="class" select="normalize-space($cssClass)"/>
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </p>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
+                <p>
+                    <!-- id -->
+                    <xsl:call-template name="tid"/>
+                    <!-- class -->
+                    <xsl:variable name="cssClass">
+                        <xsl:if test="/m:response/@doc-type ne 'epub'">
+                            glossarize
+                        </xsl:if>
+                        <xsl:if test="self::tei:ab[@type = 'mantra']">
+                            mantra
+                        </xsl:if>
+                        <xsl:if test="self::tei:trailer">
+                            trailer 
+                        </xsl:if>
+                    </xsl:variable>
+                    <xsl:attribute name="class" select="normalize-space($cssClass)"/>
+                    <xsl:apply-templates select="node()"/>
+                </p>
+            </xsl:with-param>
+            <xsl:with-param name="row-classes" select="if (self::tei:trailer) then 'space' else if (self::tei:ab[@type = 'mantra']) then 'space space-after' else ''"/>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:label">
-        <h5 class="relative section-label">
-            <xsl:call-template name="tid"/>
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </h5>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
+                <h5 class="section-label">
+                    <xsl:call-template name="tid"/>
+                    <xsl:apply-templates select="node()"/>
+                </h5>
+            </xsl:with-param>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:list[tei:item]">
-        <div class="relative list">
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </div>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
+                <div class="list">
+                    <xsl:if test="parent::tei:item">
+                        <xsl:attribute name="class" select="'list list-sublist'"/>
+                    </xsl:if>
+                    <xsl:apply-templates select="node()"/>
+                </div>
+            </xsl:with-param>
+            <xsl:with-param name="row-classes" select="if(not(parent::tei:item)) then 'space' else ''"/>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:item[parent::tei:list]">
-        <div class="relative list-item">
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </div>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
+                <div class="list-item">
+                    <xsl:variable name="css-classes">
+                        list-item 
+                        <xsl:if test="parent::tei:list/tei:item[1] = .">
+                            list-item-first 
+                        </xsl:if>
+                        <xsl:if test="parent::tei:list/tei:item[count(parent::tei:list/tei:item)] = .">
+                            list-item-last 
+                        </xsl:if>
+                    </xsl:variable>
+                    <xsl:attribute name="class" select="normalize-space($css-classes)"/>
+                    <xsl:apply-templates select="node()"/>
+                </div>
+            </xsl:with-param>
+            <xsl:with-param name="row-classes" select="'space-after'"/>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:head[parent::tei:list]">
-        <h5 class="relative section-label">
-            <xsl:call-template name="tid"/>
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </h5>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
+                <h5 class="section-label">
+                    <xsl:call-template name="tid"/>
+                    <xsl:apply-templates select="node()"/>
+                </h5>
+            </xsl:with-param>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:lg">
-        <div class="relative line-group">
-            <!-- id -->
-            <xsl:call-template name="tid"/>
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </div>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
+                <div class="line-group">
+                    <!-- id -->
+                    <xsl:call-template name="tid"/>
+                    <xsl:apply-templates select="node()"/>
+                </div>
+            </xsl:with-param>
+            <xsl:with-param name="row-classes" select="if (not(parent::tei:q)) then 'space' else ''"/>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:l[parent::tei:lg]">
-        <p class="glossarize">
-            <xsl:call-template name="milestone"/>
-            <xsl:apply-templates select="node()"/>
-        </p>
+        <xsl:call-template name="milestone">
+            <xsl:with-param name="content">
+                <div class="line">
+                    <xsl:if test="/m:response/@doc-type ne 'epub'">
+                        <xsl:attribute name="class" select="'line glossarize'"/>
+                    </xsl:if>
+                    <xsl:apply-templates select="node()"/>
+                </div>
+            </xsl:with-param>
+        </xsl:call-template>
     </xsl:template>
     
     <xsl:template match="tei:head">
         <xsl:choose>
             <xsl:when test="@type = ('chapter')">
-                <h4 class="chapter-number">
-                    <xsl:value-of select="text()"/>
-                </h4>
+                <xsl:call-template name="milestone">
+                    <xsl:with-param name="content">
+                        <div class="rw-heading">
+                            <h4 class="chapter-number">
+                                <xsl:value-of select="text()"/>
+                            </h4>
+                        </div>
+                    </xsl:with-param>
+                    <xsl:with-param name="row-classes" select="'space'"/>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="@type = ('chapterTitle')">
-                <h2>
-                    <xsl:value-of select="text()"/>
-                </h2>
+                <xsl:call-template name="milestone">
+                    <xsl:with-param name="content">
+                        <div class="rw-heading">
+                            <h2>
+                                <xsl:value-of select="text()"/>
+                            </h2>
+                        </div>
+                    </xsl:with-param>
+                    <xsl:with-param name="row-classes" select="'space'"/>
+                </xsl:call-template>
             </xsl:when>
             <xsl:when test="@type = ('section')">
-                <h4>
-                    <xsl:value-of select="text()"/>
-                </h4>
+                <xsl:call-template name="milestone">
+                    <xsl:with-param name="content">
+                        <div class="rw-heading">
+                            <h4>
+                                <xsl:value-of select="text()"/>
+                            </h4>
+                        </div>
+                    </xsl:with-param>
+                    <xsl:with-param name="row-classes" select="'space'"/>
+                </xsl:call-template>
             </xsl:when>
         </xsl:choose>
     </xsl:template>
@@ -259,15 +346,39 @@
     
     <!-- Milestone -->
     <xsl:template name="milestone">
-        <xsl:if test="preceding-sibling::*[1][self::tei:milestone] or (preceding-sibling::*[1][self::tei:lb] and preceding-sibling::*[2][self::tei:milestone])">
-            <xsl:variable name="id" select="preceding-sibling::*[1]/@xml:id"/>
-            <a class="milestone from-tei" title="Bookmark this section">
-                <xsl:attribute name="href" select="concat('#', $id)"/>
-                <xsl:attribute name="id" select="$id"/>
-                <xsl:variable name="group" select="ancestor::*[exists(@prefix)][1]"/>
-                <xsl:value-of select="concat($group/@prefix, '.', common:index-of-node($group//tei:milestone, preceding-sibling::tei:milestone[1]))"/>
-            </a>
-        </xsl:if>
+        
+        <xsl:param name="content"/>
+        <xsl:param name="row-classes"/>
+        
+        <div class="rw">
+            
+            <!-- Concat classes for the row -->
+            <xsl:attribute name="class" select="concat('rw', if((../*[1] = .) or (../*[1][self::tei:milestone] and ../*[2] = .)) then ' first-child' else '', if($row-classes gt '') then concat(' ', $row-classes) else '')"/>
+            
+            <xsl:variable name="milestone" select="preceding-sibling::*[1][self::tei:milestone] | preceding-sibling::*[2][self::tei:milestone[following-sibling::*[1][self::tei:lb]]]"/>
+            
+            <!-- Add a gutter is there's a milestone -->
+            <xsl:if test="$milestone/@xml:id">
+                <div class="gtr">
+                    <xsl:choose>
+                        <xsl:when test="/m:response/@doc-type ne 'epub'">
+                            <a class="milestone from-tei" title="Bookmark this section">
+                                <xsl:attribute name="href" select="concat('#', $milestone/@xml:id)"/>
+                                <xsl:attribute name="id" select="$milestone/@xml:id"/>
+                                <xsl:value-of select="$milestone/@label"/>
+                            </a>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="id" select="$milestone/@xml:id"/>
+                            <xsl:value-of select="$milestone/@label"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </div>
+            </xsl:if>
+            
+            <xsl:copy-of select="$content"/>
+            
+        </div>
     </xsl:template>
     
     <!-- Nested Sections -->
@@ -280,9 +391,9 @@
     
     <!-- Bibliography -->
     <xsl:template match="m:nested-section[ancestor::m:bibliography]">
-        <div class="nested-section margin">
+        <div class="nested-section">
             <xsl:if test="m:title/text()">
-                <h5 class="relative section-label">
+                <h5 class="section-label">
                     <xsl:apply-templates select="m:title/text()"/>
                 </h5>
             </xsl:if>

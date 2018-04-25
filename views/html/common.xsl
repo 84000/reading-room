@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:m="http://read.84000.co/ns/1.0" exclude-result-prefixes="#all" version="2.0">
     
-    <!-- Set cache-clearing version number -->
-    <xsl:variable name="version" select="'1.20'"/>
-    
     <xsl:output method="html" indent="no" doctype-system="about:legacy-compat"/>
     
     <xsl:template name="html-head">
         
         <xsl:param name="app-id"/>
+        <xsl:param name="app-version"/>
         <xsl:param name="page-url"/>
         <xsl:param name="page-title"/>
         <xsl:param name="page-description"/>
+        <xsl:param name="page-type"/>
         
         <!-- Look up environment variables -->
         <xsl:variable name="environment" select="doc('/db/env/environment.xml')/m:environments/m:environment[@id = $app-id]"/>
@@ -29,7 +28,14 @@
             </title>
             
             <link rel="stylesheet" type="text/css">
-                <xsl:attribute name="href" select="concat($resource-path, '/css/84000-reading-room.css', '?v=', $version)"/>
+                <xsl:choose>
+                    <xsl:when test="$page-type = ('communications')">
+                        <xsl:attribute name="href" select="concat($resource-path, '/css/84000-wordpress.css', '?v=', $app-version)"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:attribute name="href" select="concat($resource-path, '/css/84000-reading-room.css', '?v=', $app-version)"/>
+                    </xsl:otherwise>
+                </xsl:choose>
             </link>
             <link rel="stylesheet" type="text/css">
                 <xsl:attribute name="href" select="concat($resource-path, '/css/ie10-viewport-bug-workaround.css')"/>
@@ -85,11 +91,13 @@
     <xsl:template name="html-footer">
         
         <xsl:param name="app-id"/>
+        <xsl:param name="app-version"/>
         
         <!-- Look up environment variables -->
         <xsl:variable name="environment" select="doc('/db/env/environment.xml')/m:environments/m:environment[@id = $app-id]"/>
         <xsl:variable name="resource-path" select="$environment/m:resource-path/text()"/>
         <xsl:variable name="ga-tracking-id" select="$environment/m:google-analytics/@tracking-id"/>
+        
         
         <footer xmlns="http://www.w3.org/1999/xhtml" class="hidden-print">
             <div class="container" itemscope="itemscope" itemtype="http://schema.org/Organization">
@@ -112,7 +120,7 @@
         <script type="text/javascript">
             function downloadJSAtOnload() {
                 var element = document.createElement("script");
-                element.src = "<xsl:value-of select="concat($resource-path, '/js/84000-fe.min.js', '?v=', $version)"/>";
+                element.src = "<xsl:value-of select="concat($resource-path, '/js/84000-fe.min.js', '?v=', $app-version)"/>";
                 document.body.appendChild(element);
             }
             if (window.addEventListener)

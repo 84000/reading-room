@@ -8,6 +8,18 @@
     <xsl:template match="/m:response">
         
         <xsl:variable name="content">
+            
+            <section id="introduction">
+                <div class="center header">
+                    <h2>
+                        <xsl:value-of select="$page-title"/>
+                    </h2>
+                </div>
+                <div class="text">
+                    <xsl:apply-templates select="m:translation/m:introduction"/>
+                </div>
+            </section>
+            
             <section id="body-title">
                 <div class="center half-title">
                     <xsl:if test="m:translation/m:body/m:honoration/text()">
@@ -28,7 +40,7 @@
             </xsl:if>
             
             <xsl:for-each select="m:translation/m:body/m:chapter">
-                <section class="milestones" epub:type="chapter">
+                <section class="translation" epub:type="chapter">
                     <xsl:attribute name="id" select="concat('chapter-', @chapter-index/string())"/>
                     <xsl:variable name="chapter-index" select="@chapter-index/string()"/>
                     
@@ -47,22 +59,26 @@
                         </div>
                     </xsl:if>
                     
-                    <xsl:apply-templates select="tei:*"/>
+                    <div class="text">
+                        <xsl:apply-templates select="tei:*"/>
+                    </div>
                     
                 </section>
             </xsl:for-each>
             
             <xsl:if test="m:translation/m:colophon/tei:p">
-                <section id="colophon" class="milestones" epub:type="colophon">
+                <section id="colophon" class="translation" epub:type="colophon">
                     <div class="center header">
                         <h2>Colophon</h2>
                     </div>
-                    <xsl:apply-templates select="m:translation/m:colophon"/>
+                    <div class="text">
+                        <xsl:apply-templates select="m:translation/m:colophon"/>
+                    </div>
                 </section>
             </xsl:if>
             
             <xsl:if test="m:translation/m:appendix//tei:p">
-                <section id="appendix" class="milestones" epub:type="appendix">
+                <section id="appendix" class="translation" epub:type="appendix">
                     <div class="center header">
                         <h2>Appendix</h2>
                     </div>
@@ -74,8 +90,9 @@
                                 <xsl:apply-templates select="m:title"/>
                             </h4>
                             
-                            <xsl:apply-templates select="tei:*"/>
-                            
+                            <div class="text">
+                                <xsl:apply-templates select="tei:*"/>
+                            </div>
                         </div>
                     </xsl:for-each>
                 </section>
@@ -115,24 +132,6 @@
                     </xsl:if>
                 </section>
             </xsl:if>
-            
-            <aside id="notes">
-                <div class="center header">
-                    <h2>Notes</h2>
-                </div>
-                <xsl:for-each select="m:translation/m:notes/m:note">
-                    <p class="footnote" epub:type="footnote">
-                        <xsl:attribute name="id" select="@uid"/>
-                        <a class="footnote-number">
-                            <xsl:attribute name="href">
-                                <xsl:value-of select="concat('body.xhtml#link-to-', @uid)"/>
-                            </xsl:attribute>
-                            <xsl:apply-templates select="@index"/>
-                        </a>
-                        <xsl:apply-templates select="node()"/>
-                    </p>
-                </xsl:for-each>
-            </aside>
             
         </xsl:variable>
         

@@ -9,6 +9,7 @@ declare namespace m = "http://read.84000.co/ns/1.0";
 import module namespace common="http://read.84000.co/common" at "common.xql";
 import module namespace section="http://read.84000.co/outline-section" at "outline-section.xql";
 import module namespace text="http://read.84000.co/outline-text" at "outline-text.xql";
+import module namespace sponsors="http://read.84000.co/sponsors" at "sponsors.xql";
 import module namespace functx="http://www.functx.com";
 
 declare function outline:outline() {
@@ -89,19 +90,21 @@ declare function outline:progress($status as xs:string, $sort as xs:string, $ran
     let $outline := collection($outlines-path)//o:outline[@RID eq "O1JC11494"]
     
     let $all-texts := for $text in $outline//o:node[@type = ("text", "chapter")][not(o:node[@type = "chapter"])]
+        let $toh := text:toh($text)
     return
         <text xmlns="http://read.84000.co/ns/1.0" type="{ $text/@type }" id="{ $text/@RID }">
-            { text:toh($text) }
+            { $toh }
+            { sponsors:sponsored-sutra($toh) }
             { text:title($text) }
             { text:location($text, $outline) }
             { text:status($text) }
         </text>
     
     let $all-text-count := count($all-texts)
-    let $translated-text-count := count($all-texts[m:status/text() = ('available', 'missing')])
+    let $published-text-count := count($all-texts[m:status/text() = ('available', 'missing')])
     let $in-progress-text-count := count($all-texts[m:status/text() = ('in-progress')])
-    let $sponsored-text-count := count($all-texts[xs:boolean(m:toh/@sponsored)])
-    let $commissioned-text-count := $translated-text-count + $in-progress-text-count
+    let $sponsored-text-count := count($all-texts[m:sponsored/text() = ('full', 'part')])
+    let $commissioned-text-count := $published-text-count + $in-progress-text-count
     let $not-started-text-count := $all-text-count - $commissioned-text-count
     
     let $all-page-count := 
@@ -109,14 +112,14 @@ declare function outline:progress($status as xs:string, $sort as xs:string, $ran
             for $count in $outline//o:volumes/o:volume/@count-pages
             return $count - $outline//o:volumes/@title-pages-per-volume
         )
-    let $translated-page-count := sum($all-texts[m:status/text() = ('available', 'missing')]/m:location[@count-pages != '?']/@count-pages)
+    let $published-page-count := sum($all-texts[m:status/text() = ('available', 'missing')]/m:location[@count-pages != '?']/@count-pages)
     let $in-progress-page-count := sum($all-texts[m:status/text() = ('in-progress')]/m:location[@count-pages != '?']/@count-pages)
-    let $sponsored-page-count := sum($all-texts[xs:boolean(m:toh/@sponsored)]/m:location[@count-pages != '?']/@count-pages)
-    let $commissioned-page-count := $translated-page-count + $in-progress-page-count
+    let $sponsored-page-count := sum($all-texts[m:sponsored/text() = ('full', 'part')]/m:location[@count-pages != '?']/@count-pages)
+    let $commissioned-page-count := $published-page-count + $in-progress-page-count
     let $not-started-page-count := $all-page-count - $commissioned-page-count
     
     let $status-texts := 
-        if($status eq 'translated') then 
+        if($status eq 'published') then 
             $all-texts[m:status/text() = ('available', 'missing')]
         else if($status eq 'in-progress') then
             $all-texts[m:status/text() = ('in-progress')]
@@ -143,9 +146,11 @@ declare function outline:progress($status as xs:string, $sort as xs:string, $ran
     
     let $texts := 
         if($filter eq 'sponsored')then
-            $range-texts[xs:boolean(m:toh/@sponsored)]
+            $range-texts[m:sponsored/text() = ('full', 'part')]
+        else if($filter eq 'part-sponsored')then
+            $range-texts[m:sponsored/text() = ('part')]
         else if($filter eq 'not-sponsored')then
-            $range-texts[not(xs:boolean(m:toh/@sponsored))]
+            $range-texts[not(m:sponsored/text()) or m:sponsored/text() eq '']
         else
             $range-texts
             
@@ -160,14 +165,14 @@ declare function outline:progress($status as xs:string, $sort as xs:string, $ran
             <summary>
                 <texts 
                     count="{ $all-text-count }" 
-                    translated="{ $translated-text-count }" 
+                    published="{ $published-text-count }" 
                     in-progress="{ $in-progress-text-count }" 
                     sponsored="{ $sponsored-text-count }" 
                     commissioned="{ $commissioned-text-count }" 
                     not-started="{ $not-started-text-count }"/>
                 <pages 
                     count="{ $all-page-count }" 
-                    translated="{ $translated-page-count }" 
+                    published="{ $published-page-count }" 
                     in-progress="{ $in-progress-page-count }" 
                     sponsored="{ $sponsored-page-count }" 
                     commissioned="{ $commissioned-page-count }" 

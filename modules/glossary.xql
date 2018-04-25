@@ -41,7 +41,7 @@ declare function glossary:glossary-terms($type as xs:string*) as node() {
         {
             for $main-term in distinct-values($translations//*[@type="glossary"]//tei:gloss[@type = $type]/tei:term[(lower-case(@xml:lang) = ('eng', 'en') or not(@xml:lang))][not(@type = 'definition')][not(@type = 'alternative')]/text()/normalize-space(.))
                 
-                let $normalized-term := common:normalized-chars($main-term)
+                let $normalized-term := common:alphanumeric(common:normalized-chars($main-term))
                 let $start-letter := substring($normalized-term, 1, 1)
                 
                 let $items := $translations//tei:back//tei:gloss[ft:query(tei:term[not(@type = 'definition')], glossary:ft-query($main-term), glossary:ft-options())]
@@ -78,7 +78,7 @@ declare function glossary:cumulative-glossary() as node() {
         {
             for $main-term in distinct-values($translations//*[@type="glossary"]//tei:gloss/tei:term[(lower-case(@xml:lang) = ('eng', 'en') or not(@xml:lang))][not(@type = 'definition')][not(@type = 'alternative')]/text()/normalize-space(.))
                 
-                let $normalized-term := common:normalized-chars($main-term)
+                let $normalized-term := common:alphanumeric(common:normalized-chars($main-term))
                 
                 let $glossary-items := glossary:glossary-items($main-term)
                 

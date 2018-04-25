@@ -17,7 +17,7 @@
                                     var data = {
                                         datasets: [{
                                              data: [
-                                                 <xsl:value-of select="//m:progress/m:summary/m:pages/@translated"/>, 
+                                                 <xsl:value-of select="//m:progress/m:summary/m:pages/@published"/>, 
                                                  <xsl:value-of select="//m:progress/m:summary/m:pages/@in-progress"/>, 
                                                  <xsl:value-of select="//m:progress/m:summary/m:pages/@not-started"/>
                                              ],
@@ -54,17 +54,17 @@
                                         </td>
                                     </tr>
                                     
-                                    <xsl:variable name="translated-pages" select="//m:progress/m:summary/m:pages/@translated"/>
+                                    <xsl:variable name="published-pages" select="//m:progress/m:summary/m:pages/@published"/>
                                     <tr class="translated">
                                         <td>Published</td>
                                         <td>
-                                            <xsl:value-of select="format-number($translated-pages, '#,###')"/> pages
+                                            <xsl:value-of select="format-number($published-pages, '#,###')"/> pages
                                         </td>
                                         <td>
-                                            <xsl:value-of select="format-number(($translated-pages div $total-pages) * 100, '###,##0')"/>%
+                                            <xsl:value-of select="format-number(($published-pages div $total-pages) * 100, '###,##0')"/>%
                                         </td>
                                         <td>
-                                            <xsl:value-of select="format-number(//m:progress/m:summary/m:texts/@translated, '#,###')"/> texts
+                                            <xsl:value-of select="format-number(//m:progress/m:summary/m:texts/@published, '#,###')"/> texts
                                         </td>
                                     </tr>
                                     <xsl:variable name="in-progress-pages" select="//m:progress/m:summary/m:pages/@in-progress"/>
@@ -97,7 +97,7 @@
                                     <tr class="commissioned">
                                         <td>Commissioned</td>
                                         <td>
-                                            <xsl:value-of select="format-number(//m:progress/m:summary/m:pages/@commissioned, '#,###')"/> pages
+                                            <xsl:value-of select="format-number($commissioned-pages, '#,###')"/> pages
                                         </td>
                                         <td>
                                             <xsl:value-of select="format-number(($commissioned-pages div $total-pages) * 100, '###,##0')"/>%
@@ -135,25 +135,71 @@
                     </div>
                     <div class="form-group">
                         <select name="status" class="form-control">
-                            <option value="">All</option>
-                            <option value="translated">
-                                <xsl:if test="//m:progress/m:texts/@status eq 'translated'">
+                            <option value="">
+                                No progress filter
+                            </option>
+                            <option value="published">
+                                <xsl:if test="//m:progress/m:texts/@status eq 'published'">
                                     <xsl:attribute name="selected" select="'selected'"/>
                                 </xsl:if>
-                                Published
+                                Published texts
                             </option>
                             <option value="in-progress">
                                 <xsl:if test="//m:progress/m:texts/@status eq 'in-progress'">
                                     <xsl:attribute name="selected" select="'selected'"/>
                                 </xsl:if>
-                                In Progress
+                                Texts in progress
                             </option>
                             <option value="not-started">
                                 <xsl:if test="//m:progress/m:texts/@status eq 'not-started'">
                                     <xsl:attribute name="selected" select="'selected'"/>
                                 </xsl:if>
-                                Not Started
+                                Texts not started
                             </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="filter" class="form-control">
+                            <option value="none">
+                                <xsl:if test="//m:progress/m:texts/@filter eq 'none'">
+                                    <xsl:attribute name="selected" select="'selected'"/>
+                                </xsl:if>
+                                No sponsor filter
+                            </option>
+                            <option value="sponsored">
+                                <xsl:if test="//m:progress/m:texts/@filter eq 'sponsored'">
+                                    <xsl:attribute name="selected" select="'selected'"/>
+                                </xsl:if>
+                                Sponsored texts
+                            </option>
+                            <option value="part-sponsored">
+                                <xsl:if test="//m:progress/m:texts/@filter eq 'part-sponsored'">
+                                    <xsl:attribute name="selected" select="'selected'"/>
+                                </xsl:if>
+                                Part sponsored texts
+                            </option>
+                            <option value="not-sponsored">
+                                <xsl:if test="//m:progress/m:texts/@filter eq 'not-sponsored'">
+                                    <xsl:attribute name="selected" select="'selected'"/>
+                                </xsl:if>
+                                Not sponsored texts
+                            </option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <select name="range" class="form-control">
+                            <option value="0">
+                                No size filter
+                            </option>
+                            <xsl:for-each select="//m:page-size-ranges/m:range">
+                                <option>
+                                    <xsl:attribute name="value" select="@id"/>
+                                    <xsl:if test="//m:progress/m:texts/@range eq xs:string(@id)">
+                                        <xsl:attribute name="selected" select="'selected'"/>
+                                    </xsl:if>
+                                    <xsl:value-of select="concat(@min, ' to ', format-number(@max, '#,###'), ' pages')"/>
+                                </option>
+                            </xsl:for-each>
                         </select>
                     </div>
                     <div class="form-group">
@@ -178,42 +224,6 @@
                             </option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <select name="range" class="form-control">
-                            <option value="0">All sizes</option>
-                            <xsl:for-each select="//m:page-size-ranges/m:range">
-                                <option>
-                                    <xsl:attribute name="value" select="@id"/>
-                                    <xsl:if test="//m:progress/m:texts/@range eq xs:string(@id)">
-                                        <xsl:attribute name="selected" select="'selected'"/>
-                                    </xsl:if>
-                                    <xsl:value-of select="concat(@min, ' to ', format-number(@max, '#,###'), ' pages')"/>
-                                </option>
-                            </xsl:for-each>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <select name="filter" class="form-control">
-                            <option value="none">
-                                <xsl:if test="//m:progress/m:texts/@filter eq 'none'">
-                                    <xsl:attribute name="selected" select="'selected'"/>
-                                </xsl:if>
-                                No filter
-                            </option>
-                            <option value="sponsored">
-                                <xsl:if test="//m:progress/m:texts/@filter eq 'sponsored'">
-                                    <xsl:attribute name="selected" select="'selected'"/>
-                                </xsl:if>
-                                Sponsored texts
-                            </option>
-                            <option value="not-sponsored">
-                                <xsl:if test="//m:progress/m:texts/@filter eq 'not-sponsored'">
-                                    <xsl:attribute name="selected" select="'selected'"/>
-                                </xsl:if>
-                                Not sponsored texts
-                            </option>
-                        </select>
-                    </div>
                     <input type="submit" value="Apply" class="btn btn-primary"/>
                 </form>
             </div>
@@ -227,7 +237,6 @@
                     <th>Start</th>
                     <th>End</th>
                     <th>Status</th>
-                    <th> </th>
                 </tr>
             </thead>
             <tbody>
@@ -251,13 +260,6 @@
                             p. <xsl:value-of select="m:location/m:end/@page"/>
                         </td>
                         <td>
-                            <xsl:if test="xs:boolean(m:toh/@sponsored)">
-                                <div class="label label-info">
-                                    Sponsored
-                                </div> 
-                            </xsl:if>
-                        </td>
-                        <td class="nowrap">
                             <xsl:choose>
                                 <xsl:when test="m:status = 'not-started'">
                                     <div class="label label-default">
@@ -269,14 +271,28 @@
                                         In progress
                                     </div>
                                 </xsl:when>
+                                <xsl:when test="m:status = 'available'">
+                                    <div class="label label-success">
+                                        Published
+                                    </div>
+                                </xsl:when>
                                 <xsl:when test="m:status = 'missing'">
                                     <div class="label label-danger">
                                         Missing
                                     </div>
                                 </xsl:when>
-                                <xsl:when test="m:status = 'available'">
-                                    <div class="label label-success">
-                                        Published
+                            </xsl:choose>
+                            <xsl:choose>
+                                <xsl:when test="m:sponsored/text() eq 'full'">
+                                    <br/>
+                                    <div class="label label-info">
+                                        Fully sponsored
+                                    </div>
+                                </xsl:when>
+                                <xsl:when test="m:sponsored/text() eq 'part'">
+                                    <br/>
+                                    <div class="label label-info">
+                                        Part sponsored
                                     </div>
                                 </xsl:when>
                             </xsl:choose>
@@ -287,7 +303,7 @@
             <tfoot>
                 <tr>
                     <td colspan="2"/>
-                    <td colspan="5">
+                    <td colspan="4">
                         <strong>
                             <xsl:value-of select="format-number(sum(//m:progress/m:texts/@count-pages), '#,###')"/>
                         </strong> pages*, 

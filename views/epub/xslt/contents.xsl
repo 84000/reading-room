@@ -69,9 +69,8 @@
                         </li>
                     </xsl:if>
                     <li>
-                        <a href="body.xhtml#notes">Notes</a>
+                        <a href="notes.xhtml">Notes</a>
                     </li>
-                    
                     <li>
                         <a href="bibliography.xhtml">Bibliography</a>
                     </li>

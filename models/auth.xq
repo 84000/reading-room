@@ -13,6 +13,7 @@ return
         model-type="auth"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }" 
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" >
         <redirect>{ $redirect }</redirect>
     </response>

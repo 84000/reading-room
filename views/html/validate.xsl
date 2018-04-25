@@ -27,7 +27,7 @@
                     
                     <div class="panel-body">
                         
-                        <table class="table table-responsive">
+                        <table class="table table-responsive table-icons">
                             <tbody>
                                 <xsl:for-each select="//m:results/m:translation">
                                     <xsl:sort select="m:result/@status eq 'valid'"/>

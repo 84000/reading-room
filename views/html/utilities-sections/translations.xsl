@@ -160,7 +160,7 @@
                         <xsl:value-of select="fn:format-number(xs:integer(sum(//m:translations/m:translation/@wordCount)),'#,##0')"/> words
                     </th>
                     <th>
-                        <xsl:value-of select="fn:format-number(xs:integer(sum(//m:translations/m:translation/@glossaryCount)),'#,##0')"/> items
+                        <xsl:value-of select="fn:format-number(xs:integer(sum(//m:translations/m:translation/@glossaryCount)),'#,##0')"/> glossary items
                     </th>
                     <td colspan="9"/>
                 </tr>

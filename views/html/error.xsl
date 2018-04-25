@@ -16,23 +16,27 @@
         
         <!-- PAGE CONTENT -->
         <xsl:variable name="content">
-            <div class="panel-body text-center client-error">
-                
-                <h1>Sorry, there was an error.</h1>
-                
-                <p>
-                    Please select a navigation option above.
-                </p>
-                
-                <xsl:if test="$environment/@debug eq '1'">
-                    <h4>
-                        <xsl:value-of select="exception/path"/>
-                    </h4>
-                    <p>
-                        <xsl:value-of select="exception/message"/>
-                    </p>
-                </xsl:if>
-                
+            <div class="container">
+                <div class="panel panel-default">
+                    <div class="panel-body text-center client-error">
+                        
+                        <h1>Sorry, there was an error.</h1>
+                        
+                        <p>
+                            Please select a navigation option above.
+                        </p>
+                        
+                        <xsl:if test="$environment/@debug eq '1'">
+                            <h4>
+                                <xsl:value-of select="exception/path"/>
+                            </h4>
+                            <p>
+                                <xsl:value-of select="exception/message"/>
+                            </p>
+                        </xsl:if>
+                        
+                    </div>
+                </div>
             </div>
         </xsl:variable>
         
@@ -44,6 +48,7 @@
             <xsl:with-param name="page-title" select="'Error'"/>
             <xsl:with-param name="page-description" select="'Sorry, there was an error.'"/>
             <xsl:with-param name="content" select="$content"/>
+            <xsl:with-param name="nav-tab" select="''"/>
         </xsl:call-template>
         
     </xsl:template>

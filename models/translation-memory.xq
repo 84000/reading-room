@@ -50,6 +50,7 @@ return
         model-type="translation-memory"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }">
         <request translation-id="{ $translation-id }" folio="{ $folio }" />
         <action>{ $action }</action>

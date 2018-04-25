@@ -8,6 +8,7 @@ declare namespace tei="http://www.tei-c.org/ns/1.0";
 declare namespace xhtml = "http://www.w3.org/1999/xhtml";
 declare namespace sm = "http://exist-db.org/xquery/securitymanager";
 
+import module namespace functx="http://www.functx.com";
 import module namespace converter="http://tbrc.org/xquery/ewts2unicode" at "java:org.tbrc.xquery.extensions.EwtsToUniModule";
 
 declare function common:app-id() as xs:string {
@@ -75,6 +76,10 @@ declare function common:normalized-chars($string as xs:string) as xs:string{
     let $out := 'adhillmnnnrrsstum'
     return 
         translate(lower-case($string), $in, $out)
+};
+
+declare function common:alphanumeric($string as xs:string) as xs:string* {
+    replace($string, '[^a-zA-Z0-9]', '')
 };
 
 declare function common:bo-title($bo-ltn as xs:string*) as xs:string
@@ -197,6 +202,10 @@ declare function common:epub-resource($file as xs:string) as xs:base64Binary
 declare function common:environment() as node()* 
 {
     doc('/db/env/environment.xml')/m:environments/m:environment[@id eq common:app-id()]
+};
+
+declare function common:app-version() as xs:string {
+    doc(concat(common:app-path(), '/app-config.xml'))/m:app-config/m:version/text()
 };
 
 declare function common:test-conf() as node()* 

@@ -1,16 +1,13 @@
 xquery version "3.0" encoding "UTF-8";
 (:
     Accepts the resource-id parameter
-    Returns the home page xml
+    Returns the operations page xml
     -------------------------------------------------------------
-    Transform this data into the homepage html.
 :)
 
 import module namespace common="http://read.84000.co/common" at "../modules/common.xql";
 import module namespace outline="http://read.84000.co/outline" at "../modules/outline.xql";
-import module namespace translations="http://read.84000.co/translations" at "../modules/translations.xql";
-import module namespace log="http://read.84000.co/log" at "../modules/log.xql";
-import module namespace deployment="http://read.84000.co/deployment" at "../modules/deployment.xql";
+import module namespace sponsors="http://read.84000.co/sponsors" at "../modules/sponsors.xql";
 
 declare option exist:serialize "method=xml indent=no";
 
@@ -27,6 +24,7 @@ return
         model-type="operations"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" >
         <tabs>
             <tab active="{ if($tab eq 'progress')then 1 else 0 }" id="progress">Progress</tab>
@@ -35,6 +33,8 @@ return
         {
             if($tab eq 'progress') then 
                 outline:progress($status, $sort, $range, $filter)
+            else if($tab eq 'sponsors') then 
+                doc(concat(common:data-path(), '/operations/sponsors.xml'))
             else
                 ()
                 

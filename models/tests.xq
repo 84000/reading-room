@@ -17,8 +17,9 @@ declare option exist:serialize "method=xml indent=no";
 
 declare function local:test-section($section-tei as element()*, $section-html as element()*, $section-name as xs:string, $required-paragraphs as xs:integer, $count-chapters as xs:boolean)
 {
-    let $section-count-tei-p := count($section-tei//*[self::tei:p | self::tei:ab | self::tei:trailer | self::tei:bibl | self::tei:l[parent::tei:lg[not(parent::tei:note)]]])
-    let $section-count-html-p := count($section-html//xhtml:p)
+    let $section-count-tei-p := count($section-tei//*[self::tei:p | self::tei:ab | self::tei:trailer | self::tei:bibl | self::tei:l[parent::tei:lg[not(ancestor::tei:note)]]])
+    let $section-count-html-p := count($section-html//xhtml:p | $section-html//xhtml:div[contains(@class, 'line ')]) 
+    (: This needs attention: we can't rely on a space after the class 'line' :)
     
     let $section-count-tei-note := count($section-tei//tei:note)
     let $section-count-html-note := count($section-html//xhtml:a[contains(@class, 'footnote-link')])
@@ -26,10 +27,10 @@ declare function local:test-section($section-tei as element()*, $section-html as
     let $section-count-tei-q := count($section-tei//tei:q)
     let $section-count-html-q := count($section-html//xhtml:blockquote | $section-html//xhtml:span[contains(@class, 'blockquote')])
     
-    let $section-count-tei-id := count($section-tei//*[@tid][not(parent::tei:note)])
+    let $section-count-tei-id := count($section-tei//*[@tid][not(ancestor::tei:note)])
     let $section-count-html-id := count($section-html//*[contains(@id, 'node-')])
     
-    let $section-count-tei-list-item := count($section-tei//tei:list[not(parent::tei:note)]/tei:item)
+    let $section-count-tei-list-item := count($section-tei//tei:list[not(ancestor::tei:note)]/tei:item)
     let $section-count-html-list-item := count($section-html//xhtml:div[contains(@class, 'list-item')])
     
     let $section-count-tei-chapters := count($section-tei//tei:div[@type = ('section', 'chapter')])
@@ -92,6 +93,7 @@ return
         model-type="home"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" 
         translation-id="{ $translation-id }">
         {
@@ -223,25 +225,25 @@ return
                         </test>
                 }
                 {
-                    local:test-section($translation//tei:front//*[@type = 'summary'], $translation-html//*[@id eq 'summary'], 'summary', 1, false())
+                    local:test-section($translation//tei:front//*[@type eq 'summary'], $translation-html//*[@id eq 'summary'], 'summary', 1, false())
                 }
                 {
-                    local:test-section($translation//tei:front//*[@type = 'acknowledgment'], $translation-html//*[@id eq 'acknowledgements'], 'acknowledgements', 1, false())
+                    local:test-section($translation//tei:front//*[@type eq 'acknowledgment'], $translation-html//*[@id eq 'acknowledgements'], 'acknowledgements', 1, false())
                 }
                 {
-                    local:test-section($translation//tei:front//*[@type = 'introduction'], $translation-html//*[@id eq 'introduction'], 'introduction', 1, false())
+                    local:test-section($translation//tei:front//*[@type eq 'introduction'], $translation-html//*[@id eq 'introduction'], 'introduction', 1, false())
                 }
                 {
-                    local:test-section($translation//tei:body//*[@type='prologue' or tei:head/text()[lower-case(.) = "prologue"]], $translation-html//*[@id eq 'prologue'], 'prologue', 0, false())
+                    local:test-section($translation//tei:body//*[@type eq 'prologue' or tei:head/text()[lower-case(.) = "prologue"]], $translation-html//*[@id eq 'prologue'], 'prologue', 0, false())
                 }
                 {
-                    local:test-section($translation//tei:body//*[@type='translation']/*[@type=('section', 'chapter')][not(tei:head/text()[lower-case(.) = "prologue"])], $translation-html//*[@id eq 'translation'], 'translation', 1, true())
+                    local:test-section($translation//tei:body//*[@type eq 'translation']/*[@type=('section', 'chapter')][not(tei:head/text()[lower-case(.) = "prologue"])], $translation-html//*[@id eq 'translation'], 'translation', 1, true())
                 }
                 {
-                    local:test-section($translation//tei:body//*[@type='colophon'], $translation-html//*[@id eq 'colophon'], 'colophon', 0, false())
+                    local:test-section($translation//tei:body//*[@type eq 'colophon'], $translation-html//*[@id eq 'colophon'], 'colophon', 0, false())
                 }
                 {
-                    local:test-section($translation//tei:back//*[@type='appendix'], $translation-html//*[@id eq 'appendix'], 'appendix', 0, false())
+                    local:test-section($translation//tei:back//*[@type eq 'appendix'], $translation-html//*[@id eq 'appendix'], 'appendix', 0, false())
                 }
                 {
                     let $notes-count-html := count($translation-html//*[@id eq 'notes']/*/*[contains(@class, 'footnote')])

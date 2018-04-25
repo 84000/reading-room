@@ -26,13 +26,15 @@ return
         model-type="utilities"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" >
         <tabs>
             <tab active="{ if($tab eq 'translations')then 1 else 0 }" id="translations">Translations</tab>
             <tab active="{ if($tab eq 'sections')then 1 else 0 }" id="sections">Sections</tab>
             <tab active="{ if($tab eq 'tests')then 1 else 0 }" id="tests">Tests</tab>
+            <tab active="{ if($tab eq 'layout-checks')then 1 else 0 }" id="layout-checks">Layout Checks</tab>
             <tab active="{ if($tab eq 'requests')then 1 else 0 }" id="requests">Requests</tab>
-            <tab active="{ if($tab eq 'client-errors')then 1 else 0 }" id="client-errors">Client errors</tab>
+            <tab active="{ if($tab eq 'client-errors')then 1 else 0 }" id="client-errors">Client Errors</tab>
             {
                 if(common:snapshot-conf())then
                     <tab active="{ if($tab eq 'snapshot')then 1 else 0 }" id="snapshot">Snapshot</tab>

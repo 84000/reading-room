@@ -23,6 +23,7 @@ return
         model-type="section"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }" 
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" >
         <section>
             <id>{ $section-id }</id>

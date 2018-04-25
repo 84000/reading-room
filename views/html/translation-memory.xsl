@@ -171,25 +171,37 @@
                                             </xsl:variable>
                                             <xsl:variable name="onload-replace">
                                             {
-                                                <xsl:value-of select="concat('&#34;#source-text .text.plain&#34; : &#34;#unit-', @tuid, ' .source a.mark&#34;')"/>
+                                                <xsl:value-of select="concat('&#34;#source-text .text.plain&#34; : &#34;#unit-', @tuid, ' .source .mark&#34;')"/>,
+                                                <xsl:value-of select="concat('&#34;#translation-text .text.plain&#34; : &#34;#unit-', @tuid, ' .translation .mark&#34;')"/>
                                             }
                                             </xsl:variable>
+                                            <!-- 
                                             <xsl:variable name="onclick-mark">
                                             {
-                                                <xsl:value-of select="concat('&#34;#translation-text .text.plain&#34; : &#34;#unit-', @tuid, ' .translation&#34;')"/>
+                                                <xsl:value-of select="concat('"#translation-text .text.plain" : "#unit-', @tuid, ' .translation"')"/>
                                             }
+                                            </xsl:variable> -->
+                                            <xsl:variable name="onclick-bold">
+                                            [
+                                                <xsl:value-of select="concat('&#34;#unit-source-', @tuid, '&#34;')"/>,
+                                                <xsl:value-of select="concat('&#34;#unit-translation-', @tuid, '&#34;')"/>
+                                            ]
                                             </xsl:variable>
                                             <p class="source text-bo">
                                                 <a class="mark">
+                                                    <xsl:attribute name="id" select="concat('unit-source-', @tuid)"/>
                                                     <xsl:attribute name="href" select="concat('#unit-', @tuid)"/>
                                                     <xsl:attribute name="data-onclick-set" select="normalize-space($onclick-set)"/>
                                                     <xsl:attribute name="data-onload-replace" select="normalize-space($onload-replace)"/>
-                                                    <xsl:attribute name="data-onclick-mark" select="normalize-space($onclick-mark)"/>
+                                                    <xsl:attribute name="data-onclick-bold" select="normalize-space($onclick-bold)"/>
                                                     <xsl:value-of select="tmx:tuv[@xml:lang eq 'bo']/tmx:seg/text() ! normalize-space(.)"/>
                                                 </a>
                                             </p>
                                             <p class="translation">
-                                                <xsl:value-of select="tmx:tuv[@xml:lang eq 'en']/tmx:seg/text() ! normalize-space(.)"/>
+                                                <span class="mark">
+                                                    <xsl:attribute name="id" select="concat('unit-translation-', @tuid)"/>
+                                                    <xsl:value-of select="tmx:tuv[@xml:lang eq 'en']/tmx:seg/text() ! normalize-space(.)"/>
+                                                </span>
                                             </p>
                                         </div>
                                     </xsl:for-each>
@@ -226,9 +238,7 @@
                         <xsl:if test="preceding-sibling::tei:ref[1][@cRef eq //m:folio-content/@start-ref]">
                             <xsl:attribute name="class" select="'selected'"/>
                         </xsl:if>
-                        <xsl:call-template name="normalize">
-                            <xsl:with-param name="text" select="concat(., ' ')"/>
-                        </xsl:call-template>
+                        <xsl:value-of select="concat(normalize-space(.),' ')"/>
                     </span>
                 </xsl:when>
                 
@@ -264,10 +274,14 @@
             <xsl:choose>
                 
                 <!-- Output text nodes only -->
-                <xsl:when test="self::text()[normalize-space(.)]">
+                <xsl:when test="self::text()[normalize-space(.)][parent::tei:p]">
                     <xsl:call-template name="normalize">
                         <xsl:with-param name="text" select="concat(., ' ')"/>
                     </xsl:call-template>
+                </xsl:when>
+                
+                <xsl:when test="self::text()[normalize-space(.)]">
+                    <xsl:value-of select="concat(normalize-space(.),' ')"/>
                 </xsl:when>
                 
                 <!-- ignore -->

@@ -30,6 +30,7 @@ return
         model-type="translation-update"
         timestamp="{ current-dateTime() }"
         app-id="{ common:app-id() }"
+        app-version="{ common:app-version() }"
         user-name="{ common:user-name() }" 
         tab="{$tab}">
         <updates>{ $updated }</updates>

@@ -4,7 +4,7 @@
     <xsl:output method="html" indent="no" doctype-system="about:legacy-compat"/>
     
     <xsl:template match="/m:response">
-        <h3>
+        <h3 class="title">
             <xsl:value-of select="concat('Folio ', @folio)"/>
         </h3>
         <hr/>
@@ -13,12 +13,14 @@
         </div>
         <hr/>
         <div class="footer" id="source-footer">
-            <p>
-                <xsl:value-of select="concat('eKangyur ', m:source[@name eq 'ekangyur']/@ekangyur-id, ', page ', m:source[@name eq 'ekangyur']/@page, '.')"/>
-                <a href="#popover-content" class="info" role="button" tabindex="0" data-toggle="popover" data-placement="top" data-trigger="focus" data-container="#source-footer">
-                    <i class="fa fa-info-circle"/>
-                </a>
-            </p>
+            <div class="container">
+                <p>
+                    <xsl:value-of select="concat('eKangyur ', m:source[@name eq 'ekangyur']/@ekangyur-id, ', page ', m:source[@name eq 'ekangyur']/@page, '.')"/>
+                    <a href="#popover-content" class="info" role="button" tabindex="0" data-toggle="popover" data-placement="top" data-trigger="focus" data-container="#source-footer">
+                        <i class="fa fa-info-circle"/>
+                    </a>
+                </p>
+            </div>
             <div id="popover-content" class="hidden">
                 <h4 class="title">
                     <xsl:value-of select="normalize-space(m:app-text[@key eq 'source.ekangyur-description-title'])"/>

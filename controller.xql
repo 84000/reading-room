@@ -151,11 +151,11 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
         else
             local:auth('translation-memory.html')
     
-    (: tmx files :)
+    (: Cumulative glossary download :)
     else if (lower-case($exist:resource) eq 'cumulative-glossary.zip') then
         local:dispatch("/models/cumulative-glossary.xq", "", <parameters/>)
-        
-    (: tmx files :)
+    
+    (: .tmx files :)
     else if (lower-case($exist:resource) eq 'tmx.zip') then
         local:dispatch("/models/tmx-files.xq", "", <parameters/>)
     
@@ -243,7 +243,7 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
     else if ($collection-path eq "glossary") then
         if($resource-id eq 'items') then
             if($resource-suffix eq 'html') then
-                local:dispatch-html("/models/glossary-items.xq", "/views/html/translator-tools-sections/glossary-items.xsl", 
+                local:dispatch-html("/models/glossary-items.xq", "/views/html/utilities-sections/glossary-items.xsl", 
                     <parameters/>
                 )
             else
@@ -292,6 +292,31 @@ else if(not(common:auth-environment()) or sm:is-authenticated()) then
         else
             (: return the xml :)
             local:dispatch("/models/source.xq", "", 
+                <parameters xmlns="http://exist.sourceforge.net/NS/exist">
+                    <add-parameter name="resource-id" value="{$resource-id}"/>
+                    <add-parameter name="resource-suffix" value="xml"/>
+                </parameters>
+            )
+    
+    (: Translation :)
+    else if ($collection-path eq "about") then
+        if ($resource-suffix eq 'html') then
+            local:dispatch-html("/models/about.xq", "/views/html/about.xsl", 
+                <parameters xmlns="http://exist.sourceforge.net/NS/exist">
+                    <add-parameter name="resource-id" value="{$resource-id}"/>
+                    <add-parameter name="resource-suffix" value="html"/>
+                </parameters>
+            )
+        else if ($resource-suffix eq 'json') then
+            local:dispatch("/models/about.xq", "/views/json/xmlToJson.xq", 
+                <parameters xmlns="http://exist.sourceforge.net/NS/exist">
+                    <add-parameter name="resource-id" value="{$resource-id}"/>
+                    <add-parameter name="resource-suffix" value="json"/>
+                </parameters>
+            )
+        else
+            (: return the xml :)
+            local:dispatch("/models/about.xq", "", 
                 <parameters xmlns="http://exist.sourceforge.net/NS/exist">
                     <add-parameter name="resource-id" value="{$resource-id}"/>
                     <add-parameter name="resource-suffix" value="xml"/>
