@@ -174,14 +174,12 @@ declare function common:unescape($text as xs:string*) as node()*
 declare function common:search-result($nodes as node()*) as node()*
 {
     for $node in $nodes
-       let $parameters := <parameters></parameters>
-       let $attributes := <attributes></attributes>
     return
         transform:transform(
             $node, 
             doc(concat(common:app-path(), "/xslt/search-result.xsl")), 
-            $parameters, 
-            $attributes, 
+            (), 
+            (), 
             'method=xml indent=no'
         )
 };

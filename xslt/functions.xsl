@@ -50,7 +50,7 @@
         <xsl:param name="sa-string" as="xs:string"/>
         <xsl:variable name="in" select="'āḍḥīḷḹṃṇñṅṛṝṣśṭūṁ'"/>
         <xsl:variable name="out" select="'adhillmnnnrrsstum'"/>
-        <xsl:value-of select="translate(common:alphanumeric(lower-case($sa-string)), $in, $out)"/>
+        <xsl:value-of select="translate(lower-case($sa-string), $in, $out)"/>
     </xsl:function>
     
     <xsl:function name="common:glossarize-class" as="xs:string*">

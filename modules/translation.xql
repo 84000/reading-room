@@ -358,18 +358,13 @@ declare function translation:glossary($translation as node()) as node()* {
 
 declare function translation:downloads($translation-id as xs:string) as node()* {
     <downloads xmlns="http://read.84000.co/ns/1.0">
-    {
-        if(util:binary-doc-available(concat(common:data-path(), '/pdf/', $translation-id ,'.pdf'))) then
-            <download type="pdf" url="{ concat('/data/pdf/', $translation-id ,'.pdf') }" filename="{ concat($translation-id, '.pdf') }"/>
-        else
-            ()
-    }
-    {
-        if(util:binary-doc-available(concat(common:data-path(), '/epub/', $translation-id ,'.epub'))) then
-            <download type="epub" url="{ concat('/data/epub/', $translation-id ,'.epub') }" filename="{ concat($translation-id, '.epub') }"/>
-        else
-            ()
-    }
+        {
+            if(util:binary-doc-available(concat(common:data-path(), '/pdf/', $translation-id ,'.pdf'))) then
+                <download type="pdf" url="{ concat('/data/pdf/', $translation-id ,'.pdf') }" filename="{ concat($translation-id, '.pdf') }"/>
+            else
+                ()
+        }
+        <download type="epub" url="{ concat('/translation/', $translation-id ,'.epub') }" filename="{ concat($translation-id, '.epub') }"/>
     </downloads>
 };
 

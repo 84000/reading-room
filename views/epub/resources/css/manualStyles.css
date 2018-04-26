@@ -129,7 +129,7 @@ blockquote .line-group .line{
 .text-sa{
     font-style: italic;
 }
-.text-wylie{
+.text-wy{
     font-style: italic;
 }
 .text-zh{
@@ -155,7 +155,7 @@ blockquote .line-group .line{
     font-weight: normal;
 }
 .text h4{
-    margin-top: 22px;
+    margin-top: 22pt;
 }
 .text br{
     display: none;
@@ -194,9 +194,10 @@ h4 + .rw p,
 br + .rw p,
 .space + .rw p,
 .space-after + .rw p,
-.trailer p,
+p.trailer,
 .footnote-number{
     text-indent: 0;
+    page-break-after: avoid;
 }
 
 /* Gutter for Milestones */
@@ -342,6 +343,8 @@ img.logo-84000{
 }
 #abbreviations table th{
     padding-right: 8pt;
+    vertical-align: top;
+    font-weight: normal;
 }
 
 /* Bibliography */

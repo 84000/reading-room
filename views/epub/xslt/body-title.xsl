@@ -6,20 +6,24 @@
     
     <xsl:template match="/m:response">
         
-        <xsl:variable name="page-title" select="'Acknowledgements'"/>
+        <xsl:variable name="page-title" select="'Body Title'"/>
         <xsl:variable name="translation-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
         
         <xsl:variable name="content">
-            <section>
-                <div class="center header">
-                    <h2>
-                        <xsl:value-of select="$page-title"/>
-                    </h2>
-                </div>
-                <div class="text">
-                    <xsl:apply-templates select="m:translation/m:acknowledgment"/>
+            
+            <section id="body-title">
+                <div class="center half-title">
+                    <xsl:if test="m:translation/m:body/m:honoration/text()">
+                        <h2>
+                            <xsl:apply-templates select="m:translation/m:body/m:honoration"/>
+                        </h2>
+                    </xsl:if>
+                    <h1>
+                        <xsl:apply-templates select="m:translation/m:body/m:main-title"/>
+                    </h1>
                 </div>
             </section>
+            
         </xsl:variable>
         
         <xsl:call-template name="epub-page">

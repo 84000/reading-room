@@ -536,6 +536,7 @@
                                             <xsl:with-param name="title" select="'Appendix'"/>
                                             <xsl:with-param name="title-tag" select="'h3'"/>
                                         </xsl:call-template>
+                                            
                                         <div class="render-in-viewport">
                                             <xsl:for-each select="m:translation/m:appendix/m:chapter">
                                                 
@@ -687,7 +688,7 @@
                                                             </h4>
                                                             
                                                             <xsl:if test="m:term[lower-case(@xml:lang) eq 'bo-ltn']">
-                                                                <p class="text-wylie">
+                                                                <p class="text-wy">
                                                                     <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'bo-ltn'], ' · ')"/>
                                                                 </p>
                                                             </xsl:if>

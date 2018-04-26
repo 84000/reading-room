@@ -6,18 +6,18 @@
     
     <xsl:template match="/m:response">
         
-        <xsl:variable name="page-title" select="'Acknowledgements'"/>
+        <xsl:variable name="page-title" select="'Colophon'"/>
         <xsl:variable name="translation-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
         
         <xsl:variable name="content">
-            <section>
+            <section id="colophon" class="translation" epub:type="colophon">
                 <div class="center header">
                     <h2>
                         <xsl:value-of select="$page-title"/>
                     </h2>
                 </div>
                 <div class="text">
-                    <xsl:apply-templates select="m:translation/m:acknowledgment"/>
+                    <xsl:apply-templates select="m:translation/m:colophon"/>
                 </div>
             </section>
         </xsl:variable>

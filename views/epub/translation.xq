@@ -1,6 +1,7 @@
 xquery version "3.0";
 
 declare namespace m = "http://read.84000.co/ns/1.0";
+declare namespace tei = "http://www.tei-c.org/ns/1.0";
 
 import module namespace common = "http://read.84000.co/common" at "../../modules/common.xql";
 import module namespace translation = "http://read.84000.co/translation" at "../../modules/translation.xql";
@@ -56,7 +57,36 @@ let $entries := (
                 <item id="summary" href="summary.xhtml" media-type="application/xhtml+xml"/>
                 <item id="acknowledgements" href="acknowledgements.xhtml" media-type="application/xhtml+xml"/>
                 <item id="introduction" href="introduction.xhtml" media-type="application/xhtml+xml"/>
-                <item id="body" href="body.xhtml" media-type="application/xhtml+xml"/>
+                <item id="body-title" href="body-title.xhtml" media-type="application/xhtml+xml"/>
+                {
+                    if($data/m:response/m:translation/m:prologue//tei:p) then 
+                        <item id="prologue" href="prologue.xhtml" media-type="application/xhtml+xml"/>
+                    else
+                        ()
+                }
+                {
+                    for $chapter in $data/m:response/m:translation/m:body/m:chapter
+                    return
+                        <item id="chapter-{ $chapter/@chapter-index }" href="chapter-{ $chapter/@chapter-index }.xhtml" media-type="application/xhtml+xml"/>
+                }
+                {
+                    if($data/m:response/m:translation/m:colophon//tei:p) then 
+                        <item id="colophon" href="colophon.xhtml" media-type="application/xhtml+xml"/>
+                    else
+                        ()
+                }
+                {
+                    if($data/m:response/m:translation/m:appendix//tei:p) then 
+                        <item id="appendix" href="appendix.xhtml" media-type="application/xhtml+xml"/>
+                    else
+                        ()
+                }
+                {
+                    if($data/m:response/m:translation/m:abbreviations/m:item) then 
+                        <item id="abbreviations" href="abbreviations.xhtml" media-type="application/xhtml+xml"/>
+                    else
+                        ()
+                }
                 <item id="notes" href="notes.xhtml" media-type="application/xhtml+xml"/>
                 <item id="bibliography" href="bibliography.xhtml" media-type="application/xhtml+xml"/>
                 <item id="glossary" href="glossary.xhtml" media-type="application/xhtml+xml"/>
@@ -70,7 +100,36 @@ let $entries := (
                 <itemref idref="summary"/>
                 <itemref idref="acknowledgements"/>
                 <itemref idref="introduction"/>
-                <itemref idref="body"/>
+                <itemref idref="body-title"/>
+                {
+                    if($data/m:response/m:translation/m:prologue//tei:p) then 
+                        <itemref idref="prologue"/>
+                    else
+                        ()
+                }
+                {
+                    for $chapter in $data/m:response/m:translation/m:body/m:chapter
+                    return
+                        <itemref idref="chapter-{ $chapter/@chapter-index }"/>
+                }
+                {
+                    if($data/m:response/m:translation/m:colophon//tei:p) then 
+                        <itemref idref="colophon"/>
+                    else
+                        ()
+                }
+                {
+                    if($data/m:response/m:translation/m:appendix//tei:p) then 
+                        <itemref idref="appendix"/>
+                    else
+                        ()
+                }
+                {
+                    if($data/m:response/m:translation/m:abbreviations/m:item) then 
+                        <itemref idref="abbreviations"/>
+                    else
+                        ()
+                }
                 <itemref idref="notes"/>
                 <itemref idref="bibliography"/>
                 <itemref idref="glossary"/>
@@ -93,7 +152,33 @@ let $entries := (
     <entry name="OEBPS/summary.xhtml" type="xml">{transform:transform($data, doc("xslt/summary.xsl"), ())}</entry>,
     <entry name="OEBPS/acknowledgements.xhtml" type="xml">{transform:transform($data, doc("xslt/acknowledgements.xsl"), ())}</entry>,
     <entry name="OEBPS/introduction.xhtml" type="xml">{transform:transform($data, doc("xslt/introduction.xsl"), ())}</entry>,
-    <entry name="OEBPS/body.xhtml" type="xml">{transform:transform($data, doc("xslt/body.xsl"), ())}</entry>,
+    <entry name="OEBPS/body-title.xhtml" type="xml">{transform:transform($data, doc("xslt/body-title.xsl"), ())}</entry>,
+    if($data/m:response/m:translation/m:prologue//tei:p) then 
+        <entry name="OEBPS/prologue.xhtml" type="xml">{transform:transform($data, doc("xslt/prologue.xsl"), ())}</entry>
+    else
+        ()
+    ,
+    for $chapter in $data/m:response/m:translation/m:body/m:chapter
+    return
+        <entry name="OEBPS/chapter-{ $chapter/@chapter-index }.xhtml" type="xml">
+            { transform:transform($data, doc("xslt/chapter.xsl"), <parameters><param name="chapter-index" value="{ $chapter/@chapter-index }"/></parameters>) }
+        </entry>
+    ,
+    if($data/m:response/m:translation/m:colophon//tei:p) then 
+        <entry name="OEBPS/colophon.xhtml" type="xml">{transform:transform($data, doc("xslt/colophon.xsl"), ())}</entry>
+    else
+        ()
+    ,
+    if($data/m:response/m:translation/m:appendix//tei:p) then 
+        <entry name="OEBPS/appendix.xhtml" type="xml">{transform:transform($data, doc("xslt/appendix.xsl"), ())}</entry>
+    else
+        ()
+    ,
+    if($data/m:response/m:translation/m:abbreviations/m:item) then 
+        <entry name="OEBPS/abbreviations.xhtml" type="xml">{transform:transform($data, doc("xslt/abbreviations.xsl"), ())}</entry>
+    else
+        ()
+    ,
     <entry name="OEBPS/notes.xhtml" type="xml">{transform:transform($data, doc("xslt/notes.xsl"), ())}</entry>,
     <entry name="OEBPS/bibliography.xhtml" type="xml">{transform:transform($data, doc("xslt/bibliography.xsl"), ())}</entry>,
     <entry name="OEBPS/glossary.xhtml" type="xml">{transform:transform($data, doc("xslt/glossary.xsl"), ())}</entry>,

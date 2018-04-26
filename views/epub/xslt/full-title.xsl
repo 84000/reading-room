@@ -3,9 +3,11 @@
     
     <xsl:import href="../../../xslt/tei-to-xhtml.xsl"/>
     <xsl:include href="epub-page.xsl"/>
-    <xsl:variable name="page-title" select="'Full Title'"/>
     
     <xsl:template match="/m:response">
+        
+        <xsl:variable name="page-title" select="'Full Title'"/>
+        <xsl:variable name="translation-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
         
         <xsl:variable name="content">
             <section class="center full-title" epub:type="titlepage">
@@ -38,7 +40,7 @@
         </xsl:variable>
         
         <xsl:call-template name="epub-page">
-            <xsl:with-param name="translation-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
+            <xsl:with-param name="translation-title" select="$translation-title"/>
             <xsl:with-param name="page-title" select="$page-title"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>

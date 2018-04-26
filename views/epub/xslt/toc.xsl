@@ -55,19 +55,19 @@
                     </navLabel>
                     <content src="introduction.xhtml"/>
                 </navPoint>
-                <xsl:if test="m:translation/m:prologue/tei:p">
+                <xsl:if test="m:translation/m:prologue//tei:p">
                     <navPoint id="prologue">
                         <navLabel>
                             <text>Prologue</text>
                         </navLabel>
-                        <content src="body.xhtml#prologue"/>
+                        <content src="prologue.xhtml"/>
                     </navPoint>
                 </xsl:if>
                 <navPoint id="body-title">
                     <navLabel>
                         <text>The Translation</text>
                     </navLabel>
-                    <content src="body.xhtml#body-title"/>
+                    <content src="body-title.xhtml"/>
                 </navPoint>
                 <xsl:for-each select="m:translation/m:body/m:chapter[m:title/text() | m:title-number/text()]">
                     <navPoint>
@@ -85,16 +85,16 @@
                             </text>
                         </navLabel>
                         <content>
-                            <xsl:attribute name="src" select="concat('body.xhtml#chapter-', @chapter-index/string())"/>
+                            <xsl:attribute name="src" select="concat('chapter-', @chapter-index, '.xhtml')"/>
                         </content>
                     </navPoint>
                 </xsl:for-each>
-                <xsl:if test="m:translation/m:colophon/tei:p">
+                <xsl:if test="m:translation/m:colophon//tei:p">
                     <navPoint id="colophon">
                         <navLabel>
                             <text>Colophon</text>
                         </navLabel>
-                        <content src="body.xhtml#colophon"/>
+                        <content src="colophon.xhtml"/>
                     </navPoint>
                 </xsl:if>
                 <xsl:if test="m:translation/m:appendix//tei:p">
@@ -102,15 +102,15 @@
                         <navLabel>
                             <text>Appendix</text>
                         </navLabel>
-                        <content src="body.xhtml#appendix"/>
+                        <content src="appendix.xhtml"/>
                     </navPoint>
                 </xsl:if>
                 <xsl:if test="m:translation/m:abbreviations/m:item">
-                    <navPoint id="colophon">
+                    <navPoint id="abbreviations">
                         <navLabel>
                             <text>Abbreviations</text>
                         </navLabel>
-                        <content src="body.xhtml#abbreviations"/>
+                        <content src="abbreviations.xhtml"/>
                     </navPoint>
                 </xsl:if>
                 <navPoint id="notes">

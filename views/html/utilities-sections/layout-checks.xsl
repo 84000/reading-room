@@ -30,13 +30,8 @@
                 </a>
             </li>
             <li>
-                <a href="/translation/UT22084-031-002.html#UT22084-031-002-34" target="test-layout">
-                    Nested paragraphs #1
-                </a>
-            </li>
-            <li>
                 <a href="/translation/UT22084-031-002.html#UT22084-031-002-45" target="test-layout">
-                    Nested paragraphs #2
+                    Nested paragraphs
                 </a>
             </li>
             <li>
@@ -52,6 +47,11 @@
             <li>
                 <a href="/translation/UT22084-055-001.html#UT22084-055-001-44" target="test-layout">
                     Structured introduction
+                </a>
+            </li>
+            <li>
+                <a href="/translation/UT22084-079-011.html#prologue" target="test-layout">
+                    Prologue
                 </a>
             </li>
             <li>

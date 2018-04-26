@@ -76,6 +76,7 @@
             <xsl:choose>
                 <xsl:when test="/m:response/@doc-type eq 'epub'">
                     <xsl:attribute name="href" select="concat('notes.xhtml#', @xml:id)"/>
+                    <xsl:attribute name="epub:type" select="'noteref'"/>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:attribute name="href" select="concat('#', @xml:id)"/>
@@ -143,25 +144,16 @@
     
     <xsl:template match="tei:ptr">
         <a class="internal-ref">
+            
             <xsl:choose>
                 <xsl:when test="/m:response/@doc-type eq 'epub'">
                     <xsl:attribute name="href">
                         <xsl:choose>
-                            <xsl:when test="@location eq 'missing'">
-                                <xsl:attribute name="href" select="'#'"/>
-                                <xsl:attribute name="class" select="'internal-ref disabled'"/>
-                            </xsl:when>
-                            <xsl:when test="@location eq 'glossary'">
-                                <xsl:value-of select="concat('glossary.xhtml', @target)"/>
-                            </xsl:when>
-                            <xsl:when test="@location eq 'notes'">
-                                <xsl:value-of select="concat('notes.xhtml', @target)"/>
-                            </xsl:when>
-                            <xsl:when test="@location eq 'introduction'">
-                                <xsl:value-of select="concat('introduction.xhtml', @target)"/>
+                            <xsl:when test="@location eq 'chapter'">
+                                <xsl:value-of select="concat('chapter-', @chapter-index, '.xhtml', @target)"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="concat('body.xhtml', @target)"/>
+                                <xsl:value-of select="concat(@location, '.xhtml', @target)"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:attribute>
@@ -171,6 +163,11 @@
                     <xsl:attribute name="class" select="'internal-ref scroll-to-anchor'"/>
                 </xsl:otherwise>
             </xsl:choose>
+            
+            <xsl:if test="@location eq 'missing'">
+                <xsl:attribute name="href" select="'#'"/>
+                <xsl:attribute name="class" select="'internal-ref disabled'"/>
+            </xsl:if>
             
             <xsl:apply-templates select="text()"/>
         </a>

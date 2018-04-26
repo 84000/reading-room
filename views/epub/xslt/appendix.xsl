@@ -6,19 +6,29 @@
     
     <xsl:template match="/m:response">
         
-        <xsl:variable name="page-title" select="'Acknowledgements'"/>
+        <xsl:variable name="page-title" select="'Appendix'"/>
         <xsl:variable name="translation-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
         
         <xsl:variable name="content">
-            <section>
+            <section id="appendix" class="translation" epub:type="appendix">
                 <div class="center header">
                     <h2>
                         <xsl:value-of select="$page-title"/>
                     </h2>
                 </div>
-                <div class="text">
-                    <xsl:apply-templates select="m:translation/m:acknowledgment"/>
-                </div>
+                <xsl:for-each select="m:translation/m:appendix/m:chapter">
+                    
+                    <div class="chapter">
+                        <div class="text">
+                            <div class="center space-after">
+                                <h4>
+                                    <xsl:apply-templates select="m:title"/>
+                                </h4>
+                            </div>
+                            <xsl:apply-templates select="tei:*"/>
+                        </div>
+                    </div>
+                </xsl:for-each>
             </section>
         </xsl:variable>
         

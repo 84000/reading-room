@@ -225,18 +225,13 @@ declare function text:text($text as node()*, $translated as xs:boolean, $ancesto
                 }
             </chapters>
             <downloads>
-            {
-                if(util:binary-doc-available(concat(common:data-path(), '/pdf/', $translation-id ,'.pdf'))) then
-                    <download type="pdf" url="{ concat('/data/pdf/', $translation-id ,'.pdf') }"/>
-                else
-                    ()
-            }
-            {
-                if(util:binary-doc-available(concat(common:data-path(), '/epub/', $translation-id ,'.epub'))) then
-                    <download type="epub" url="{ concat('/data/epub/', $translation-id ,'.epub') }"/>
-                else
-                    ()
-            }
+                {
+                    if(util:binary-doc-available(concat(common:data-path(), '/pdf/', $translation-id ,'.pdf'))) then
+                        <download type="pdf" url="{ concat('/data/pdf/', $translation-id ,'.pdf') }"/>
+                    else
+                        ()
+                }
+                <download type="epub" url="{ concat('/translation/', $translation-id ,'.epub') }"/>
             </downloads>
         </text>
 };

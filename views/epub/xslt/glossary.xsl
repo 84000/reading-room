@@ -3,9 +3,11 @@
     
     <xsl:import href="../../../xslt/tei-to-xhtml.xsl"/>
     <xsl:import href="epub-page.xsl"/>
-    <xsl:variable name="page-title" select="'Glossary'"/>
     
     <xsl:template match="/m:response">
+        
+        <xsl:variable name="page-title" select="'Glossary'"/>
+        <xsl:variable name="translation-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
         
         <xsl:variable name="content">
             <section epub:type="glossary">
@@ -23,20 +25,17 @@
                             <xsl:apply-templates select="m:term[lower-case(@xml:lang) = 'en']"/>
                         </h4>
                         <xsl:if test="m:term[lower-case(@xml:lang) eq 'bo-ltn']">
-                            <p>
-                                <xsl:attribute name="class" select="concat('text-wylie', ' ', common:lang-class(@xml:lang))"/>
+                            <p class="text-wy">
                                 <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'bo-ltn'], ' · ')"/>
                             </p>
                         </xsl:if>
                         <xsl:if test="m:term[lower-case(@xml:lang) eq 'bo']">
-                            <p>
-                                <xsl:attribute name="class" select="concat('text-bo', ' ', common:lang-class(@xml:lang))"/>
+                            <p class="text-bo">
                                 <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'bo'], ' · ')"/>
                             </p>
                         </xsl:if>
                         <xsl:if test="m:term[lower-case(@xml:lang) eq 'sa-ltn']">
-                            <p>
-                                <xsl:attribute name="class" select="concat('text-sa', ' ', common:lang-class(@xml:lang))"/>
+                            <p class="text-sa">
                                 <xsl:value-of select="string-join(m:term[lower-case(@xml:lang) eq 'sa-ltn'], ' · ')"/>
                             </p>
                         </xsl:if>
@@ -52,7 +51,7 @@
         </xsl:variable>
         
         <xsl:call-template name="epub-page">
-            <xsl:with-param name="translation-title" select="m:translation/m:titles/m:title[@xml:lang eq 'en']"/>
+            <xsl:with-param name="translation-title" select="$translation-title"/>
             <xsl:with-param name="page-title" select="$page-title"/>
             <xsl:with-param name="content" select="$content"/>
         </xsl:call-template>
