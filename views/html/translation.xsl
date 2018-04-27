@@ -775,7 +775,7 @@
                 
                 <div id="link-to-top-container" class="fixed-btn-container">
                     
-                    <a href="#top" id="link-to-top" class="btn-round" title="Return to the top of the page">
+                    <a href="#top" id="link-to-top" class="btn-round scroll-to-anchor" title="Return to the top of the page">
                         <i class="fa fa-arrow-up" aria-hidden="true"/>
                     </a>
                     
